@@ -15,7 +15,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 set(TS_FILES CS307ParsingGUIOfficial_en_US.ts)
 
 set(PROJECT_SOURCES
-        main.cpp
+    mainGUI.cpp
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
