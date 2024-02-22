@@ -65,8 +65,27 @@ int upload_template(fs::path filepath) {
     file.close();
     file_upload.close();
 
-    std::cout << "File " << filename << " uploaded successfully";
+    std::cout << "File " << filename << " uploaded successfully" << std::endl;
     return 0;
+}
+
+
+// This function is used to delete a template directory and 
+// all of the contents.
+int delete_template(std::string filename) {
+    // See if the directory exists
+    fs::path dir_path = CURRENT_PATH / "\\templates" / "\\" / filename.substr(0, filename.find_last_of('.'));
+    if (!fs::exists(dir_path)) {
+        return -1;
+    }
+
+    // Remove direcotry and all contents
+    if (fs::remove_all(dir_path) > 0) {
+        std::cout << filename.substr(0, filename.find_last_of('.')) << " deleted successfully." << std::endl;
+        return 0;
+    } else {
+        return -2;
+    }
 }
 
 
@@ -106,6 +125,6 @@ int save_document(std::string filename) {
     file.close();
     file_out.close();
 
-    std::cout << "File " << filename << " saved successfully in " << folder_out;
+    std::cout << "File " << filename << " saved successfully in " << folder_out << std::endl;
     return 0;
 }
