@@ -1,11 +1,4 @@
-#include <iostream>
-#include <filesystem>
-#include <fstream>
-#include <string>
-
-#define CURRENT_PATH fs::current_path()
-
-namespace fs = std::filesystem;
+#include "file_operations.h"
 
 // This function is used to save uploaded templates to the 
 // correct location.
