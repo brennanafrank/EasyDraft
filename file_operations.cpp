@@ -7,6 +7,69 @@
 
 namespace fs = std::filesystem;
 
+// This function is used to save uploaded templates to the 
+// correct location.
+int upload_template(fs::path filepath) {
+    // Find the file extension to make sure its .docx
+    if (!filepath.string().find(".docx")) {
+        return -1;
+    }
+
+    // Open file from filepath
+    std::fstream file(filepath);
+    if (!file.is_open()) {
+        return -2;
+    }
+
+    // Get filename from filepath
+    std::string filename = filepath.string().substr(filepath.string().find_last_of('\\'));
+
+    // See if the folder for uploaded templates is created
+    fs::path folder_temps = CURRENT_PATH / "\\templates";
+    if (!fs::exists(folder_temps)) {
+        if (!fs::create_directory(folder_temps)) {
+            // Could not create the directory
+            file.close();
+            return -3;
+        }
+    }
+
+    // Create the folder for the template
+    fs::path temp_folder = CURRENT_PATH / "\\templates" / "\\" / filename.substr(0, filename.find_last_of('.'));
+    if (!fs::exists(temp_folder)) {
+        if (!fs::create_directory(temp_folder)) {
+            // Could not create the directory
+            file.close();
+            return -4;
+        }
+    } else {
+        // Folder exists
+        file.close();
+        return -5;
+    }
+
+    // Open new tempalte in new folder
+    std::fstream file_upload(temp_folder / filename);
+    if (!file_upload.is_open()) {
+        file.close();
+        return -6;
+    }
+
+    // Read from file and write to file_upload
+    std::string line;
+    while (std::getline(file, line)) {
+        file_upload << line << std::endl;
+    }
+
+    // Close both files
+    file.close();
+    file_upload.close();
+
+    std::cout << "File " << filename << " uploaded successfully";
+    return 0;
+}
+
+
 // This funciton is used to save documents that are taken from
 // the parser.
 int save_document(std::string filename) {
