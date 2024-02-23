@@ -1,108 +1,73 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include <QSettings>
-#include <QVBoxLayout>
+#include "./ui_mainwindow.h"
+#include <QFileSystemModel>
+#include <QTreeView>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
+#include <QMimeData>
+
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    model = new QStandardItemModel(this);
-    treeView = new QTreeView(this);
-    treeView->setModel(model);
+    QFileSystemModel *model = new QFileSystemModel;
+    model->setRootPath(QDir::currentPath());
+    ui->pathViewer->setModel(model);
+    ui->pathViewer->setRootIndex(model->index("/Users/michael/Downloads"));
 
-    QPushButton *addFolderButton = new QPushButton("Add Folder", this);
-    connect(addFolderButton, &QPushButton::clicked, this, &MainWindow::onAddFolderClicked);
+    connect(ui->createFolderButton, &QPushButton::clicked, this, &MainWindow::createFolder);
+    connect(ui->deleteItemButton, &QPushButton::clicked, this, &MainWindow::deleteItem);
 
-    QPushButton *deleteFolderButton = new QPushButton("Delete Folder", this);
-    connect(deleteFolderButton, &QPushButton::clicked, this, &MainWindow::onDeleteFolderClicked);
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(treeView);
-    layout->addWidget(addFolderButton);
-    layout->addWidget(deleteFolderButton);
-
-    QWidget *widget = new QWidget(this);
-    widget->setLayout(layout);
-    setCentralWidget(widget);
-
-    loadModel();
 }
 
+void MainWindow::createFolder() {
+
+    QModelIndex index = ui->pathViewer->currentIndex();
+    if (!index.isValid()) return;
+
+    QFileSystemModel *model = static_cast<QFileSystemModel *>(ui->pathViewer->model());
+    QString itemPath = model->filePath(index);
+    QFileInfo fileInfo(itemPath);
+
+    QString targetPath;
+    if (fileInfo.isDir()) {
+        targetPath = itemPath;
+    } else {
+        targetPath = fileInfo.path();
+    }
+
+    QString folderName = QInputDialog::getText(this, tr("Create Folder"), tr("Folder Name:"));
+    if (folderName.isEmpty()) return;
+
+    QString folderPath = QDir(targetPath).absoluteFilePath(folderName);
+
+    if (!QDir().mkdir(folderPath)) {
+        QMessageBox::warning(this, tr("Create Folder"), tr("Failed to create folder at %1.").arg(folderPath));
+    } else {
+        QMessageBox::information(this, tr("Create Folder"), tr("Folder created successfully."));
+    }
+
+}
+
+void MainWindow::deleteItem() {
+    QModelIndex index = ui->pathViewer->currentIndex();
+    if (!index.isValid()) return;
+
+    if (QMessageBox::question(this, tr("Delete Item"), tr("Are you sure?"), QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {
+        QFileSystemModel *model = static_cast<QFileSystemModel *>(ui->pathViewer->model());
+        if (!model->remove(index)) {
+            QMessageBox::warning(this, tr("Delete Item"), tr("Failed to delete item."));
+        }
+    }
+}
 
 MainWindow::~MainWindow()
 {
-    saveModel();
     delete ui;
-}
-
-void MainWindow::onAddFolderClicked() {
-    QStandardItem *newFolder = new QStandardItem("New Folder");
-    newFolder->setEditable(true);
-    model->invisibleRootItem()->appendRow(newFolder);
-}
-
-void MainWindow::onDeleteFolderClicked() {
-    QModelIndex currentIndex = treeView->currentIndex();
-    if (!currentIndex.isValid())
-        return;
-
-    if (currentIndex.parent().isValid()) {
-        model->itemFromIndex(currentIndex.parent())->removeRow(currentIndex.row());
-    } else {
-        model->removeRow(currentIndex.row());
-    }
-}
-
-
-void MainWindow::saveModel() {
-    QSettings settings("YourOrganization", "YourApp", this);
-    settings.beginGroup("FolderStructure");
-    settings.remove(""); // Clear existing settings
-
-    for (int i = 0; i < model->invisibleRootItem()->rowCount(); ++i) {
-        saveItem(settings, model->invisibleRootItem()->child(i), i);
-    }
-    settings.endGroup();
-}
-
-void MainWindow::saveItem(QSettings &settings, QStandardItem *item, int index) {
-    if (!item) return;
-    settings.beginGroup(QString::number(index));
-    settings.setValue("name", item->text());
-    settings.setValue("childCount", item->rowCount());
-    for (int i = 0; i < item->rowCount(); ++i) {
-        saveItem(settings, item->child(i), i);
-    }
-    settings.endGroup();
-}
-
-
-void MainWindow::loadModel() {
-    QSettings settings("YourOrganization", "YourApp", this);
-    settings.beginGroup("FolderStructure");
-    model->clear();
-    loadItem(settings, model->invisibleRootItem(), 0);
-    settings.endGroup();
-}
-
-void MainWindow::loadItem(QSettings &settings, QStandardItem *parentItem, int index) {
-    settings.beginGroup(QString::number(index));
-    QString name = settings.value("name").toString();
-    int childCount = settings.value("childCount", 0).toInt();
-
-    QStandardItem *item = new QStandardItem(name);
-    item->setEditable(true);
-
-    if (parentItem != model->invisibleRootItem()) {
-        parentItem->appendRow(item);
-    } else {
-        model->invisibleRootItem()->appendRow(item);
-    }
-
-    for (int i = 0; i < childCount; ++i) {
-        loadItem(settings, item, i);
-    }
-    settings.endGroup();
 }
