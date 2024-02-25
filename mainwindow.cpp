@@ -3,8 +3,9 @@
 
 #include <QDir>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QPixmap>
-#include <QStandardPaths>
+//#include <QStandardPaths>
 
 // Q entry list
 // Q list widget
@@ -15,29 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-/*
-    QWidget *firstPageWidget = new QWidget;
-    QWidget *secondPageWidget = new QWidget;
-    QWidget *thirdPageWidget = new QWidget;
-
-    QStackedWidget *stackedWidget = new QStackedWidget;
-    stackedWidget->addWidget(firstPageWidget);
-    stackedWidget->addWidget(secondPageWidget);
-    stackedWidget->addWidget(thirdPageWidget);
-
-
-    QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(stackedWidget);
-    setLayout(layout);
-
-    QComboBox *pageComboBox = new QComboBox;
-    pageComboBox->addItem(tr("Page 1"));
-    pageComboBox->addItem(tr("Page 2"));
-    pageComboBox->addItem(tr("Page 3"));
-    connect(pageComboBox, QOverload<int>::of(&QComboBox::activated),
-            stackedWidget, &QStackedWidget::setCurrentIndex);
-*/
+    ui->stackedWidget->setCurrentIndex(2);
 
 }
 
@@ -56,8 +35,14 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_pushButton_2_clicked()
 {
 
-    // Get the home directory of the user
-    QString path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    // Get the directory of the user
+
+    // Set the parent to null
+    //Caption = "Select Directory"
+    //Initial directory is home
+    // Filter is directorys only
+    QString path = QFileDialog::getExistingDirectory(nullptr, "Select Directory", QDir::homePath(), QFileDialog::ShowDirsOnly);
+
 
     // Construct a file path to the directory using QDir
 
@@ -68,10 +53,46 @@ void MainWindow::on_pushButton_2_clicked()
     if (!userDir.exists()) {
 
         qWarning() << "Path not found" << path;
+        exit(1);
 
     }
 
-    QString file = QFileDialog::getOpenFileName(nullptr, "Open a File", path);
+    // Based on stack overflow page in how to get files from the directories
+
+    for (const QFileInfo &file : userDir.entryInfoList(QDir::Files))
+    {
+        QListWidgetItem *item = new QListWidgetItem(file.fileName());
+        item->setData(Qt::UserRole, file.absolutePath()); // if you need absolute path of the file
+        ui->listWidget->addItem(item);
+    }
+
+
+}
+
+
+void MainWindow::on_actionBack_triggered()
+{
+
+    ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() - 1);
+
+}
+
+
+void MainWindow::on_pushButton_4_clicked()
+{
+
+    if (ui->listWidget->count() == 0) {
+
+        QMessageBox::warning(nullptr, "Warning", "No documents!");
+
+    }
+    else {
+
+        ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() + 1);
+
+        ui->label->setText(ui->listWidget->currentItem()->text());
+
+    }
 
 }
 

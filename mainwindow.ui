@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>865</width>
+    <width>870</width>
     <height>600</height>
    </rect>
   </property>
@@ -14,19 +14,6 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QScrollBar" name="verticalScrollBar">
-    <property name="geometry">
-     <rect>
-      <x>850</x>
-      <y>0</y>
-      <width>20</width>
-      <height>511</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Vertical</enum>
-    </property>
-   </widget>
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
@@ -43,27 +30,52 @@
      <widget class="QPushButton" name="pushButton_2">
       <property name="geometry">
        <rect>
-        <x>610</x>
-        <y>220</y>
+        <x>140</x>
+        <y>430</y>
         <width>141</width>
         <height>71</height>
        </rect>
       </property>
       <property name="text">
-       <string>Insert File</string>
+       <string>Select Directory</string>
       </property>
      </widget>
-     <widget class="Line" name="line">
+     <widget class="QListWidget" name="listWidget">
       <property name="geometry">
        <rect>
-        <x>420</x>
-        <y>-10</y>
-        <width>20</width>
-        <height>551</height>
+        <x>30</x>
+        <y>30</y>
+        <width>811</width>
+        <height>381</height>
        </rect>
       </property>
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
+     </widget>
+     <widget class="QPushButton" name="pushButton_4">
+      <property name="geometry">
+       <rect>
+        <x>570</x>
+        <y>430</y>
+        <width>141</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Select Widget</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page_3">
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>297</x>
+        <y>15</y>
+        <width>221</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </widget>
@@ -89,7 +101,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>865</width>
+     <width>870</width>
      <height>37</height>
     </rect>
    </property>
@@ -100,7 +112,6 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionTrash_2"/>
     <addaction name="actionFile"/>
    </widget>
    <widget class="QMenu" name="menuDownload">
@@ -115,9 +126,16 @@
     </property>
     <addaction name="actionTrash_2"/>
    </widget>
+   <widget class="QMenu" name="menuBack">
+    <property name="title">
+     <string>Back</string>
+    </property>
+    <addaction name="actionBack"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDownload"/>
    <addaction name="menuTrash"/>
+   <addaction name="menuBack"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionFile_Options">
@@ -160,6 +178,11 @@
    </property>
    <property name="text">
     <string>Trash</string>
+   </property>
+  </action>
+  <action name="actionBack">
+   <property name="text">
+    <string>Back</string>
    </property>
   </action>
  </widget>
