@@ -31,13 +31,16 @@ private slots:
         w.show(); //replace with open a template through the gui
         //check if opening a template displays the correct text boxes
         // Find the textbox
-        QLineEdit* textbox = w.findChild<QLineEdit*>("textbox");
-        QVERIFY2(textbox != nullptr, "Could not find the textbox");
-        // Check if the textbox is enabled
-        QVERIFY2(textbox->isEnabled(), "Textbox is not enabled");
+        QList<QLineEdit*> lineEdits = window.findChildren<QLineEdit*>();
+
+        for(QLineEdit* lineEdit : lineEdits) {
+            QVERIFY2(lineEdit->text().isEmpty(), "Found a text box that is not empty");
+            QVERIFY2(lineEdit->text().isEnabled(), "Found a text box that is not enabled");
+        }
+        
     }
     //dont know the actual process of parsing, opening, reading files.
-    void test_replacePlaceholders() {
+    void test_replacePlaceholders() { //processing module
         QString documentContent = "<Placeholder1> <Placeholder2> <Placeholder3>";
         QMap<QString, QString> placeholderValues;
         placeholderValues["<Placeholder1>"] = "Value1";
@@ -48,14 +51,15 @@ private slots:
         QVERIFY2(compareString(finalText, expectedFinalText), "Failed replacing placeholders");
     }
     void test_parsing() {
-
+        
 
     } 
-    void test_multiple_save_document() {
+    void test_inputModule() { //test different custom profiles or placeholders
+
+    }
+    void test_save_document() {
         open(File)
         QString testData = "<Placeholder>"; //replace with what to save
-        saveFile(File, testData);
-        saveFile(File, testData);
         saveFile(File, testData);
         QVERIFY2(checkFileContent(File, testData), "File does not saved correctly");
 
