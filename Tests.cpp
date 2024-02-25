@@ -1,19 +1,72 @@
 #include <QTest>
 #include <QFile>
 
-class Test : public QObject
+class Tests : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void 
-    void test_main() {
-        
+    void test_MainWindowVisibility() {
+        // Create a new instance of the main window
+        MainWindow w;
+        w.show();
+        // Check if the window is visible
+        //
+        QVERIFY2(w.isVisible(), "Window is not visible");
+    }
+    //replicate test for all buttons (Ask Aneesh)
+    void test_WindowButton() {
+        // Create a new instance of the main window
+        MainWindow w;
+        w.show();
+        // Find the button
+        QPushButton* button = w.findChild<QPushButton*>("button");
+        QVERIFY2(button != nullptr, "Could not find the button");
+        // Check if the button is enabled
+        QVERIFY2(button->isEnabled(), "Button is not enabled");
+    }
+    void test_openTemplate() {
+        // Create a new instance of the main window
+        MainWindow w;
+        w.show(); //replace with open a template through the gui
+        //check if opening a template displays the correct text boxes
+        // Find the textbox
+        QLineEdit* textbox = w.findChild<QLineEdit*>("textbox");
+        QVERIFY2(textbox != nullptr, "Could not find the textbox");
+        // Check if the textbox is enabled
+        QVERIFY2(textbox->isEnabled(), "Textbox is not enabled");
+    }
+    //dont know the actual process of parsing, opening, reading files.
+    void test_replacePlaceholders() {
+        QString documentContent = "<Placeholder1> <Placeholder2> <Placeholder3>";
+        QMap<QString, QString> placeholderValues;
+        placeholderValues["<Placeholder1>"] = "Value1";
+        placeholderValues["<Placeholder2>"] = "Value2";
+        placeholderValues["<Placeholder3>"] = "Value3";
+        QString expectedFinalText = "Value1 Value2 Value3";
+        QString finalText = replacePlaceholders(documentContent, placeholderValues);
+        QVERIFY2(compareString(finalText, expectedFinalText), "Failed replacing placeholders");
+    }
+    void test_parsing() {
+
+
+    } 
+    void test_multiple_save_document() {
         open(File)
+        QString testData = "<Placeholder>"; //replace with what to save
+        saveFile(File, testData);
+        saveFile(File, testData);
+        saveFile(File, testData);
+        QVERIFY2(checkFileContent(File, testData), "File does not saved correctly");
+
+    }
+    void test_main() { //WIP
+        
+        open(File);
         fileContent = <possible read function>
-        list = parse(fileContent)
+        list = parse(fileContent);
         //test parsing
-        QVERIFY2(checkList(list, expectedList), "Not parsed correctly")
+        QVERIFY2(checkList(list, expectedList), "Not parsed correctly");
 
         //test replacing placeholders
         QString finalText = replacePlaceholders(documentContent, placeholderValues);
@@ -23,7 +76,7 @@ private slots:
         //test generatingDocument
     
         QString testData = "Test content to be saved into file.";
-        saveFile("testFile.txt", testData);
+        saveFile(File, testData);
         QVERIFY2(checkFileContent("testFile.txt", testData), "File content does not match expected data.");
         
     }

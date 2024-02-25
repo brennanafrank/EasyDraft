@@ -8,10 +8,16 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
+find_package(Qt6 REQUIRED COMPONENTS Test)
+enable_testing(true)
+
+qt_add_executable(test Tests.cpp)
+add_test(NAME test COMMAND test)
 set(TS_FILES CS307ParsingGUIOfficial_en_US.ts)
 
 set(PROJECT_SOURCES
@@ -49,7 +55,9 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
+q
 target_link_libraries(CS307ParsingGUIOfficial PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(test PRIVATE Qt${QT_VERSION_MAJOR}::Test)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
