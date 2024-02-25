@@ -121,3 +121,31 @@ int save_document(std::string filename) {
     std::cout << "File " << filename << " saved successfully in " << folder_out << std::endl;
     return 0;
 }
+
+
+// This function uses LibreOffice to convert document types through
+// the command line.
+int libre_converter(std::string filename, std::string file_ext) {
+    // Check if user has libreoffice
+    if (std::system("libreoffice --version") != 0) {
+        return -1;
+    }
+
+    // Run conversion command
+    fs::path folder_out = CURRENT_PATH / "\\output";
+    return std::system(("libreoffice --headless --convert-to " + file_ext + " --outdir " + folder_out.string() + " " + filename).c_str());
+}
+
+
+// This function uses Pandoc to convert docuement types through
+// the command line.
+int pandoc_converter(std::string filename, std::string file_ext) {
+    // Check if user has pandoc
+    if (std::system("pandoc --version") != 0) {
+        return -1;
+    }
+
+    // Run conversion command
+    fs::path folder_out = CURRENT_PATH / "\\output";
+    return std::system(("pandoc -s " + filename + " -o " + filename.substr(0, filename.find_last_of('.')) + file_ext).c_str());
+}

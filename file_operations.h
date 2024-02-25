@@ -1,6 +1,7 @@
 #ifndef FILE_OPERATIONS_H
 #define FILE_OPERATIONS_H
 
+#include <cstdlib>
 #include <iostream>
 #include <filesystem>
 #include <fstream>
