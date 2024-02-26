@@ -52,14 +52,14 @@ build cmake_object_order_depends_target_EasyDraft: phony || CMakeFiles/EasyDraft
 build CMakeFiles/EasyDraft.dir/main.cpp.o: CXX_COMPILER__EasyDraft_unscanned_Debug /Users/brennan/Documents/purdue-cs/cs307/EasyDraft/main.cpp || cmake_object_order_depends_target_EasyDraft
   DEP_FILE = CMakeFiles/EasyDraft.dir/main.cpp.o.d
   FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
-  INCLUDES = -I/Users/brennan/Documents/purdue-cs/cs307/EasyDraft/.
+  INCLUDES = -I/Users/brennan/Documents/purdue-cs/cs307/EasyDraft/. -I/Users/brennan/Documents/purdue-cs/cs307/EasyDraft/./miniz-cpp
   OBJECT_DIR = CMakeFiles/EasyDraft.dir
   OBJECT_FILE_DIR = CMakeFiles/EasyDraft.dir
 
 build CMakeFiles/EasyDraft.dir/TemplateParser.cpp.o: CXX_COMPILER__EasyDraft_unscanned_Debug /Users/brennan/Documents/purdue-cs/cs307/EasyDraft/TemplateParser.cpp || cmake_object_order_depends_target_EasyDraft
   DEP_FILE = CMakeFiles/EasyDraft.dir/TemplateParser.cpp.o.d
   FLAGS = -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
-  INCLUDES = -I/Users/brennan/Documents/purdue-cs/cs307/EasyDraft/.
+  INCLUDES = -I/Users/brennan/Documents/purdue-cs/cs307/EasyDraft/. -I/Users/brennan/Documents/purdue-cs/cs307/EasyDraft/./miniz-cpp
   OBJECT_DIR = CMakeFiles/EasyDraft.dir
   OBJECT_FILE_DIR = CMakeFiles/EasyDraft.dir
 

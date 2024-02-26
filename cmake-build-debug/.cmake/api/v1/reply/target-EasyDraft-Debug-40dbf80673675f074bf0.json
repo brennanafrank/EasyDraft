@@ -25,13 +25,19 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 8,
+				"line" : 9,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
 				"line" : 6,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 7,
 				"parent" : 0
 			}
 		]
@@ -50,6 +56,10 @@
 				{
 					"backtrace" : 2,
 					"path" : "/Users/brennan/Documents/purdue-cs/cs307/EasyDraft/."
+				},
+				{
+					"backtrace" : 3,
+					"path" : "/Users/brennan/Documents/purdue-cs/cs307/EasyDraft/./miniz-cpp"
 				}
 			],
 			"language" : "CXX",
@@ -125,7 +135,7 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "TemplateParser.h",
+			"path" : "TemplateParser.hpp",
 			"sourceGroupIndex" : 1
 		}
 	],

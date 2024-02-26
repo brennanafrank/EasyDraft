@@ -4,8 +4,9 @@ project(EasyDraft)
 set(CMAKE_CXX_STANDARD 17)
 
 include_directories(.)
+include_directories(./miniz-cpp)
 
 add_executable(EasyDraft
         main.cpp
         TemplateParser.cpp
-        TemplateParser.h)
+        TemplateParser.hpp)

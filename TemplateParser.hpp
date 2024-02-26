@@ -1,19 +1,23 @@
-#ifndef EASYDRAFT_TEMPLATEPARSER_H
-#define EASYDRAFT_TEMPLATEPARSER_H
-
+#ifndef EASYDRAFT_TEMPLATEPARSER_HPP
+#define EASYDRAFT_TEMPLATEPARSER_HPP
+#include <zip_file.hpp>
 #include <cstdio>
 #include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
+namespace fs = filesystem;
 using recursive_directory_iterator = filesystem::recursive_directory_iterator;
 
 
 class TemplateParser {
-    // path to the docx file
+public:
+    TemplateParser();
+    void parse(string fullFilePath);
 private:
-    string docxPath = nullptr;
+    // path to the docx file
+    string docxPath = "";
     vector<string> replacements;
 
 
@@ -25,4 +29,4 @@ private:
 };
 
 
-#endif //EASYDRAFT_TEMPLATEPARSER_H
+#endif //EASYDRAFT_TEMPLATEPARSER_HPP
