@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>721</width>
-    <height>647</height>
+    <width>959</width>
+    <height>678</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,10 +17,10 @@
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>671</width>
-      <height>561</height>
+      <x>80</x>
+      <y>30</y>
+      <width>791</width>
+      <height>541</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -28,18 +28,40 @@
       <widget class="QTreeView" name="pathViewer"/>
      </item>
      <item>
-      <widget class="QPushButton" name="createFolderButton">
-       <property name="text">
-        <string>Create Folder</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QPushButton" name="addTagButton">
+         <property name="text">
+          <string>Add Tag</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="deleteTagButton">
+         <property name="text">
+          <string>Delete Tag</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="deleteItemButton">
-       <property name="text">
-        <string>Delete</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="createFolderButton">
+         <property name="text">
+          <string>Create Folder</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="deleteItemButton">
+         <property name="text">
+          <string>Delete Item</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </widget>
@@ -49,7 +71,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>721</width>
+     <width>959</width>
      <height>24</height>
     </rect>
    </property>
