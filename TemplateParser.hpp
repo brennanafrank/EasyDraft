@@ -1,6 +1,11 @@
 #ifndef EASYDRAFT_TEMPLATEPARSER_HPP
 #define EASYDRAFT_TEMPLATEPARSER_HPP
-#include <zip_file.hpp>
+
+#ifndef MINIZ_INCLUDED
+#define MINIZ_INCLUDED
+#include "zip_file.hpp"
+#endif // MINIZ_INCLUDED
+
 #include <cstdio>
 #include <filesystem>
 #include <iostream>
