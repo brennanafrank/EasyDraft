@@ -4,6 +4,10 @@
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
+
+#include <QDir>
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -15,9 +19,13 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow();   
 
 private slots:
+    void changePage();
+
+    //QDir constructPath();
+
     void on_pushButton_clicked();
 
     void on_pushButton_2_clicked();
@@ -25,6 +33,12 @@ private slots:
     void on_actionBack_triggered();
 
     void on_pushButton_4_clicked();
+
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_8_clicked();
+
+    void on_pushButton_5_clicked();
 
 private:
     Ui::MainWindow *ui;
