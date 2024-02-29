@@ -100,6 +100,33 @@ int change_config(std::string key, std::string value, bool json_refresh) {
         return -1;
     }
     return 0;
+
+    if (json_refresh) {
+        std::string config_filename = "config.txt";
+        if (fs::exists(config_filename)) {
+            fs::remove(config_filename);
+        }
+
+        json config = {
+            {"paths", {
+                {"CURRENT_DIR", CURRENT_DIR},
+                {"IMPORT_DIR", IMPORT_DIR},
+                {"EXPORT_DIR", EXPORT_DIR}
+            }},
+            {"misc", {
+                {"CONVERTER", CONVERTER}
+            }}
+        };
+
+        std::ofstream config_file("config.json");
+        if (!config_file.is_open()) {
+            return -2;
+        }
+
+        config_file << config.dump(4) << std::endl;
+        config_file.close();
+    }
+    return 0;
 }
 
 // Funciton to reset the config file to defaults.
