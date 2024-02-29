@@ -1,0 +1,3 @@
+/Users/brennan/Documents/purdue-cs/cs307/EasyDraft/cmake-build-debug/CMakeFiles/EasyDraft.dir
+/Users/brennan/Documents/purdue-cs/cs307/EasyDraft/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/brennan/Documents/purdue-cs/cs307/EasyDraft/cmake-build-debug/CMakeFiles/rebuild_cache.dir
