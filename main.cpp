@@ -3,7 +3,7 @@
 #ifndef MAIN_CPP
 #define MAIN_CPP
 
-#include <TemplateParser.hpp>
+#include "TemplateParser.cpp"
 int main() {
     TemplateParser tp{};
     tp.parse("stat511.docx");

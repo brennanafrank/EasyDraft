@@ -1,7 +1,9 @@
 # ninja log v5
+3	764	1709213688536999130	CMakeFiles/EasyDraft.dir/KZip.cpp.o	3d2603c0c841e440
 369	407	1708917413266735970	EasyDraft	7cbda29b0608abfb
-2	509	1708958278697514240	CMakeFiles/EasyDraft.dir/TemplateParser.cpp.o	16ca8bdb80ccb51c
-1	453	1708958278642218744	CMakeFiles/EasyDraft.dir/main.cpp.o	93f895d4942ec275
-0	55	1708988960540169284	build.ninja	be2470d0ad89da60
-2	665	1708988964307213820	CMakeFiles/EasyDraft.dir/main.cpp.o	9caca579ae33f0ca
-2	695	1708988964337245777	CMakeFiles/EasyDraft.dir/TemplateParser.cpp.o	6bd78f8d079025eb
+2	509	1709214165886620889	CMakeFiles/EasyDraft.dir/TemplateParser.cpp.o	914da827b52c61a4
+2	509	1709214165887251180	CMakeFiles/EasyDraft.dir/main.cpp.o	dd3ccb1745123677
+1	50	1709214259523369615	build.ninja	be2470d0ad89da60
+0	49	1709214259523369615	build.ninja	be2470d0ad89da60
+3	492	1709214438178423263	CMakeFiles/EasyDraft.dir/TemplateParser.cpp.o	eb9d32466a158923
+2	499	1709214438186643814	CMakeFiles/EasyDraft.dir/main.cpp.o	ff65e48988489203

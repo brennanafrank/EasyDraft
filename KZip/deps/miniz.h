@@ -144,7 +144,7 @@
         functions (such as tdefl_compress_mem_to_heap() and tinfl_decompress_mem_to_heap()) won't work. */
      /*#define MINIZ_NO_MALLOC */
 
-#include "nowide/cstdio.hpp"
+#include "../KZip/deps/nowide/cstdio.hpp"
 
 #if defined(__TINYC__) && (defined(__linux) || defined(__linux__))
      /* TODO: Work around "error: include file 'sys\utime.h' when compiling with tcc on Linux */
