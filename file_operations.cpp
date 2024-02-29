@@ -1,4 +1,4 @@
-#include "file_operations.h"
+#include "file_operations.hpp"
 
 // This function is used to save uploaded templates to the 
 // correct location.
@@ -18,7 +18,7 @@ int upload_template(fs::path filepath) {
     std::string filename = filepath.string().substr(filepath.string().find_last_of('\\'));
 
     // See if the folder for uploaded templates is created
-    fs::path folder_temps = CURRENT_PATH / "\\templates";
+    fs::path folder_temps = IMPORT_DIR;
     if (!fs::exists(folder_temps)) {
         if (!fs::create_directory(folder_temps)) {
             // Could not create the directory
@@ -28,7 +28,7 @@ int upload_template(fs::path filepath) {
     }
 
     // Create the folder for the template
-    fs::path temp_folder = CURRENT_PATH / "\\templates" / "\\" / filename.substr(0, filename.find_last_of('.'));
+    fs::path temp_folder = IMPORT_DIR / "\\" / filename.substr(0, filename.find_last_of('.'));
     if (!fs::exists(temp_folder)) {
         if (!fs::create_directory(temp_folder)) {
             // Could not create the directory
@@ -67,7 +67,7 @@ int upload_template(fs::path filepath) {
 // all of the contents.
 int delete_template(std::string filename) {
     // See if the directory exists
-    fs::path dir_path = CURRENT_PATH / "\\templates" / "\\" / filename.substr(0, filename.find_last_of('.'));
+    fs::path dir_path = IMPORT_DIR / "\\" / filename.substr(0, filename.find_last_of('.'));
     if (!fs::exists(dir_path)) {
         return -1;
     }
@@ -86,13 +86,13 @@ int delete_template(std::string filename) {
 // the parser.
 int save_document(std::string filename) {
     // Open file in arg for reading
-    std::ifstream file(CURRENT_PATH / filename);
+    std::ifstream file(CURRENT_DIR / filename);
     if (!file.is_open()) {
         return -1;
     }
 
     // See if the folder for saved files is created
-    fs::path folder_out = CURRENT_PATH / "\\output";
+    fs::path folder_out = EXPORT_DIR;
     if (!fs::exists(folder_out)) {
         if (!fs::create_directory(folder_out)) {
             // Could not create the directory
@@ -123,6 +123,37 @@ int save_document(std::string filename) {
 }
 
 
+std::vector<std::string> template_list() {
+    std::vector<std::string> templates;
+
+    for (const auto& entry : fs::directory_iterator(IMPORT_DIR)) {
+        if (fs::is_directory(entry.path())) {
+            templates.push_back(entry.path().filename().string());
+        }
+    }
+
+    if (templates.empty()) {
+        return {};
+    }
+
+    return templates;
+}
+
+
+int docx_convert(std::string filename, std::string file_ext) {
+    if (CONVERTER.c_str() == nullptr) {
+        // User hasn't choosen a converter
+        return -2;
+    } else if (CONVERTER == "LibreOffice") {
+        return libre_converter(filename, file_ext);
+    } else if (CONVERTER == "Pandoc") {
+        return pandoc_converter(filename, file_ext);
+    } else {
+        // Converter field is corrupt
+        return -3;
+    }
+}
+
 // This function uses LibreOffice to convert document types through
 // the command line.
 int libre_converter(std::string filename, std::string file_ext) {
@@ -132,7 +163,7 @@ int libre_converter(std::string filename, std::string file_ext) {
     }
 
     // Run conversion command
-    fs::path folder_out = CURRENT_PATH / "\\output";
+    fs::path folder_out = EXPORT_DIR;
     return std::system(("libreoffice --headless --convert-to " + file_ext + " --outdir " + folder_out.string() + " " + filename).c_str());
 }
 
@@ -146,6 +177,28 @@ int pandoc_converter(std::string filename, std::string file_ext) {
     }
 
     // Run conversion command
-    fs::path folder_out = CURRENT_PATH / "\\output";
+    fs::path folder_out = EXPORT_DIR;
     return std::system(("pandoc -s " + filename + " -o " + filename.substr(0, filename.find_last_of('.')) + file_ext).c_str());
 }
+
+// Used for testing
+/*
+int main() {
+    err_count = 0;
+    fprintf(stderr, "err_count: %d\n", err_count); err_count++;
+    read_config();
+
+    upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\CS307 Charter.docx");
+    upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\CS307 Homework 2 Team 37.docx");
+    upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Design Document Team 37.docx");
+    upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Team 37 - Sprint #1 - Planning Document.docx");
+
+    std::vector<std::string> templates = template_list();
+
+    for (const auto& directory : templates) {
+        std::cout << directory << std::endl;
+    }
+
+    return 0;
+}
+*/
