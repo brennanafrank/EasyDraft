@@ -3,7 +3,7 @@
 //
 
 
-#include "KZip.hpp"
+#include "KZip\KZip.hpp"
 
 namespace KZip {
 
