@@ -4,7 +4,7 @@
 
 #ifndef TEMPLATEPARSER_CPP
 #define TEMPLATEPARSER_CPP
-#include "KZip/KZip.hpp"
+#include "KZip\KZip.hpp"
 
 #include <cstdio>
 #include <filesystem>
