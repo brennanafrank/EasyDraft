@@ -9,28 +9,33 @@ int upload_template(fs::path filepath) {
     }
 
     // Open file from filepath
-    std::fstream file(filepath);
+    std::ifstream file(filepath);
     if (!file.is_open()) {
         return -2;
     }
+    file.close();
 
     // Get filename from filepath
-    std::string filename = filepath.string().substr(filepath.string().find_last_of('\\'));
+    //std::string filename = filepath.string().substr(filepath.string().find_last_of('\\'));
+    //filename = filename.stem();
+    std::string filename = (filepath.stem()).string();
 
     // See if the folder for uploaded templates is created
-    fs::path folder_temps = IMPORT_DIR;
-    if (!fs::exists(folder_temps)) {
-        if (!fs::create_directory(folder_temps)) {
+    fs::path import_dir = IMPORT_DIR;
+    fprintf(stderr, "path: %s\n", (import_dir.string().c_str()));
+    if (!fs::exists(import_dir)) {
+        if (!fs::create_directory(import_dir)) {
             // Could not create the directory
-            file.close();
+            //file.close();
             return -3;
         }
     }
 
     // Create the folder for the template
-    fs::path temp_folder = IMPORT_DIR / "\\" / filename.substr(0, filename.find_last_of('.'));
-    if (!fs::exists(temp_folder)) {
-        if (!fs::create_directory(temp_folder)) {
+    import_dir = import_dir / filename;
+    fprintf(stderr, "folder name: %s\n", (import_dir).string().c_str());
+    if (!fs::exists(import_dir)) {
+        if (!fs::create_directory(import_dir)) {
             // Could not create the directory
             file.close();
             return -4;
@@ -42,21 +47,21 @@ int upload_template(fs::path filepath) {
     }
 
     // Open new tempalte in new folder
-    std::fstream file_upload(temp_folder / filename);
-    if (!file_upload.is_open()) {
-        file.close();
+    fs::path file_location = import_dir / filepath.filename();
+    fprintf(stderr, "Filename path: %s\n", file_location.string().c_str());
+    
+    // Copy the file with overwrite_existing option
+    std::error_code ec;
+    fs::copy_file(filepath, file_location, ec);
+
+    if (ec) {
+        std::cerr << "Error copying file: " << ec.message() << std::endl;
         return -6;
     }
 
-    // Read from file and write to file_upload
-    std::string line;
-    while (std::getline(file, line)) {
-        file_upload << line << std::endl;
-    }
-
     // Close both files
-    file.close();
-    file_upload.close();
+    //file.close();
+    //file_upload.close();
 
     std::cout << "File " << filename << " uploaded successfully" << std::endl;
     return 0;
@@ -182,16 +187,28 @@ int pandoc_converter(std::string filename, std::string file_ext) {
 }
 
 // Used for testing
-/*
+// /*
 int main() {
     err_count = 0;
     fprintf(stderr, "err_count: %d\n", err_count); err_count++;
     read_config();
+    fprintf(stderr, "err_count: %d\n", err_count); err_count++;
 
-    upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\CS307 Charter.docx");
-    upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\CS307 Homework 2 Team 37.docx");
-    upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Design Document Team 37.docx");
-    upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Team 37 - Sprint #1 - Planning Document.docx");
+    fprintf(stderr, "Return: %d\n", upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\CS307 Charter.docx"));
+        fprintf(stderr, "err_count: %d\n", err_count); err_count++;
+
+    fprintf(stderr, "Return: %d\n", upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\CS307 Homework 2 Team 37.docx"));
+    
+        fprintf(stderr, "err_count: %d\n", err_count); err_count++;
+
+    fprintf(stderr, "Return: %d\n", upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Design Document Team 37.docx"));
+    // upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Design Document Team 37.docx");
+        fprintf(stderr, "err_count: %d\n", err_count); err_count++;
+
+    fprintf(stderr, "Return: %d\n", upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Team 37 - Sprint #1 - Planning Document.docx"));
+    // upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Team 37 - Sprint #1 - Planning Document.docx");
+        fprintf(stderr, "err_count: %d\n", err_count); err_count++;
+
 
     std::vector<std::string> templates = template_list();
 
@@ -201,4 +218,4 @@ int main() {
 
     return 0;
 }
-*/
+// */

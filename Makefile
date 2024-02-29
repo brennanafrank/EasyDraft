@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -std=c++17 -Wall
-SRCS = file_operations.cpp config.cpp TemplateParser.cpp main.cpp KZip.cpp
+SRCS = file_operations.cpp config.cpp
 OBJS = $(SRCS:.cpp=.o)
 TARGET = run
 
