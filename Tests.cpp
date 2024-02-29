@@ -64,7 +64,7 @@ private slots:
         QVERIFY2(checkFileContent(File, testData), "File does not saved correctly");
 
     }
-    void test_main() { //WIP
+    void test_oneProcessedDocument() { //WIP
         
         open(File);
         fileContent = <possible read function>
