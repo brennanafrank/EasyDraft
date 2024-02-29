@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.17)
 
 project(CS307ParsingGUIOfficial VERSION 0.1 LANGUAGES CXX)
 
@@ -8,6 +8,11 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Add the KZip library
+add_library(KZip INTERFACE)
+target_include_directories(KZip INTERFACE ${CMAKE_SOURCE_DIR}/KZip)
+
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
@@ -78,3 +83,4 @@ install(TARGETS CS307ParsingGUIOfficial
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(CS307ParsingGUIOfficial)
 endif()
+==
