@@ -14,8 +14,12 @@ public:
 
     void setTagManager(TagManager *manager);
 
+    void setFilterTag(const QString& tag);
+protected:
+    // bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 private:
     TagManager *tagManager;
+    QString currentFilterTag;
 };
 
 #endif // CUSTOMFILESYSTEMMODEL_H

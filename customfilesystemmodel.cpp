@@ -19,3 +19,11 @@ QVariant CustomFileSystemModel::data(const QModelIndex &index, int role) const {
     }
     return QFileSystemModel::data(index, role);
 }
+
+
+void CustomFileSystemModel::setFilterTag(const QString& tag) {
+    currentFilterTag = tag;
+    emit layoutChanged(); // Notify views that the data has changed
+}
+
+

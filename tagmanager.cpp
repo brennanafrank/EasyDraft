@@ -61,4 +61,17 @@ QStringList TagManager::getTags(const QString &filePath) {
     return tagList;
 }
 
+\
+
+QStringList TagManager::getFilesByTag(const QString& tag) const {
+    QStringList filePaths;
+    for (auto it = tagData.begin(); it != tagData.end(); ++it) {
+        QJsonArray tags = it.value().toArray();
+        if (tags.contains(tag)) {
+            filePaths.append(it.key());
+        }
+    }
+    return filePaths;
+}
+
 

@@ -2,8 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-// #include "tagfilterproxymodel.h"
 #include "tagmanager.h"
+#include "placeholdermanager.h"
+#include <QListView>
+#include <QStringListModel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,6 +21,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     QString getCurrentSelectedFilePath();
+    void displayFilesForTag(const QString &tag);
+
 
 private:
     Ui::MainWindow *ui;
@@ -26,13 +30,17 @@ private:
     void deleteItem();
     void deleteTag();
     TagManager *tagManager;
-    // TagFilterProxyModel *tagFilterProxyModel;
+    QListView* listView;
+    QStringListModel* model;
+    PlaceholderManager *placeholderManager;
+
 protected:
-    void dragEnterEvent(QDragEnterEvent *event) override;
-    void dragMoveEvent(QDragMoveEvent *event) override;
-    void dropEvent(QDropEvent *event) override;
 
 private slots:
-    void on_addTagButton_clicked();
+    void onAddTagButtonClicked();
+    void onTagComboBoxCurrentIndexChanged(const QString &tag);
+    void onAddPlaceholderClicked();
+    void onPlaceholderSelected(int index);
+    void onDeletePlaceholderClicked();
 };
 #endif // MAINWINDOW_H

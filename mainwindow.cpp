@@ -13,16 +13,19 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , tagManager(new TagManager("/Users/michael/Downloads/Test_Folder/config.json"))
-    // , tagFilterProxyModel(new TagFilterProxyModel(this))
+    , placeholderManager(new PlaceholderManager(this))
 {
     ui->setupUi(this);
 
+    placeholderManager->addDefaultPlaceholders();
+    placeholderManager->loadPlaceholders();
+    CustomFileSystemModel *fileSystemModel = new CustomFileSystemModel(this);
+    fileSystemModel->setRootPath(QDir::currentPath());
+    fileSystemModel->setTagManager(tagManager);
+    ui->pathViewer->setModel(fileSystemModel);
+    ui->pathViewer->setRootIndex(fileSystemModel->index("/Users/michael/Downloads/Test_Folder"));
 
-    CustomFileSystemModel *model = new CustomFileSystemModel(this);
-    model->setRootPath(QDir::currentPath());
-    model->setTagManager(tagManager);
-    ui->pathViewer->setModel(model);
-    ui->pathViewer->setRootIndex(model->index("/Users/michael/Downloads/Test_Folder"));
+
     ui->pathViewer->setDragEnabled(true);
     ui->pathViewer->setAcceptDrops(true);
     ui->pathViewer->setDropIndicatorShown(true);
@@ -30,9 +33,20 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->createFolderButton, &QPushButton::clicked, this, &MainWindow::createFolder);
     connect(ui->deleteItemButton, &QPushButton::clicked, this, &MainWindow::deleteItem);
     connect(ui->deleteTagButton, &QPushButton::clicked, this, &MainWindow::deleteTag);
+    connect(ui->addPlaceholderButton, &QPushButton::clicked, this, &MainWindow::onAddPlaceholderClicked);
+    connect(ui->placeholderComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onPlaceholderSelected(int)));
+    connect(ui->deletePlaceholderButton, &QPushButton::clicked, this, &MainWindow::onDeletePlaceholderClicked);
+
+
+    // Populate the combo box with existing placeholder names if any
+    ui->placeholderComboBox->addItems(placeholderManager->getPlaceholderNames());
 
 }
 
+void MainWindow::onTagComboBoxCurrentIndexChanged(const QString &tag) {
+    auto *model = static_cast<CustomFileSystemModel*>(ui->pathViewer->model());
+    model->setFilterTag(tag);
+}
 
 
 
@@ -56,7 +70,7 @@ void MainWindow::createFolder() {
 
     // Get new file name from user
     QString folderName = QInputDialog::getText(this, tr("Create Folder"), tr("Folder Name:"));
-    if (folderName.isEmpty()) return; // 如果用户没有输入名称，就直接返回
+    if (folderName.isEmpty()) return;
 
     // Construct the folderpath
     QString folderPath = QDir(targetPath).absoluteFilePath(folderName);
@@ -93,7 +107,7 @@ QString MainWindow::getCurrentSelectedFilePath() {
 }
 
 
-void MainWindow::on_addTagButton_clicked() {
+void MainWindow::onAddTagButtonClicked() {
     QString filePath = getCurrentSelectedFilePath();
     if (filePath.isEmpty()) {
         return;
@@ -132,37 +146,64 @@ void MainWindow::deleteTag() {
     }
 }
 
-
-MainWindow::~MainWindow()
-{
-    delete ui;
-    delete tagManager;
-}
-
-void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
-    if (event->mimeData()->hasUrls()) {
-        event->acceptProposedAction();
-    }
-}
-
-void MainWindow::dragMoveEvent(QDragMoveEvent *event) {
-    event->acceptProposedAction();
-}
-
-void MainWindow::dropEvent(QDropEvent *event) {
-    const QMimeData *mimeData = event->mimeData();
-
-    if (mimeData->hasUrls()) {
-        QList<QUrl> urlList = mimeData->urls();
-
-        QString targetFolderPath = "/path/to/target/folder";
-
-        foreach(const QUrl &url, urlList) {
-            QString filePath = url.toLocalFile();
-            QFileInfo fileInfo(filePath);
-            QString fileName = fileInfo.fileName();
-
-            QFile::copy(filePath, targetFolderPath + "/" + fileName);
+void MainWindow::onAddPlaceholderClicked() {
+    bool ok;
+    // Prompt user for placeholder name
+    QString placeholderName = QInputDialog::getText(this, tr("Add Placeholder"),
+                                                    tr("Placeholder Name:"), QLineEdit::Normal,
+                                                    QString(), &ok);
+    if (ok && !placeholderName.isEmpty()) {
+        // Prompt user for placeholder value
+        QString placeholderValue = QInputDialog::getText(this, tr("Placeholder Value"),
+                                                         tr("Value for ") + placeholderName + ":", QLineEdit::Normal,
+                                                         QString(), &ok);
+        if (ok) {
+            // Use PlaceholderManager to add placeholder
+            placeholderManager->addPlaceholder(placeholderName, placeholderValue);
+            placeholderManager->savePlaceholders();
+            // Update UI ComboBox
+            ui->placeholderComboBox->addItem(placeholderName);
         }
     }
 }
+
+
+void MainWindow::onPlaceholderSelected(int index) {
+    if (index < 0) return; // Ensure valid index
+
+    QString placeholderName = ui->placeholderComboBox->itemText(index);
+
+    // Check if the selected placeholder is the current date and time
+    if (placeholderName == "CurrentDateTime") {
+        // Dynamically generate the current date and time
+        QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+        ui->lineEdit->setText(currentDateTime);
+    } else {
+        // For other placeholders, fetch the stored value
+        QString value = placeholderManager->getPlaceholderValue(placeholderName);
+        ui->lineEdit->setText(value);
+    }
+}
+
+void MainWindow::onDeletePlaceholderClicked() {
+    QString placeholderName = ui->placeholderComboBox->currentText();
+    if (!placeholderName.isEmpty()) {
+        placeholderManager->removePlaceholder(placeholderName);
+        ui->placeholderComboBox->removeItem(ui->placeholderComboBox->currentIndex());
+
+        // Optionally, save placeholders to persist the deletion
+        placeholderManager->savePlaceholders();
+    }
+}
+
+
+
+
+MainWindow::~MainWindow()
+{
+    placeholderManager->savePlaceholders();
+    delete ui;
+    delete tagManager;
+    delete placeholderManager;
+}
+

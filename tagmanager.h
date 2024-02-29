@@ -11,6 +11,7 @@ public:
     void addTag(const QString &filePath, const QString &tag);
     void removeTag(const QString &filePath, const QString &tag);
     QStringList getTags(const QString &filePath);
+     QStringList getFilesByTag(const QString& tag) const;
 
 private:
     QString configFilePath;
