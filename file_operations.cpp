@@ -1,67 +1,50 @@
 #include "file_operations.hpp"
 
-// This function is used to save uploaded templates to the 
-// correct location.
+// This function is used to save uploaded templates to the correct location.
 int upload_template(fs::path filepath) {
-    // Find the file extension to make sure its .docx
-    if (!filepath.string().find(".docx")) {
+    // Find the file extension to make sure it's .docx
+    if (filepath.extension() != ".docx") {
         return -1;
     }
 
-    // Open file from filepath
-    std::ifstream file(filepath);
-    if (!file.is_open()) {
-        return -2;
-    }
-    file.close();
-
     // Get filename from filepath
-    //std::string filename = filepath.string().substr(filepath.string().find_last_of('\\'));
-    //filename = filename.stem();
-    std::string filename = (filepath.stem()).string();
+    std::string filename = filepath.stem().string();
 
     // See if the folder for uploaded templates is created
     fs::path import_dir = IMPORT_DIR;
-    fprintf(stderr, "path: %s\n", (import_dir.string().c_str()));
+    std::cout << "Path: " << import_dir << std::endl;
     if (!fs::exists(import_dir)) {
         if (!fs::create_directory(import_dir)) {
             // Could not create the directory
-            //file.close();
             return -3;
         }
     }
 
     // Create the folder for the template
-    import_dir = import_dir / filename;
-    fprintf(stderr, "folder name: %s\n", (import_dir).string().c_str());
+    import_dir /= filename;
+    std::cout << "Folder name: " << import_dir << std::endl;
     if (!fs::exists(import_dir)) {
         if (!fs::create_directory(import_dir)) {
             // Could not create the directory
-            file.close();
             return -4;
         }
     } else {
         // Folder exists
-        file.close();
         return -5;
     }
 
-    // Open new tempalte in new folder
+    // Open new template in new folder
     fs::path file_location = import_dir / filepath.filename();
-    fprintf(stderr, "Filename path: %s\n", file_location.string().c_str());
-    
+    std::cout << "Filename path: " << file_location << std::endl;
+
     // Copy the file with overwrite_existing option
     std::error_code ec;
-    fs::copy_file(filepath, file_location, ec);
+    fs::copy_file(filepath, file_location, fs::copy_options::overwrite_existing, ec);
 
     if (ec) {
         std::cerr << "Error copying file: " << ec.message() << std::endl;
         return -6;
     }
-
-    // Close both files
-    //file.close();
-    //file_upload.close();
 
     std::cout << "File " << filename << " uploaded successfully" << std::endl;
     return 0;
@@ -72,7 +55,7 @@ int upload_template(fs::path filepath) {
 // all of the contents.
 int delete_template(std::string filename) {
     // See if the directory exists
-    fs::path dir_path = IMPORT_DIR / "\\" / filename.substr(0, filename.find_last_of('.'));
+    fs::path dir_path = IMPORT_DIR / filename.substr(0, filename.find_last_of('.'));
     if (!fs::exists(dir_path)) {
         return -1;
     }
@@ -185,37 +168,3 @@ int pandoc_converter(std::string filename, std::string file_ext) {
     fs::path folder_out = EXPORT_DIR;
     return std::system(("pandoc -s " + filename + " -o " + filename.substr(0, filename.find_last_of('.')) + file_ext).c_str());
 }
-
-// Used for testing
-// /*
-int main() {
-    err_count = 0;
-    fprintf(stderr, "err_count: %d\n", err_count); err_count++;
-    read_config();
-    fprintf(stderr, "err_count: %d\n", err_count); err_count++;
-
-    fprintf(stderr, "Return: %d\n", upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\CS307 Charter.docx"));
-        fprintf(stderr, "err_count: %d\n", err_count); err_count++;
-
-    fprintf(stderr, "Return: %d\n", upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\CS307 Homework 2 Team 37.docx"));
-    
-        fprintf(stderr, "err_count: %d\n", err_count); err_count++;
-
-    fprintf(stderr, "Return: %d\n", upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Design Document Team 37.docx"));
-    // upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Design Document Team 37.docx");
-        fprintf(stderr, "err_count: %d\n", err_count); err_count++;
-
-    fprintf(stderr, "Return: %d\n", upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Team 37 - Sprint #1 - Planning Document.docx"));
-    // upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\Team 37 - Sprint #1 - Planning Document.docx");
-        fprintf(stderr, "err_count: %d\n", err_count); err_count++;
-
-
-    std::vector<std::string> templates = template_list();
-
-    for (const auto& directory : templates) {
-        std::cout << directory << std::endl;
-    }
-
-    return 0;
-}
-// */
