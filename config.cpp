@@ -1,18 +1,40 @@
 #include "config.hpp"
 
+int err_count;
+
+// Defining global variables for config.hpp.
+// Use if using read_config and config.json
+/*
+// "paths"
+fs::path CURRENT_DIR;
+fs::path IMPORT_DIR;
+fs::path EXPORT_DIR;
+
+// "misc"
+std::string CONVERTER;
+*/
+
+// Use if not using read_config and config.json.
+// This is used to make testing easier. 
+// Will still need to compile config.cpp for program to run.
+fs::path CURRENT_DIR = (fs::current_path()).string();
+fs::path IMPORT_DIR = (fs::current_path().append("templates")).string();
+fs::path EXPORT_DIR = (fs::current_path().append("output")).string();
+std::string CONVERTER = "None";
+
 // Function to read the configuration file and
 // fill out the variables that have values in
 // the config file. This would be used on startup.
 int read_config() {
     // Check if file exists
-    if (!fs::exists("config.json")) {
+    if (!fs::exists(fs::current_path().append("config.json"))) {
         if (create_fill_config() != 0) {
             return -1;
         }
     }
 
     // Open config file
-    std::ifstream config_file("config.json");
+    std::ifstream config_file(fs::current_path().append("config.json"));
     if (!config_file.is_open()) {
         return -2;
     }
@@ -26,9 +48,13 @@ int read_config() {
     config_file.close();
 
     // Fill out variables with config info here
-    for (json::iterator it = config.begin(); it != config.end(); ++it) {
+    // Paths
+    CURRENT_DIR = static_cast<fs::path>(config["paths"]["CURRENT_DIR"]);
+    IMPORT_DIR = static_cast<fs::path>(config["paths"]["IMPORT_DIR"]);
+    EXPORT_DIR = static_cast<fs::path>(config["paths"]["EXPORT_DIR"]);
 
-    }
+    // Misc
+    CONVERTER = static_cast<std::string>(config["misc"]["CONVERTER"]);
 
     return 0;
 }
@@ -36,7 +62,6 @@ int read_config() {
 // Function to create config.json and input all
 // information needed for the program to run.
 int create_fill_config() {
-    //std::ofstream config_file("config.json", std::ios::out);
     std::ofstream config_file("config.json");
     if (!config_file.is_open()) {
         return -1;
@@ -45,12 +70,12 @@ int create_fill_config() {
     // Input defualt info
     json default_config = {
         {"paths", {
-            {"current_dir", nullptr},
-            {"import_dir", nullptr},
-            {"export_dir", nullptr}
+            {"CURRENT_DIR", (fs::current_path()).string()},
+            {"IMPORT_DIR", (fs::current_path().append("templates")).string()},
+            {"EXPORT_DIR", (fs::current_path().append("output")).string()}
         }},
         {"misc", {
-            {"converter", nullptr}
+            {"CONVERTER", "None"}
         }}
     };
 
@@ -62,6 +87,29 @@ int create_fill_config() {
 
 // Function to change the value of a configuration
 // in the file.
-int change_config() {
+int change_config(std::string key, std::string value, bool json_refresh) {
+    if (key == "CURRENT_DIR") {    
+        CURRENT_DIR = value;
+    } else if (key == "IMPORT_DIR") {
+        IMPORT_DIR = value;
+    } else if (key == "EXPORT_DIR") {
+        EXPORT_DIR = value;
+    } else if (key == "CONVERTER") {
+        CONVERTER = value;
+    } else {
+        return -1;
+    }
     return 0;
+}
+
+// Funciton to reset the config file to defaults.
+int reset_config() {
+    std::string config_file = "config.txt";
+
+    if (fs::exists(config_file)) {
+        fs::remove(config_file);
+        return create_fill_config();
+    } else {
+        return -2;
+    }
 }
