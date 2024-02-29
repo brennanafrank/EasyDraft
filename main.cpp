@@ -1,11 +1,11 @@
 /* CS307 PROJECT: EASYDRAFT */
-// insta segfault on running
 #ifndef MAIN_CPP
 #define MAIN_CPP
+#include <string>
+#include "TemplateParser.hpp"
 
 int main() {
-    //TemplateParser tp{};
-    //tp.parse("stat511.docx");
+    parse("stat511.docx");
     return 0;
 }
 #endif

@@ -4,7 +4,7 @@
 
 #ifndef TEMPLATEPARSER_CPP
 #define TEMPLATEPARSER_CPP
-#include "KZip\KZip.hpp"
+#include "KZip/KZip.hpp"
 
 #include <cstdio>
 #include <filesystem>
@@ -15,37 +15,9 @@ using namespace std;
 namespace fs = filesystem;
 using recursive_directory_iterator = filesystem::recursive_directory_iterator;
 
-
-class TemplateParser {
-public:
-    TemplateParser();
-    void parse(const string& fullFilePath);
-private:
-    // path to the docx file
-    string docxPath = "";
-    vector<string> replacements;
-
-
-    // set the replacements, like from the input module, etc
-
-    void setReplacements(const vector<string>& replacements);
-
-
-};
-
-
-
-void TemplateParser::setReplacements(const vector<string>& replacements) {
-    this->replacements = replacements;
-}
-
-TemplateParser::TemplateParser() {}
-
-// the file path to our docx/zip file has to be in full
-void TemplateParser::parse(const string& fullFilePath) {
-    cout << "here1 \n";
+void parse(string fullFilePath) {
     fs::path tempdocxparsing("./tempdocxparsing");
-    cout << "here1 \n";
+    cout << "here1.6 \n";
     fs::create_directory(tempdocxparsing);
     cout << "here1 \n";
 
@@ -92,6 +64,30 @@ void TemplateParser::parse(const string& fullFilePath) {
     // remove the temporary directory we created
     system("rm -rf ./tempdocxparsing"); // #TODO make system independent
 }
+
+class TemplateParser {
+public:
+
+private:
+    // path to the docx file
+    string docxPath = "";
+    vector<string> replacements;
+
+
+    // set the replacements, like from the input module, etc
+
+    void setReplacements(const vector<string>& replacements) {
+        this->replacements = replacements;
+    }
+
+
+};
+
+
+
+
+
+
 
 
 

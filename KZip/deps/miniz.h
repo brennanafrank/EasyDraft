@@ -145,7 +145,7 @@
      /*#define MINIZ_NO_MALLOC */
 
 //#include "../KZip/deps/nowide/cstdio.hpp"
-#include "nowide\cstdio.hpp"
+#include "nowide/cstdio.hpp"
 
 
 #if defined(__TINYC__) && (defined(__linux) || defined(__linux__))
