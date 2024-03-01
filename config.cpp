@@ -20,6 +20,7 @@ std::string CONVERTER;
 fs::path CURRENT_DIR = (fs::current_path()).string();
 fs::path IMPORT_DIR = (fs::current_path().append("templates")).string();
 fs::path EXPORT_DIR = (fs::current_path().append("output")).string();
+fs::path DRAFTS_DIR = (fs::current_path().append("drafts")).string();
 std::string CONVERTER = "None";
 
 // Function to read the configuration file and
@@ -52,6 +53,7 @@ int read_config() {
     CURRENT_DIR = static_cast<fs::path>(config["paths"]["CURRENT_DIR"]);
     IMPORT_DIR = static_cast<fs::path>(config["paths"]["IMPORT_DIR"]);
     EXPORT_DIR = static_cast<fs::path>(config["paths"]["EXPORT_DIR"]);
+    DRAFTS_DIR = static_cast<fs::path>(config["paths"]["DRAFTS_DIR"]);
 
     // Misc
     CONVERTER = static_cast<std::string>(config["misc"]["CONVERTER"]);
@@ -72,7 +74,8 @@ int create_fill_config() {
         {"paths", {
             {"CURRENT_DIR", (fs::current_path()).string()},
             {"IMPORT_DIR", (fs::current_path().append("templates")).string()},
-            {"EXPORT_DIR", (fs::current_path().append("output")).string()}
+            {"EXPORT_DIR", (fs::current_path().append("output")).string()},
+            {"DRAFTS_DIR", (fs::current_path().append("drafts")).string()}
         }},
         {"misc", {
             {"CONVERTER", "None"}
@@ -94,10 +97,42 @@ int change_config(std::string key, std::string value, bool json_refresh) {
         IMPORT_DIR = value;
     } else if (key == "EXPORT_DIR") {
         EXPORT_DIR = value;
+    } else if (key == "DRAFT_DIR") {
+        DRAFTS_DIR = value;
     } else if (key == "CONVERTER") {
         CONVERTER = value;
+    } else if (key == "n/a") {
+        
     } else {
         return -1;
+    }
+    return 0;
+
+    if (json_refresh) {
+        std::string config_filename = "config.txt";
+        if (fs::exists(config_filename)) {
+            fs::remove(config_filename);
+        }
+
+        json config = {
+            {"paths", {
+                {"CURRENT_DIR", CURRENT_DIR},
+                {"IMPORT_DIR", IMPORT_DIR},
+                {"EXPORT_DIR", EXPORT_DIR},
+                {"DRAFT_DIR", DRAFTS_DIR}
+            }},
+            {"misc", {
+                {"CONVERTER", CONVERTER}
+            }}
+        };
+
+        std::ofstream config_file("config.json");
+        if (!config_file.is_open()) {
+            return -2;
+        }
+
+        config_file << config.dump(4) << std::endl;
+        config_file.close();
     }
     return 0;
 }

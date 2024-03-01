@@ -7,6 +7,13 @@ QT_BEGIN_NAMESPACE
 
 #include <QDir>
 
+#include "placeholdermanager.h"
+#include "tagmanager.h"
+#include "customfilesystemmodel.h"
+#include <QListView>
+#include <QStringListModel>
+
+
 
 namespace Ui {
 class MainWindow;
@@ -19,17 +26,13 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();   
+    ~MainWindow();
+    QString getCurrentSelectedFilePath();
+    void displayFilesForTag(const QString &tag);
+
 
 private slots:
     void changePage();
-
-    //QDir constructPath();
-
-    void on_pushButton_clicked();
-
-    void on_pushButton_2_clicked();
-
     void on_actionBack_triggered();
 
     void on_pushButton_4_clicked();
@@ -40,7 +43,36 @@ private slots:
 
     void on_pushButton_5_clicked();
 
+    void on_actionTrash_2_triggered();
+
+    void on_actionDownload_2_triggered();
+
+    void on_actionSearch_triggered();
+
+    void filterSearch(const QString &);
+
+    void onAddPlaceholderClicked();
+
+    void onPlaceholderSelected(int index);
+
+    void onDeletePlaceholderClicked();
+
+    void onAddTagButtonClicked();
+
+    void onTagComboBoxCurrentIndexChanged(const QString &tag);
+
+
+
 private:
     Ui::MainWindow *ui;
+    PlaceholderManager *placeholderManager;
+    void createFolder();
+    void deleteItem();
+    void deleteTag();
+    TagManager *tagManager;
+    QListView* listView;
+    QStringListModel* model;
+
+
 };
 #endif // MAINWINDOW_H
