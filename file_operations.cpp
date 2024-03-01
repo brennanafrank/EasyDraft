@@ -72,7 +72,7 @@ int delete_template(std::string filename) {
 
 // This funciton is used to save documents that are taken from
 // the parser.
-int save_document(std::string filename) {
+int export_document(std::string filename) {
     // Open file in arg for reading
     std::ifstream file(CURRENT_DIR / filename);
     if (!file.is_open()) {
@@ -128,8 +128,31 @@ std::vector<std::string> template_list() {
 }
 
 
+// Function to search the vector to find templates
+// that include the key value.
+std::vector<std::string> search_template_list(std::string key) {
+    std::vector<std::string> temp_list = template_list();
+    if (temp_list.empty()) {
+        return {};
+    }
+    std::vector<std::string> result_list;
+
+    // Iterate over temp_list and add strings that start with key to result_list
+    for (const std::string& str : temp_list) {
+        if (str.find(key) == 0) {
+            result_list.push_back(str);
+        }
+    }
+
+    if (result_list.empty()) {
+        return {};
+    }
+    return result_list;
+}
+
+
 int docx_convert(std::string filename, std::string file_ext) {
-    if (CONVERTER.c_str() == nullptr) {
+    if (CONVERTER == "None") {
         // User hasn't choosen a converter
         return -2;
     } else if (CONVERTER == "LibreOffice") {
