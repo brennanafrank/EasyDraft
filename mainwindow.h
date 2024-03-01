@@ -7,6 +7,9 @@ QT_BEGIN_NAMESPACE
 
 #include <QDir>
 
+#include "placeholdermanager.h"
+
+
 
 namespace Ui {
 class MainWindow;
@@ -41,7 +44,14 @@ private slots:
 
     void filterSearch(const QString &);
 
+    void onAddPlaceholderClicked();
+    void onPlaceholderSelected(int index);
+    void onDeletePlaceholderClicked();
+
 private:
     Ui::MainWindow *ui;
+    PlaceholderManager *placeholderManager;
+
+
 };
 #endif // MAINWINDOW_H

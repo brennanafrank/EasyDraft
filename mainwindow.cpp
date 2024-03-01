@@ -3,7 +3,7 @@
 
 #include "file_operations.hpp"
 
-
+#include <QInputDialog>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QPixmap>
@@ -18,6 +18,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
+    , placeholderManager(new PlaceholderManager(this))
 {
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(0);
@@ -31,7 +32,18 @@ MainWindow::MainWindow(QWidget *parent)
         ui->listWidget->addItem(item);
     }
 
-    ui->lineEdit->setVisible(false);
+    ui->lineEdit_2->setVisible(false);
+
+
+    placeholderManager->addDefaultPlaceholders();
+    placeholderManager->loadPlaceholders();
+
+    connect(ui->addPlaceholderButton, &QPushButton::clicked, this, &MainWindow::onAddPlaceholderClicked);
+    connect(ui->placeholderComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onPlaceholderSelected(int)));
+    connect(ui->deletePlaceholderButton, &QPushButton::clicked, this, &MainWindow::onDeletePlaceholderClicked);
+
+    // Populate the combo box with existing placeholder names if any
+    ui->placeholderComboBox->addItems(placeholderManager->getPlaceholderNames());
 
 }
 
@@ -45,7 +57,6 @@ void MainWindow::changePage() {
     ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() + 1);
 
 }
-
 
 
 
@@ -152,8 +163,8 @@ void MainWindow::on_actionDownload_2_triggered()
 void MainWindow::on_actionSearch_triggered()
 {
 
-    ui->lineEdit->setVisible(true);
-    connect(ui->lineEdit, &QLineEdit::textChanged, this, &MainWindow::filterSearch);
+    ui->lineEdit_2->setVisible(true);
+    connect(ui->lineEdit_2, &QLineEdit::textChanged, this, &MainWindow::filterSearch);
 
 
 }
@@ -170,4 +181,57 @@ void MainWindow::filterSearch(const QString &text) {
     }
 
 }
+
+
+
+void MainWindow::onAddPlaceholderClicked() {
+    bool ok;
+    // Prompt user for placeholder name
+    QString placeholderName = QInputDialog::getText(this, tr("Add Placeholder"),
+                                                    tr("Placeholder Name:"), QLineEdit::Normal,
+                                                    QString(), &ok);
+    if (ok && !placeholderName.isEmpty()) {
+        // Prompt user for placeholder value
+        QString placeholderValue = QInputDialog::getText(this, tr("Placeholder Value"),
+                                                         tr("Value for ") + placeholderName + ":", QLineEdit::Normal,
+                                                         QString(), &ok);
+        if (ok) {
+            // Use PlaceholderManager to add placeholder
+            placeholderManager->addPlaceholder(placeholderName, placeholderValue);
+            placeholderManager->savePlaceholders();
+            // Update UI ComboBox
+            ui->placeholderComboBox->addItem(placeholderName);
+        }
+    }
+}
+
+
+void MainWindow::onPlaceholderSelected(int index) {
+    if (index < 0) return; // Ensure valid index
+
+    QString placeholderName = ui->placeholderComboBox->itemText(index);
+
+    // Check if the selected placeholder is the current date and time
+    if (placeholderName == "CurrentDateTime") {
+        // Dynamically generate the current date and time
+        QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+        ui->lineEdit->setText(currentDateTime);
+    } else {
+        // For other placeholders, fetch the stored value
+        QString value = placeholderManager->getPlaceholderValue(placeholderName);
+        ui->lineEdit->setText(value);
+    }
+}
+
+void MainWindow::onDeletePlaceholderClicked() {
+    QString placeholderName = ui->placeholderComboBox->currentText();
+    if (!placeholderName.isEmpty()) {
+        placeholderManager->removePlaceholder(placeholderName);
+        ui->placeholderComboBox->removeItem(ui->placeholderComboBox->currentIndex());
+
+        // Optionally, save placeholders to persist the deletion
+        placeholderManager->savePlaceholders();
+    }
+}
+
 
