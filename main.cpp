@@ -8,7 +8,8 @@
 
 //#include "TemplateParser.cpp"
 int main() {
-    upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\CS307 Charter.docx");
+    parse("./complex.docx");
+    // upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\CS307 Charter.docx");
     return 0;
 }
 #endif
