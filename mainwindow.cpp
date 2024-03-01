@@ -124,7 +124,17 @@ void MainWindow::on_pushButton_8_clicked()
 void MainWindow::on_pushButton_5_clicked()
 {
 
+    QString currentUpdate = ui->listWidget->currentItem()->text();
 
+    std::string updateStandard = currentUpdate.toStdString();
+
+    int error = export_document(updateStandard);
+
+    if (error < 0) {
+
+        QMessageBox::about(this, "Warning", "Error");
+
+    }
 
 }
 
