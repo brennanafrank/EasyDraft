@@ -483,7 +483,9 @@ namespace KZip
          * @brief
          * @param other
          */
+    public:
         ZipEntryProxy(const ZipEntryProxy& other);
+    private:
 
         /**
          * @brief

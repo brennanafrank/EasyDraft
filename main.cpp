@@ -5,7 +5,7 @@
 #include "TemplateParser.hpp"
 
 int main() {
-    parse("stat511.docx");
+    parse("./complex.docx");
     return 0;
 }
 #endif

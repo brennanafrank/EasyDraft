@@ -6,54 +6,58 @@
 #define TEMPLATEPARSER_CPP
 #include "KZip/KZip.hpp"
 
+#include <assert.h>
+
+#include <algorithm>
 #include <cstdio>
 #include <filesystem>
 #include <iostream>
+#include <regex>
 #include <string>
 #include <vector>
 using namespace std;
 namespace fs = filesystem;
 using recursive_directory_iterator = filesystem::recursive_directory_iterator;
 
-void parse(string fullFilePath) {
+void parse(const string fullFilePath) {
     fs::path tempdocxparsing("./tempdocxparsing");
     cout << "here1.6 \n";
     fs::create_directory(tempdocxparsing);
     cout << "here1 \n";
 
-    const fs::path docxpath("stat511.docx");
-
-    /*
-    // rb is mode read-binary, open a binary file for reading
-    FILE* inputDocx = fopen(fullFilePath.c_str(), "rb");
-    if (!inputDocx) {
-        cerr << "There was an error opening the docx input file" << "\n";
-        return;
-    }
-
-    // TODO fix later
-    string outputpath = "";
-    // wb, write a binary file
-    FILE* output = fopen(outputpath.c_str(), "wb");
-    if (!output) {
-        cerr << "There was an error opening the docx output file" << "\n";
-        // close original file descriptor
-        fclose(inputDocx);
-        return;
-    }
-     */
-
+    // replaces all occurances, so we might have to be careful if there's bugs with this
+    std::string zipString = std::regex_replace(fullFilePath, std::regex(".docx"), ".zip");
+    fs::copy(fs::path(fullFilePath), fs::path(zipString), fs::copy_options::overwrite_existing);
     KZip::ZipArchive input; // load zipFileName
-    input.create(docxpath);
+    input.open(zipString);
     cout << "here2\n";
-    for (string s : input.entryNames()) {
-        cout << s << "\n";
+    vector<string> entryNames = input.entryNames();
+    cout << entryNames.size() << "\n";
+    vector<KZip::ZipEntryProxy> xmlFiles{};
+    for (int i = 0; i < entryNames.size(); i++) {
+        int nameLen = entryNames[i].size();
+        if (entryNames[i].find(".xml") == nameLen - 4) {
+
+            KZip::ZipEntryProxy currentXml = input.entry(fs::path(entryNames[i]));
+            // get data as a string
+            std::string data = currentXml.getData<std::string>();
+            // uses the ignore case flag
+            //std::string replacedData = std::regex_replace(data, std::regex("(\\s*)\\$\\$COOL NOUN\\$\\$(\\s*)", std::regex::icase),
+             //                                             "$1business$2");
+            std::string replacedData = std::regex_replace(data, std::regex("COOL NOUN"),
+                                                         "business");
+            currentXml.setData<std::string>(replacedData);
+            assert(replacedData == currentXml.getData<std::string>());
+            if (entryNames[i] == "word/document.xml") {
+                cout << replacedData << "\n";
+            }
+        }
     }
+
+    cout << zipString << "\n";
+    input.save();
+    input.close();
     cout << "here3\n";
-
-    mz_zip_archive zip_archive;
-
-
 
 
     /* later */
