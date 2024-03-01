@@ -5,20 +5,7 @@
 #ifndef TEMPLATEPARSER_CPP
 #define TEMPLATEPARSER_CPP
 
-#include "extlibs/11Zip/include/elzip/elzip.hpp"
-#include "extlibs/11Zip/src/elzip.cpp"
-#include <assert.h>
-
-#include <algorithm>
-#include <cstdio>
-#include <filesystem>
-#include <iostream>
-#include <regex>
-#include <string>
-#include <vector>
-using namespace std;
-namespace fs = filesystem;
-using recursive_directory_iterator = filesystem::recursive_directory_iterator;
+#include "TemplateParser.hpp"
 
 void parse(const string fullFilePath) {
     cout << "here1.6 \n";
@@ -28,7 +15,7 @@ void parse(const string fullFilePath) {
     // replaces all occurances, so we might have to be careful if there's bugs with this
     std::string zipString = "./tempdocxparsing/" + std::regex_replace(fullFilePath, std::regex(".docx"), ".zip");
     fs::copy(fs::path(fullFilePath), fs::path(zipString), fs::copy_options::overwrite_existing);
-    elz::extractZip(zipString);
+    //elz::extractZip(zipString);
     cout << "here2\n";
     /*vector<string> entryNames = input.entryNames();
     cout << entryNames.size() << "\n";
