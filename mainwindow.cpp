@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->createFolderButton, &QPushButton::clicked, this, &MainWindow::createFolder);
     connect(ui->deleteItemButton, &QPushButton::clicked, this, &MainWindow::deleteItem);
     connect(ui->deleteTagButton, &QPushButton::clicked, this, &MainWindow::deleteTag);
+    connect(ui->addTagButton, &QPushButton::clicked, this, &MainWindow::onAddTagButtonClicked);
     // Populate the combo box with existing placeholder names if any
     ui->placeholderComboBox->addItems(placeholderManager->getPlaceholderNames());
 
