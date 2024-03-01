@@ -1,7 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
-
+#include <string>
+#include <vector>
+#include <algorithm>
 
 void createProfile(std::vector<std::vector<std::string>> placeholders) {
     //create a new profile
@@ -29,7 +31,7 @@ void createProfile(std::vector<std::vector<std::string>> placeholders) {
                 outfile << placeholders[i][1] << std::endl;
             }
             
-            fclose(outfile);
+            fclose(file);
         }
 }
 void updatePlaceholders(std::string fileName, std::string placeholder, std::string value) {
@@ -66,17 +68,17 @@ void addProfilePlaceholder(std::string fileName, std::string placeholder, std::s
     outfile << value << std::endl;
 }
 
-void fillPlaceholders(std::string fileName) {
+void fillPlaceholders(std::string fileName, std::vector<std::vector<std::string>> placeholders ) {
     std::unordered_map<std::string, std::string> profilePlaceholders = getProfile(fileName);
     std::string choice;
-    std::string placeholders[10];
+
     std::cout << "Do you want to autofill(1) or select placeholders to match(2)? (1/2): ";
     std::cin >> choice;
     if (choice == "1") {
         //autofill
         for (const auto& pair : profilePlaceholders) {
             //check each placeholder in profile if it matches one placeholder in placeholders array
-            if (placeholders.find(pair.first) != placeholders.end()) {
+            if (std::find(placeholders[0].begin(), placeholders[0].end(), pair.first) != placeholders.end()) {
                 //find text box related to the placeholder
 
                 //fill in the text box with the value in profile (pair.second)
