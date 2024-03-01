@@ -4,9 +4,8 @@
 
 #include "config.hpp"
 #include "file_operations.hpp"
-#include "TemplateParser.cpp"
+#include "TemplateParser.hpp"
 
-//#include "TemplateParser.cpp"
 int main() {
     parse("./complex.docx");
     // upload_template("C:\\Users\\School\\Documents\\EasyDraft\\example_docx\\CS307 Charter.docx");

@@ -5,6 +5,7 @@
 #ifndef TEMPLATEPARSER_CPP
 #define TEMPLATEPARSER_CPP
 
+<<<<<<< HEAD
 #include <assert.h>
 #include <algorithm>
 #include <cstdio>
@@ -19,6 +20,7 @@
 using namespace std;
 namespace fs = filesystem;
 using recursive_directory_iterator = filesystem::recursive_directory_iterator;
+#include "TemplateParser.hpp"
 
 #ifndef PARSE_FUNC
 #define PARSE_FUNC
@@ -37,7 +39,6 @@ void parse(const string fullFilePath) {
     std::system(("rm " + zipString).c_str());
 
 
-    cout << "here2\n";
 
 
     // std::string discardedString;
@@ -91,13 +92,6 @@ private:
 
 
 };
-
-
-
-
-
-
-
 
 
 #endif // TEMPLATEPARSER_CPP
