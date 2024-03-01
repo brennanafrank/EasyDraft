@@ -1,0 +1,8 @@
+#ifndef EASYDRAFT_TEMPLATEPARSER_HPP
+#define EASYDRAFT_TEMPLATEPARSER_HPP
+
+void parse(std::string);
+
+
+
+#endif //EASYDRAFT_TEMPLATEPARSER_HPP
