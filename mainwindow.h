@@ -8,6 +8,10 @@ QT_BEGIN_NAMESPACE
 #include <QDir>
 
 #include "placeholdermanager.h"
+#include "tagmanager.h"
+#include "customfilesystemmodel.h"
+#include <QListView>
+#include <QStringListModel>
 
 
 
@@ -22,7 +26,10 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();   
+    ~MainWindow();
+    QString getCurrentSelectedFilePath();
+    void displayFilesForTag(const QString &tag);
+
 
 private slots:
     void changePage();
@@ -45,12 +52,26 @@ private slots:
     void filterSearch(const QString &);
 
     void onAddPlaceholderClicked();
+
     void onPlaceholderSelected(int index);
+
     void onDeletePlaceholderClicked();
+
+    void onAddTagButtonClicked();
+
+    void onTagComboBoxCurrentIndexChanged(const QString &tag);
+
+
 
 private:
     Ui::MainWindow *ui;
     PlaceholderManager *placeholderManager;
+    void createFolder();
+    void deleteItem();
+    void deleteTag();
+    TagManager *tagManager;
+    QListView* listView;
+    QStringListModel* model;
 
 
 };
