@@ -93,21 +93,7 @@ void MainWindow::on_pushButton_8_clicked()
 void MainWindow::on_pushButton_5_clicked()
 {
 
-    QString path = QFileDialog::getExistingDirectory(nullptr, "Select Directory", QDir::homePath(), QFileDialog::ShowDirsOnly);
 
-
-    // Construct a file path to the directory using QDir
-
-    QDir userDir(path);
-
-    // Error checking if the path to the directory exists
-
-    if (!userDir.exists()) {
-
-        qWarning() << "Path not found" << path;
-        exit(1);
-
-    }
 
 }
 
@@ -115,7 +101,24 @@ void MainWindow::on_pushButton_5_clicked()
 void MainWindow::on_actionTrash_2_triggered()
 {
 
+    QString currentDelete = ui->listWidget->currentItem()->text();
 
+    std::string deleteStandard = currentDelete.toStdString();
+
+    delete_template(deleteStandard);
+
+    ui->listWidget->clear();
+
+    if (!template_list().empty()) {
+
+        for (int i = 0; i < template_list().size(); i++) {
+
+            QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(template_list()[i]));
+            ui->listWidget->addItem(item);
+
+        }
+
+    }
 
 }
 
@@ -127,6 +130,19 @@ void MainWindow::on_actionDownload_2_triggered()
     std::filesystem::path name = path.toStdString();
 
     upload_template(name);
+
+    ui->listWidget->clear();
+
+    if (!template_list().empty()) {
+
+        for (int i = 0; i < template_list().size(); i++) {
+
+            QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(template_list()[i]));
+            ui->listWidget->addItem(item);
+
+        }
+
+    }
 
 }
 
