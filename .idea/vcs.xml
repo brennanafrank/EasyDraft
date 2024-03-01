@@ -2,6 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/miniz-cpp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extlibs/11Zip" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extlibs/11Zip/extlibs/minizip" vcs="Git" />
   </component>
 </project>

@@ -1,0 +1,21 @@
+CC = g++
+CFLAGS = -std=c++17 -Iextlibs/11Zip/include/elzip -Iextlibs/11Zip/extlibs
+MINIZIP_SRCS = $(wildcard extlibs/11Zip/extlibs/minizip/*.c)
+MINIZIP_OBJS = $(MINIZIP_SRCS:.c=.o)
+SRCS = extlibs/11Zip/src/elzip.cpp extlibs/11Zip/src/unzipper.cpp extlibs/11Zip/src/zipper.cpp TemplateParser.cpp file_operations.cpp config.cpp main.cpp
+OBJS = $(SRCS:.cpp=.o)
+TARGET = run
+
+all: $(TARGET)
+
+%.o: %.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(TARGET): $(OBJS) $(MINIZIP_OBJS)
+	$(CC) $(CFLAGS) $(OBJS) $(MINIZIP_OBJS) -o $(TARGET)
+
+clean:
+	rm -f $(OBJS) $(MINIZIP_OBJS) $(TARGET) config.json
