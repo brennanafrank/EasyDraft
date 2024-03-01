@@ -4,8 +4,9 @@
 
 #ifndef TEMPLATEPARSER_CPP
 #define TEMPLATEPARSER_CPP
-#include "KZip/KZip.hpp"
 
+#include "extlibs/11Zip/include/elzip/elzip.hpp"
+#include "extlibs/11Zip/src/elzip.cpp"
 #include <assert.h>
 
 #include <algorithm>
@@ -20,18 +21,16 @@ namespace fs = filesystem;
 using recursive_directory_iterator = filesystem::recursive_directory_iterator;
 
 void parse(const string fullFilePath) {
-    fs::path tempdocxparsing("./tempdocxparsing");
     cout << "here1.6 \n";
-    fs::create_directory(tempdocxparsing);
+    fs::create_directory(fs::path("./tempdocxparsing"));
     cout << "here1 \n";
 
     // replaces all occurances, so we might have to be careful if there's bugs with this
-    std::string zipString = std::regex_replace(fullFilePath, std::regex(".docx"), ".zip");
+    std::string zipString = "./tempdocxparsing/" + std::regex_replace(fullFilePath, std::regex(".docx"), ".zip");
     fs::copy(fs::path(fullFilePath), fs::path(zipString), fs::copy_options::overwrite_existing);
-    KZip::ZipArchive input; // load zipFileName
-    input.open(zipString);
+    elz::extractZip(zipString);
     cout << "here2\n";
-    vector<string> entryNames = input.entryNames();
+    /*vector<string> entryNames = input.entryNames();
     cout << entryNames.size() << "\n";
     vector<KZip::ZipEntryProxy> xmlFiles{};
     for (int i = 0; i < entryNames.size(); i++) {
@@ -60,13 +59,11 @@ void parse(const string fullFilePath) {
     cout << "here3\n";
 
 
+     */
     /* later */
     for (const auto& dirEntry : recursive_directory_iterator("./tempdocxparsing")) {
         cout << dirEntry << endl;
     }
-
-    // remove the temporary directory we created
-    system("rm -rf ./tempdocxparsing"); // #TODO make system independent
 }
 
 class TemplateParser {

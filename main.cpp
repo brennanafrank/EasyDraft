@@ -1,10 +1,10 @@
 /* CS307 PROJECT: EASYDRAFT */
-// insta segfault on running
 #ifndef MAIN_CPP
 #define MAIN_CPP
 
 #include "config.hpp"
 #include "file_operations.hpp"
+#include "TemplateParser.cpp"
 
 //#include "TemplateParser.cpp"
 int main() {
