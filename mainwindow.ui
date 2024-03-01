@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page_2">
      <widget class="QListWidget" name="listWidget">
@@ -48,6 +48,16 @@
       </property>
       <property name="text">
        <string>Select Widget</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>0</y>
+        <width>113</width>
+        <height>21</height>
+       </rect>
       </property>
      </widget>
     </widget>
@@ -173,10 +183,17 @@
     </property>
     <addaction name="actionBack"/>
    </widget>
+   <widget class="QMenu" name="menuSearch">
+    <property name="title">
+     <string>Additional</string>
+    </property>
+    <addaction name="actionSearch"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDownload"/>
    <addaction name="menuTrash"/>
    <addaction name="menuBack"/>
+   <addaction name="menuSearch"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionFile_Options">
@@ -224,6 +241,15 @@
   <action name="actionBack">
    <property name="text">
     <string>Back</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="icon">
+    <iconset>
+     <normaloff>10905219.png</normaloff>10905219.png</iconset>
+   </property>
+   <property name="text">
+    <string>Search</string>
    </property>
   </action>
  </widget>

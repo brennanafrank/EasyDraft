@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-#include "file_operations.hpp""
+#include "file_operations.hpp"
 
 
 #include <QFileDialog>
@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent)
         QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(templates[i]));
         ui->listWidget->addItem(item);
     }
+
+    ui->lineEdit->setVisible(false);
 
 }
 
@@ -141,6 +143,29 @@ void MainWindow::on_actionDownload_2_triggered()
             ui->listWidget->addItem(item);
 
         }
+
+    }
+
+}
+
+
+void MainWindow::on_actionSearch_triggered()
+{
+
+    ui->lineEdit->setVisible(true);
+    connect(ui->lineEdit, &QLineEdit::textChanged, this, &MainWindow::filterSearch);
+
+
+}
+
+
+void MainWindow::filterSearch(const QString &text) {
+
+    for (int i = 0; i < ui->listWidget->count(); i++) {
+
+        QListWidgetItem *item = ui->listWidget->item(i);
+        bool matches = item->text().contains(text, Qt::CaseInsensitive);
+        ui->listWidget->setRowHidden(i, !matches);
 
     }
 

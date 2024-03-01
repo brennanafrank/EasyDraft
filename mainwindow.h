@@ -37,6 +37,10 @@ private slots:
 
     void on_actionDownload_2_triggered();
 
+    void on_actionSearch_triggered();
+
+    void filterSearch(const QString &);
+
 private:
     Ui::MainWindow *ui;
 };
