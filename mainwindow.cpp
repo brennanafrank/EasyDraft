@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     placeholderManager->addDefaultPlaceholders();
     placeholderManager->loadPlaceholders();
+
     CustomFileSystemModel *fileSystemModel = new CustomFileSystemModel(this);
     fileSystemModel->setRootPath(QDir::currentPath());
     fileSystemModel->setTagManager(tagManager);
@@ -33,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->createFolderButton, &QPushButton::clicked, this, &MainWindow::createFolder);
     connect(ui->deleteItemButton, &QPushButton::clicked, this, &MainWindow::deleteItem);
     connect(ui->deleteTagButton, &QPushButton::clicked, this, &MainWindow::deleteTag);
+    connect(ui->addTagButton, &QPushButton::clicked, this, &MainWindow::onAddTagButtonClicked);
+
+
     connect(ui->addPlaceholderButton, &QPushButton::clicked, this, &MainWindow::onAddPlaceholderClicked);
     connect(ui->placeholderComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onPlaceholderSelected(int)));
     connect(ui->deletePlaceholderButton, &QPushButton::clicked, this, &MainWindow::onDeletePlaceholderClicked);
