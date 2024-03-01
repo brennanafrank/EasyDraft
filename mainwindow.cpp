@@ -132,7 +132,9 @@ void MainWindow::on_pushButton_5_clicked()
 
     if (error < 0) {
 
-        QMessageBox::about(this, "Warning", "Error");
+        QString status = QString("Error(%d)").arg(error);
+
+        QMessageBox::about(this, "Warning", status);
 
     }
 
