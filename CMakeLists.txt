@@ -20,6 +20,12 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
         ${TS_FILES}
+        file_operations.cpp
+        file_operations.hpp
+        config.cpp
+        config.hpp
+        json.hpp
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

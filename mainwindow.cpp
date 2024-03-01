@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-#include <filesystem>
+#include "file_operations.hpp""
+
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QPixmap>
@@ -20,6 +22,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(0);
 
+
+    std::vector<std::string> templates = template_list();
+
+    for (int i = 0;  i < templates.size(); i++)
+    {
+        QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(templates[i]));
+        ui->listWidget->addItem(item);
+    }
+
 }
 
 MainWindow::~MainWindow()
@@ -33,78 +44,8 @@ void MainWindow::changePage() {
 
 }
 
-/*QDir MainWindow:: constructPath() {
-
-    QString path = QFileDialog::getExistingDirectory(nullptr, "Select Directory", QDir::homePath(), QFileDialog::ShowDirsOnly);
 
 
-    // Construct a file path to the directory using QDir
-
-    QDir userDir(path);
-
-    // Error checking if the path to the directory exists
-
-    if (!userDir.exists()) {
-
-        qWarning() << "Path not found" << path;
-        throw in
-
-    }
-
-
-    return userDir;
-
-
-}*/
-
-
-void MainWindow::on_pushButton_clicked()
-{
-    changePage();
-
-}
-
-
-void MainWindow::on_pushButton_2_clicked()
-{
-
-    // Get the directory of the user
-
-    // Set the parent to null
-    //Caption = "Select Directory"
-    //Initial directory is home
-    // Filter is directorys only
-    QString path = QFileDialog::getExistingDirectory(nullptr, "Select Directory", QDir::homePath(), QFileDialog::ShowDirsOnly);
-
-
-    // Construct a file path to the directory using QDir
-
-    QDir userDir(path);
-
-    // Error checking if the path to the directory exists
-
-    if (!userDir.exists()) {
-
-        qWarning() << "Path not found" << path;
-        exit(1);
-
-    }
-
-    else {
-
-        // Based on stack overflow page in how to get files from the directories
-
-        for (const QFileInfo &file : userDir.entryInfoList(QDir::Files))
-        {
-            QListWidgetItem *item = new QListWidgetItem(file.fileName());
-            item->setData(Qt::UserRole, file.absolutePath()); // if you need absolute path of the file
-            ui->listWidget->addItem(item);
-        }
-
-    }
-
-
-}
 
 
 void MainWindow::on_actionBack_triggered()
@@ -167,6 +108,25 @@ void MainWindow::on_pushButton_5_clicked()
         exit(1);
 
     }
+
+}
+
+
+void MainWindow::on_actionTrash_2_triggered()
+{
+
+
+
+}
+
+
+void MainWindow::on_actionDownload_2_triggered()
+{
+    QString path = QFileDialog::getOpenFileName(this, "...", QDir::homePath());
+
+    std::filesystem::path name = path.toStdString();
+
+    upload_template(name);
 
 }
 

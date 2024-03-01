@@ -23,13 +23,6 @@ public:
 
 private slots:
     void changePage();
-
-    //QDir constructPath();
-
-    void on_pushButton_clicked();
-
-    void on_pushButton_2_clicked();
-
     void on_actionBack_triggered();
 
     void on_pushButton_4_clicked();
@@ -39,6 +32,10 @@ private slots:
     void on_pushButton_8_clicked();
 
     void on_pushButton_5_clicked();
+
+    void on_actionTrash_2_triggered();
+
+    void on_actionDownload_2_triggered();
 
 private:
     Ui::MainWindow *ui;
