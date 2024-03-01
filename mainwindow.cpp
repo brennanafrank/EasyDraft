@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
+
 void MainWindow::onTagComboBoxCurrentIndexChanged(const QString &tag) {
     auto *model = static_cast<CustomFileSystemModel*>(ui->pathViewer->model());
     model->setFilterTag(tag);
@@ -177,12 +178,19 @@ void MainWindow::onPlaceholderSelected(int index) {
 
     QString placeholderName = ui->placeholderComboBox->itemText(index);
 
+    QWidget *focusedWidget = QApplication::focusWidget();
+
     // Check if the selected placeholder is the current date and time
     if (placeholderName == "CurrentDateTime") {
         // Dynamically generate the current date and time
         QString currentDateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
         ui->lineEdit->setText(currentDateTime);
     } else {
+        // if (focusedWidget && focusedWidget->metaObject()->className() == QLatin1String("QLineEdit")) {
+        //     QLineEdit *lineEdit = static_cast<QLineEdit *>(focusedWidget);
+        //     QString value = placeholderManager->getPlaceholderValue(placeholderName);
+        //     lineEdit->setText(value);
+        // }
         // For other placeholders, fetch the stored value
         QString value = placeholderManager->getPlaceholderValue(placeholderName);
         ui->lineEdit->setText(value);
@@ -190,6 +198,7 @@ void MainWindow::onPlaceholderSelected(int index) {
 }
 
 void MainWindow::onDeletePlaceholderClicked() {
+
     QString placeholderName = ui->placeholderComboBox->currentText();
     if (!placeholderName.isEmpty()) {
         placeholderManager->removePlaceholder(placeholderName);
@@ -199,7 +208,6 @@ void MainWindow::onDeletePlaceholderClicked() {
         placeholderManager->savePlaceholders();
     }
 }
-
 
 
 

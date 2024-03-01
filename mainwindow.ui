@@ -31,6 +31,9 @@
       <widget class="QLineEdit" name="lineEdit"/>
      </item>
      <item>
+      <widget class="QLineEdit" name="lineEdit_2"/>
+     </item>
+     <item>
       <widget class="QComboBox" name="tagSelector"/>
      </item>
      <item>
