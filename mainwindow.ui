@@ -17,26 +17,16 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>-20</x>
       <y>0</y>
       <width>861</width>
       <height>571</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page_2">
-     <widget class="QListWidget" name="listWidget">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>30</y>
-        <width>811</width>
-        <height>381</height>
-       </rect>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pushButton_4">
       <property name="geometry">
        <rect>
@@ -50,13 +40,93 @@
        <string>Select Widget</string>
       </property>
      </widget>
+     <widget class="QLineEdit" name="lineEdit_2">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>0</y>
+        <width>113</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>30</y>
+        <width>761</width>
+        <height>381</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QListWidget" name="listWidget"/>
+       </item>
+       <item>
+        <widget class="QTreeView" name="pathViewer"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QPushButton" name="createFolderButton">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>430</y>
+        <width>100</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Create folder</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="deleteItemButton">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>430</y>
+        <width>100</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Delete Item</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="addTagButton">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>470</y>
+        <width>100</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Add Tag</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="deleteTagButton">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>470</y>
+        <width>100</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Delete Tag</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_3">
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>297</x>
-        <y>15</y>
+        <x>340</x>
+        <y>10</y>
         <width>221</width>
         <height>61</height>
        </rect>
@@ -76,6 +146,52 @@
       </property>
       <property name="text">
        <string>Submit</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="deletePlaceholderButton">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>70</y>
+        <width>100</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Delete</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="addPlaceholderButton">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>130</y>
+        <width>100</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Add</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="placeholderComboBox">
+      <property name="geometry">
+       <rect>
+        <x>700</x>
+        <y>190</y>
+        <width>103</width>
+        <height>32</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>270</y>
+        <width>361</width>
+        <height>21</height>
+       </rect>
       </property>
      </widget>
     </widget>
@@ -173,10 +289,17 @@
     </property>
     <addaction name="actionBack"/>
    </widget>
+   <widget class="QMenu" name="menuSearch">
+    <property name="title">
+     <string>Additional</string>
+    </property>
+    <addaction name="actionSearch"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDownload"/>
    <addaction name="menuTrash"/>
    <addaction name="menuBack"/>
+   <addaction name="menuSearch"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionFile_Options">
@@ -224,6 +347,15 @@
   <action name="actionBack">
    <property name="text">
     <string>Back</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="icon">
+    <iconset>
+     <normaloff>10905219.png</normaloff>10905219.png</iconset>
+   </property>
+   <property name="text">
+    <string>Search</string>
    </property>
   </action>
  </widget>
