@@ -13,7 +13,7 @@ namespace fs = std::filesystem;
 
 int upload_template(fs::path filepath);
 int delete_template(std::string filename);
-int save_document(std::string filename);
+int export_document(std::string filename);
 std::vector<std::string> template_list();
 std::vector<std::string> search_template_list();
 int docx_convert(std::string filename, std::string file_ext);

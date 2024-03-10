@@ -19,26 +19,38 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="560dbc9f-573c-4cd9-803e-fcb08376b4dc" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/EasyDraft.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/KZip.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/KZip.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/KZip/deps/miniz.h" beforeDir="false" afterPath="$PROJECT_DIR$/KZip/deps/miniz.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Images.qrc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/KZip.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/miniz.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/args.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/cenv.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/config.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/convert.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/cstdio.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/cstdlib.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/encoding_errors.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/encoding_utf.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/filebuf.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/fstream.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/iostream.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/scoped_ptr.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/stackstring.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/system.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/utf.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/utf8_codecvt.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/KZip/deps/nowide/windows.hpp" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/TemplateParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/TemplateParser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TemplateParser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/TemplateParser.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extlibs/11Zip/include/elzip/elzip.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/extlibs/11Zip/include/elzip/elzip.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extlibs/11Zip/include/elzip/unzipper.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/extlibs/11Zip/include/elzip/unzipper.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extlibs/11Zip/include/elzip/zipper.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/extlibs/11Zip/include/elzip/zipper.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/extlibs/11Zip/src/elzip.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/extlibs/11Zip/src/elzip.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniz-cpp" beforeDir="false" afterPath="$PROJECT_DIR$/miniz-cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniz-cpp/examples/pipe.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/miniz-cpp/examples/pipe.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniz-cpp/examples/read.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/miniz-cpp/examples/read.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniz-cpp/examples/write.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/miniz-cpp/examples/write.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/miniz-cpp/zip_file.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/stat511.docx" beforeDir="false" afterPath="$PROJECT_DIR$/stat511.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/miniz-cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/run" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/stat511.docx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,6 +88,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.advertisement.text.has.clang-format": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "com.jetbrains.cidr.cpp.cmake.workspace.CMakeCacheInvalidator.marker": "true",
@@ -139,6 +152,8 @@
       <workItem from="1709185809259" duration="7216000" />
       <workItem from="1709228636860" duration="152000" />
       <workItem from="1709228797022" duration="2522000" />
+      <workItem from="1709239740591" duration="6275000" />
+      <workItem from="1709266186704" duration="12474000" />
     </task>
     <servers />
   </component>

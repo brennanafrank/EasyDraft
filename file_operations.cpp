@@ -74,41 +74,34 @@ int delete_template(std::string filename) {
 // the parser.
 int export_document(std::string filename) {
     // Open file in arg for reading
-    std::ifstream file(CURRENT_DIR / filename);
-    if (!file.is_open()) {
-        return -1;
-    }
+    std::string filename_ext = filename + ".docx";
+    fs::path filepath = IMPORT_DIR / filename / filename_ext;
+    std::cout << "path: " << filepath << std::endl;
 
     // See if the folder for saved files is created
     fs::path folder_out = EXPORT_DIR;
     if (!fs::exists(folder_out)) {
         if (!fs::create_directory(folder_out)) {
             // Could not create the directory
-            file.close();
-            return -2;
+            return -1;
         }
     }
 
-    // Open file in output folder for writing
-    std::ofstream file_out(folder_out);
-    if (!file_out.is_open()) {
-        file.close();
-        return -3;
-    }
+    // Construct the full destination file path
+    fs::path destination_file = folder_out / filename_ext;
 
-    // Read the contents from file and write to file_out
-    std::string line;
-    while (std::getline(file, line)) {
-        file_out << line << std::endl;
-    }
+    std::error_code ec;
+    fs::copy_file(filepath, destination_file, fs::copy_options::overwrite_existing, ec);
 
-    //Close both files
-    file.close();
-    file_out.close();
+    if (ec) {
+        std::cerr << "Error copying file: " << ec.message() << std::endl;
+        return -2;
+    }
 
     std::cout << "File " << filename << " saved successfully in " << folder_out << std::endl;
     return 0;
 }
+
 
 
 std::vector<std::string> template_list() {

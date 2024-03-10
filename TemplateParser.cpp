@@ -4,66 +4,76 @@
 
 #ifndef TEMPLATEPARSER_CPP
 #define TEMPLATEPARSER_CPP
-#include "KZip/KZip.hpp"
 
+<<<<<<< HEAD
+#include <assert.h>
+#include <algorithm>
 #include <cstdio>
+#include <cstdlib>
 #include <filesystem>
 #include <iostream>
+#include <ostream>
+#include <regex>
+#include <sstream>
 #include <string>
 #include <vector>
 using namespace std;
 namespace fs = filesystem;
 using recursive_directory_iterator = filesystem::recursive_directory_iterator;
+#include "TemplateParser.hpp"
 
-void parse(string fullFilePath) {
-    fs::path tempdocxparsing("./tempdocxparsing");
-    cout << "here1.6 \n";
-    fs::create_directory(tempdocxparsing);
+#ifndef PARSE_FUNC
+#define PARSE_FUNC
+void parse(const string fullFilePath) {
+    cout << "here1.5 \n";
+    std::system("rm -rf ./tempdocxparsing");
+    fs::create_directory(fs::path("./tempdocxparsing"));
     cout << "here1 \n";
 
-    const fs::path docxpath("stat511.docx");
+    // replaces all occurances, so we might have to be careful if there's bugs with this
+    std::string zipString = "./tempdocxparsing/" + std::regex_replace(fullFilePath, std::regex(".docx"), ".zip");
+    fs::copy(fs::path(fullFilePath), fs::path(zipString), fs::copy_options::overwrite_existing);
 
-    /*
-    // rb is mode read-binary, open a binary file for reading
-    FILE* inputDocx = fopen(fullFilePath.c_str(), "rb");
-    if (!inputDocx) {
-        cerr << "There was an error opening the docx input file" << "\n";
-        return;
-    }
-
-    // TODO fix later
-    string outputpath = "";
-    // wb, write a binary file
-    FILE* output = fopen(outputpath.c_str(), "wb");
-    if (!output) {
-        cerr << "There was an error opening the docx output file" << "\n";
-        // close original file descriptor
-        fclose(inputDocx);
-        return;
-    }
-     */
-
-    KZip::ZipArchive input; // load zipFileName
-    input.create(docxpath);
-    cout << "here2\n";
-    for (string s : input.entryNames()) {
-        cout << s << "\n";
-    }
-    cout << "here3\n";
-
-    mz_zip_archive zip_archive;
+    cout << "unzip -o " + zipString + " -d ./tempdocxparsing\n";
+    std::system(("unzip -o " + zipString + " -d ./tempdocxparsing").c_str());
+    std::system(("rm " + zipString).c_str());
 
 
 
 
-    /* later */
+    // std::string discardedString;
+    // std::string individualFilepath;
     for (const auto& dirEntry : recursive_directory_iterator("./tempdocxparsing")) {
-        cout << dirEntry << endl;
+        std::string path = dirEntry.path();
+        // for some reason this comes with quotation marks
+        path.erase(std::remove(path.begin(), path.end(), '"'), path.end());
+
+        if (path.find(".xml") != path.size() - 4) {
+            continue;
+        }
+        cout << path << "\n";
+
+        std::ifstream inputFileStream(path);
+        // originally .temp at the end
+        std::ofstream outputFileStream(path + ".temp");
+        std::string line;
+        while (std::getline(inputFileStream, line)) {
+            std::string replacedData = std::regex_replace(line, std::regex("(\\s*)\\$\\$COOL NOUN\\$\\$(\\s*)", std::regex::icase),
+"$1business$2");
+            outputFileStream << replacedData << "\n";
+        }
+
+        std::system(("cp " + path + ".temp " + path).c_str());
+        std::system(("rm " + path + ".temp").c_str());
+
+        outputFileStream.close();
+        inputFileStream.close();
     }
 
-    // remove the temporary directory we created
-    system("rm -rf ./tempdocxparsing"); // #TODO make system independent
+    std::system(("zip -r " + fullFilePath + ".temp ./tempdocxparsing/").c_str());
+
 }
+#endif // PARSE_FUNC
 
 class TemplateParser {
 public:
@@ -82,13 +92,6 @@ private:
 
 
 };
-
-
-
-
-
-
-
 
 
 #endif // TEMPLATEPARSER_CPP

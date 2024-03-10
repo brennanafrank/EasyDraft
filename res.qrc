@@ -1,8 +1,8 @@
 <RCC>
     <qresource prefix="/rec">
         <file>images.png</file>
-        <file>Images.qrc</file>
         <file>Settings-icon-symbol-vector.png</file>
+        <file>10905219.png</file>
     </qresource>
     <qresource prefix="/new/prefix1"/>
 </RCC>
