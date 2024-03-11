@@ -23,9 +23,14 @@ public:
     QString getCurrentSelectedFilePath();
     void displayFilesForTag(const QString &tag);
 
+    void createDynamicPlaceholders(const std::vector<std::pair<std::string, std::string>>& replacements);
+    void clearWidgetsFromLayout(QLayout* layout);
+    void updatePlaceholderValuesFromInputs();
+
 
 private:
     Ui::MainWindow *ui;
+
     void createFolder();
     void deleteItem();
     void deleteTag();
@@ -33,6 +38,7 @@ private:
     QListView* listView;
     QStringListModel* model;
     PlaceholderManager *placeholderManager;
+    std::vector<std::pair<std::string, std::string>> replacements;
 
 protected:
 
@@ -42,5 +48,6 @@ private slots:
     void onAddPlaceholderClicked();
     void onPlaceholderSelected(int index);
     void onDeletePlaceholderClicked();
+    void onCompleteFillButtonlicked();
 };
 #endif // MAINWINDOW_H

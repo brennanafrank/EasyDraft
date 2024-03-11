@@ -1,4 +1,4 @@
-#include "PlaceholderManager.h"
+#include "placeholdermanager.h"
 #include <QDateTime>
 #include <QSettings>
 

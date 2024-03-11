@@ -8,6 +8,10 @@
 #include <QDragMoveEvent>
 #include <QDropEvent>
 #include <QMimeData>
+#include <QFormLayout>
+#include <QLabel>
+
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -44,6 +48,21 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Populate the combo box with existing placeholder names if any
     ui->placeholderComboBox->addItems(placeholderManager->getPlaceholderNames());
+
+
+    // Test dynamically generate placeholders.
+    std::vector<std::pair<std::string, std::string>> replacements = {
+        {"Name", "Michael"},
+        {"Address", "HK"},
+        {"Occupation", "Developer"},
+        {"University", "Purdue"},
+        {"Country", "USA"},
+        {"Email", "michael@example.com"},
+        {"Phone", "+1234567890"},
+    };
+    createDynamicPlaceholders(replacements);
+
+
 
 }
 
@@ -209,6 +228,77 @@ void MainWindow::onDeletePlaceholderClicked() {
     }
 }
 
+
+void MainWindow::clearWidgetsFromLayout(QLayout* layout) {
+    QFormLayout* formLayout = qobject_cast<QFormLayout*>(layout);
+    if (!formLayout) return;
+
+    // Removing widgets from the form layout
+    while (formLayout->rowCount() > 0) {
+        QLayoutItem* item = formLayout->itemAt(0, QFormLayout::LabelRole);
+        if (item && item->widget()) {
+            item->widget()->deleteLater();
+        }
+        item = formLayout->itemAt(0, QFormLayout::FieldRole);
+        if (item && item->widget()) {
+            item->widget()->deleteLater();
+        }
+        formLayout->removeRow(0);
+    }
+}
+
+
+
+void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::string, std::string>>& replacements) {
+    QWidget* contents = ui->scrollAreaWidgetContents;
+    QFormLayout* layout = qobject_cast<QFormLayout*>(contents->layout());
+    connect(ui->completeFillButton, &QPushButton::clicked, this, &MainWindow::onCompleteFillButtonlicked);
+    // If the layout already exists, clear all widgets from it
+    this->replacements = replacements; // Update the class member variable
+    if (layout) {
+        clearWidgetsFromLayout(layout);
+    } else {
+        // If no layout exists, create a new one
+        layout = new QFormLayout(contents);
+        contents->setLayout(layout);
+    }
+
+    for (const auto& pair : replacements) {
+        QLabel* label = new QLabel(QString::fromStdString(pair.first));
+        QLineEdit* lineEdit = new QLineEdit(QString::fromStdString(pair.second));
+        layout->addRow(label, lineEdit);
+    }
+}
+
+
+void MainWindow::updatePlaceholderValuesFromInputs() {
+    QFormLayout *layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
+    if (!layout) return;
+
+    // Temporary vector to hold updated values
+    std::vector<std::pair<std::string, std::string>> updatedReplacements;
+
+    for (int i = 0; i < layout->rowCount(); ++i) {
+        // Assuming each row has a QLabel and QLineEdit
+        QLabel* label = qobject_cast<QLabel*>(layout->itemAt(i, QFormLayout::LabelRole)->widget());
+        QLineEdit* lineEdit = qobject_cast<QLineEdit*>(layout->itemAt(i, QFormLayout::FieldRole)->widget());
+        if (label && lineEdit) {
+            // Update the temporary vector with the new values
+            updatedReplacements.emplace_back(label->text().toStdString(), lineEdit->text().toStdString());
+        }
+    }
+
+    // Update the class member variable with the new values
+    replacements = updatedReplacements;
+}
+
+void MainWindow::onCompleteFillButtonlicked() {
+    updatePlaceholderValuesFromInputs();
+    // for debug
+    for (const auto &pair : replacements) {
+        qDebug() << QString::fromStdString(pair.first) << ": " << QString::fromStdString(pair.second);
+    }
+}
 
 
 MainWindow::~MainWindow()
