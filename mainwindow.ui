@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page_2">
      <widget class="QPushButton" name="pushButton_4">
@@ -223,6 +223,18 @@
       </property>
      </widget>
     </widget>
+    <widget class="QWidget" name="viewDocument">
+     <widget class="QTextBrowser" name="textBrowser">
+      <property name="geometry">
+       <rect>
+        <x>145</x>
+        <y>50</y>
+        <width>621</width>
+        <height>441</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
     <widget class="QWidget" name="page_5">
      <widget class="QPushButton" name="pushButton_5">
       <property name="geometry">
@@ -293,7 +305,15 @@
     <property name="title">
      <string>Additional</string>
     </property>
+    <widget class="QMenu" name="menuFilter">
+     <property name="title">
+      <string>Order</string>
+     </property>
+     <addaction name="actionAscending"/>
+     <addaction name="actionDescending"/>
+    </widget>
     <addaction name="actionSearch"/>
+    <addaction name="menuFilter"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuDownload"/>
@@ -356,6 +376,16 @@
    </property>
    <property name="text">
     <string>Search</string>
+   </property>
+  </action>
+  <action name="actionAscending">
+   <property name="text">
+    <string>Ascending</string>
+   </property>
+  </action>
+  <action name="actionDescending">
+   <property name="text">
+    <string>Descending</string>
    </property>
   </action>
  </widget>

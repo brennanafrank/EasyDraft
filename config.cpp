@@ -19,7 +19,8 @@ std::string CONVERTER;
 // Will still need to compile config.cpp for program to run.
 fs::path CURRENT_DIR = (fs::current_path()).string();
 fs::path IMPORT_DIR = (fs::current_path().append("templates")).string();
-fs::path EXPORT_DIR = (fs::current_path().append("output")).string();
+//fs::path EXPORT_DIR = (fs::current_path().append("output")).string();
+fs::path EXPORT_DIR = ("/Users/aneeshpendyala/Desktop/ExportTemplates");
 fs::path DRAFTS_DIR = (fs::current_path().append("drafts")).string();
 std::string CONVERTER = "None";
 
