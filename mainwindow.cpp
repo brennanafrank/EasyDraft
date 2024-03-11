@@ -3,6 +3,7 @@
 
 #include "file_operations.hpp"
 
+#include <QVBoxLayout>
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -21,7 +22,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , tagManager(new TagManager("/Users/aneeshpendyala/Desktop/Hellodjwqdjwoiq/config.json"))
+    , tagManager(new TagManager("/Users/aneeshpendyala/Desktop/Json Directory/config.json"))
     , placeholderManager(new PlaceholderManager(this))
 {
     ui->setupUi(this);
@@ -29,14 +30,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     std::vector<std::string> templates = template_list();
-
     for (int i = 0;  i < templates.size(); i++)
     {
         QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(templates[i]));
         ui->listWidget->addItem(item);
     }
-
     ui->lineEdit_2->setVisible(false);
+
+    // Allow for sorting
+
+    ui->listWidget->setSortingEnabled(true);
 
 
     placeholderManager->addDefaultPlaceholders();
@@ -46,7 +49,7 @@ MainWindow::MainWindow(QWidget *parent)
     fileSystemModel->setRootPath(QDir::currentPath());
     fileSystemModel->setTagManager(tagManager);
     ui->pathViewer->setModel(fileSystemModel);
-    ui->pathViewer->setRootIndex(fileSystemModel->index("/Users/aneeshpendyala/Desktop/Hellodjwqdjwoiq"));
+    ui->pathViewer->setRootIndex(fileSystemModel->index("/Users/aneeshpendyala/Desktop/Json Directory"));
 
 
     ui->pathViewer->setDragEnabled(true);
@@ -82,7 +85,16 @@ void MainWindow::changePage() {
 void MainWindow::on_actionBack_triggered()
 {
 
-    ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() - 1);
+    if (ui->stackedWidget->currentIndex() == 4) {
+
+        ui->stackedWidget->setCurrentWidget(ui->page_4);
+
+    }
+    else {
+
+        ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() - 1);
+
+    }
 
 }
 
@@ -109,7 +121,7 @@ void MainWindow::on_pushButton_4_clicked()
 void MainWindow::on_pushButton_3_clicked()
 {
 
-    changePage();
+    ui->stackedWidget->setCurrentWidget(ui->page_5);
 
 }
 
@@ -368,4 +380,53 @@ void MainWindow::deleteTag() {
     }
 }
 
+
+// When ascending is triggered
+
+void MainWindow::on_actionAscending_triggered()
+{
+    ui->listWidget->sortItems(Qt::AscendingOrder);
+
+}
+
+
+//Descnding triggered
+void MainWindow::on_actionDescending_triggered()
+{
+
+    ui->listWidget->sortItems(Qt::DescendingOrder);
+
+}
+
+
+void MainWindow::on_pushButton_6_clicked()
+{
+
+    changePage();
+
+    QFile fileView("/Users/aneeshpendyala/Desktop/Templates/oneq.docx");
+
+    /*for (int i = 0; i < filePathsForViewing.size(); i++) {
+
+        if (filePathsForViewing[i].find(ui->listWidget->currentItem()->text().toStdString() + ".docx") != std::string::npos) {
+
+            QFile fileView(QString::fromStdString(filePathsForViewing[i]));
+
+        }
+
+
+    }*/
+
+
+    if (!fileView.open(QIODevice::ReadOnly)) {
+
+        QMessageBox::information(0, "Info", fileView.errorString());
+
+    }
+
+    QTextStream readIn(&fileView);
+
+    ui->textBrowser->setText(readIn.readAll());
+
+}
 

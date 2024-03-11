@@ -27,6 +27,8 @@ set(PROJECT_SOURCES
         config.cpp
         config.hpp
         json.hpp
+        drafts.cpp
+        drafts.hpp
 
 )
 

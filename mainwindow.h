@@ -12,6 +12,8 @@ QT_BEGIN_NAMESPACE
 #include "customfilesystemmodel.h"
 #include <QListView>
 #include <QStringListModel>
+#include <vector>
+#include <string>
 
 
 
@@ -63,6 +65,12 @@ private slots:
 
 
 
+    void on_actionAscending_triggered();
+
+    void on_actionDescending_triggered();
+
+    void on_pushButton_6_clicked();
+
 private:
     Ui::MainWindow *ui;
     PlaceholderManager *placeholderManager;
@@ -72,6 +80,7 @@ private:
     TagManager *tagManager;
     QListView* listView;
     QStringListModel* model;
+    std::vector<std::string> filePathsForViewing;
 
 
 };
