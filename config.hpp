@@ -10,7 +10,6 @@ using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 // Define a custom type for a vector of integers
-typedef std::vector<std::vector<std::string>> ValueVector;
 typedef std::vector<std::pair<std::string, std::string>> PlaceholderPair;
 
 int read_config();

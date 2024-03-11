@@ -13,7 +13,7 @@ int create_draft_dir() {
 }
 
 // Funciton to create a draft
-int create_draft(std::string draft_name, ValueVector inputs) {
+int create_draft(std::string draft_name, PlaceholderPair inputs) {
     // Check for directory
     if (!fs::exists(DRAFTS_DIR)) {
         if (create_draft_dir() != 0) {
@@ -29,9 +29,10 @@ int create_draft(std::string draft_name, ValueVector inputs) {
 
     // Input info as .json file
     json draft_vector;
-    for (const auto& row : inputs) {
-        draft_vector.push_back(row);
+    for (const auto& pair : inputs) {
+        draft_vector[pair.first] = pair.second;
     }
+
 
     // Add input to file
     draft_file << draft_vector.dump(4);
@@ -41,18 +42,18 @@ int create_draft(std::string draft_name, ValueVector inputs) {
 }
 
 // Function to use a draft
-ValueVector use_draft(std::string draft_name) {
+PlaceholderPair use_draft(std::string draft_name) {
     // Check for directory
     if (!fs::exists(DRAFTS_DIR)) {
         if (create_draft_dir() != 0) {
-            return {{"-1"}};
+            return {{"error", "-1"}};
         }
     } 
     
     // Open the json file
     std::ifstream draft_file(DRAFTS_DIR / fs::path(draft_name).replace_extension(".json"));
     if (!draft_file.is_open()) {
-        return {{"-2"}};
+        return {{"error", "-2"}};
     }
     
     // Fill vector with json file info
@@ -61,13 +62,13 @@ ValueVector use_draft(std::string draft_name) {
     draft_file.close();
 
     // Convert json object to vector
-    ValueVector inputs;
-    for (const auto& row : draft_vector) {
-        inputs.push_back(row);
+    PlaceholderPair inputs;
+    for (const auto& item : draft_vector) {
+        inputs.push_back(std::make_pair(item[0], item[1]));
     }
 
     if (delete_draft(draft_name) != 0) {
-        return {{"-3"}};
+        return {{"error", "-3"}};
     }
     return inputs;
 }
