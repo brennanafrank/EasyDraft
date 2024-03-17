@@ -6,6 +6,15 @@
 #include "placeholdermanager.h"
 #include <QListView>
 #include <QStringListModel>
+#include <QLabel>
+#include <QTreeView>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
+#include <QMimeData>
+#include <QFormLayout>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -26,7 +35,7 @@ public:
     void createDynamicPlaceholders(const std::vector<std::pair<std::string, std::string>>& replacements);
     void clearWidgetsFromLayout(QLayout* layout);
     void updatePlaceholderValuesFromInputs();
-
+    void updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel);
 
 private:
     Ui::MainWindow *ui;

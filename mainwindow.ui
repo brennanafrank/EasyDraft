@@ -142,19 +142,6 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2"/>
      </widget>
-     <widget class="QPushButton" name="completeFillButton">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>530</y>
-        <width>100</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Complete</string>
-      </property>
-     </widget>
     </widget>
    </widget>
   </widget>

@@ -1,15 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "customfilesystemmodel.h"
-#include <QTreeView>
-#include <QInputDialog>
-#include <QMessageBox>
-#include <QDragEnterEvent>
-#include <QDragMoveEvent>
-#include <QDropEvent>
-#include <QMimeData>
-#include <QFormLayout>
-#include <QLabel>
+
+
 
 
 
@@ -57,9 +50,23 @@ MainWindow::MainWindow(QWidget *parent)
         {"Occupation", "Developer"},
         {"University", "Purdue"},
         {"Country", "USA"},
+        {"Age", "30"},
         {"Email", "michael@example.com"},
         {"Phone", "+1234567890"},
+        {"Language", "English"},
+        {"Hobby", "Reading"},
+        {"City", "Lafayette"},
+        {"Company", "Google"},
+        {"JobTitle", "Software Engineer"},
+        {"Degree", "Computer Science"},
+        {"Industry", "Technology"},
+        {"Experience", "5 years"},
+        {"Skill", "Programming"},
+        {"Interest", "Music"},
+        {"Hometown", "Chicago"},
+        {"Position", "Senior Developer"}
     };
+
     createDynamicPlaceholders(replacements);
 
 
@@ -247,12 +254,19 @@ void MainWindow::clearWidgetsFromLayout(QLayout* layout) {
     }
 }
 
+void MainWindow::updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel) {
+    int currentLength = lineEdit->text().length();
+    int maxLength = lineEdit->maxLength();
+    charCountLabel->setText(QString("%1/%2").arg(currentLength).arg(maxLength));
+}
 
 
 void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::string, std::string>>& replacements) {
     QWidget* contents = ui->scrollAreaWidgetContents;
     QFormLayout* layout = qobject_cast<QFormLayout*>(contents->layout());
-    connect(ui->completeFillButton, &QPushButton::clicked, this, &MainWindow::onCompleteFillButtonlicked);
+    QPushButton* completeFillButton = new QPushButton("Complete", ui->scrollAreaWidgetContents);
+    connect(completeFillButton, &QPushButton::clicked, this, &MainWindow::onCompleteFillButtonlicked);
+
     // If the layout already exists, clear all widgets from it
     this->replacements = replacements; // Update the class member variable
     if (layout) {
@@ -263,34 +277,59 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
         contents->setLayout(layout);
     }
 
+    int maxCharLimit = 20; // Example maximum character limit
+
     for (const auto& pair : replacements) {
         QLabel* label = new QLabel(QString::fromStdString(pair.first));
         QLineEdit* lineEdit = new QLineEdit(QString::fromStdString(pair.second));
-        layout->addRow(label, lineEdit);
+        lineEdit->setMaxLength(maxCharLimit); // Set the maximum character limit
+
+        // Character count label
+        QLabel* charCountLabel = new QLabel(QString("0/%1").arg(maxCharLimit));
+        updateCharCountLabel(lineEdit, charCountLabel); // Initial update
+
+
+        // Connect the textChanged signal to update the character count dynamically
+        connect(lineEdit, &QLineEdit::textChanged, this, [this, lineEdit, charCountLabel, maxCharLimit]() {
+            updateCharCountLabel(lineEdit, charCountLabel);
+        });
+
+
+        QHBoxLayout* rowLayout = new QHBoxLayout();
+        rowLayout->addWidget(lineEdit);
+        rowLayout->addWidget(charCountLabel);
+
+        layout->addRow(label, rowLayout);
     }
+    layout->addRow(completeFillButton);
 }
 
 
 void MainWindow::updatePlaceholderValuesFromInputs() {
-    QFormLayout *layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
+    QFormLayout* layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
     if (!layout) return;
 
-    // Temporary vector to hold updated values
     std::vector<std::pair<std::string, std::string>> updatedReplacements;
 
-    for (int i = 0; i < layout->rowCount(); ++i) {
-        // Assuming each row has a QLabel and QLineEdit
+    // Iterate through the form layout rows, except for the last one which is the 'Complete' button
+    for (int i = 0; i < layout->rowCount() - 1; ++i) {
+        // Get the label for the current row
         QLabel* label = qobject_cast<QLabel*>(layout->itemAt(i, QFormLayout::LabelRole)->widget());
-        QLineEdit* lineEdit = qobject_cast<QLineEdit*>(layout->itemAt(i, QFormLayout::FieldRole)->widget());
-        if (label && lineEdit) {
-            // Update the temporary vector with the new values
-            updatedReplacements.emplace_back(label->text().toStdString(), lineEdit->text().toStdString());
+
+        // Assume the QLineEdit is the first widget in the QHBoxLayout
+        QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
+        if (rowLayout && !rowLayout->isEmpty()) {
+            QLineEdit* lineEdit = qobject_cast<QLineEdit*>(rowLayout->itemAt(0)->widget());
+            if (lineEdit && label) {
+                // Update the temporary vector with the new values
+                updatedReplacements.emplace_back(label->text().toStdString(), lineEdit->text().toStdString());
+            }
         }
     }
 
-    // Update the class member variable with the new values
     replacements = updatedReplacements;
 }
+
 
 void MainWindow::onCompleteFillButtonlicked() {
     updatePlaceholderValuesFromInputs();
