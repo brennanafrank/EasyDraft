@@ -15,14 +15,4 @@ void move_to_trash(char* filename) {
     return;
 }
 
-void permanent_delete(char* filename) {
-     // Function to delete a template from the current directory
 
-    if (std::remove(filename) != 0) {
-        std::cout << "Error deleting file" << std::endl;
-    } else {
-        std::cout << "File deleted successfully" << std::endl;
-    }
-
-    return;
-}
