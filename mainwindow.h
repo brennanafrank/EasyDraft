@@ -71,6 +71,11 @@ private slots:
 
     void on_pushButton_6_clicked();
 
+
+    void on_pushButton_clicked();
+
+    void checkChange(const QString &text);
+
 private:
     Ui::MainWindow *ui;
     PlaceholderManager *placeholderManager;
@@ -81,6 +86,11 @@ private:
     QListView* listView;
     QStringListModel* model;
     std::vector<std::string> filePathsForViewing;
+
+
+
+    // This is for testing warning only; remove for later
+    bool warning;
 
 
 };

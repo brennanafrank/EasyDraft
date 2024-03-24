@@ -7,6 +7,7 @@
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QXmlStreamReader>
 #include <QPixmap>
 #include <QTreeView>
 
@@ -66,6 +67,29 @@ MainWindow::MainWindow(QWidget *parent)
     // Populate the combo box with existing placeholder names if any
     ui->placeholderComboBox->addItems(placeholderManager->getPlaceholderNames());
 
+
+    // Setting up all the fonts that a user can select
+    for (int j = 1; j <= 12; ++j) {
+
+        ui->fontSelector->addItem(QString::fromStdString(std::to_string(j)));
+
+    }
+
+    ui->ColorSelector->addItem("Red");
+    ui->ColorSelector->addItem("Blue");
+    ui->ColorSelector->addItem("Yellow");
+    ui->ColorSelector->addItem("Pink");
+    ui->ColorSelector->addItem("Purple");
+    ui->ColorSelector->addItem("Green");
+    ui->ColorSelector->addItem("Black");
+    ui->ColorSelector->addItem("White");
+
+
+    // Highlighting the name of the file we're at
+
+    QFont font("Arial", 20, QFont::Bold);
+
+    ui->label->setFont(font);
 }
 
 MainWindow::~MainWindow()
@@ -78,9 +102,6 @@ void MainWindow::changePage() {
     ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() + 1);
 
 }
-
-
-
 
 void MainWindow::on_actionBack_triggered()
 {
@@ -128,7 +149,18 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_pushButton_8_clicked()
 {
-    changePage();
+
+    if (warning) {
+
+        changePage();
+
+    }
+    else {
+
+        QMessageBox::critical(nullptr, "Error", "Text cannot be empty.");
+        ui->warningLine->setStyleSheet("QLineEdit { background-color: red; }");
+
+    }
 
 }
 
@@ -402,6 +434,8 @@ void MainWindow::on_actionDescending_triggered()
 void MainWindow::on_pushButton_6_clicked()
 {
 
+    // This is a work in progress code for reading a docx file
+
     changePage();
 
     QFile fileView("/Users/aneeshpendyala/Desktop/Templates/oneq.docx");
@@ -424,9 +458,34 @@ void MainWindow::on_pushButton_6_clicked()
 
     }
 
+
     QTextStream readIn(&fileView);
 
     ui->textBrowser->setText(readIn.readAll());
+
+    fileView.close();
+
+}
+
+void MainWindow::checkChange(const QString &text) {
+
+    if (!text.isEmpty()) {
+
+        warning = true;
+    }
+
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+
+    // From a qt forum to check if a line is edited
+    QObject::connect(ui->warningLine, &QLineEdit::textChanged, [&]() {
+        // Slot code
+        if (!ui->warningLine->text().isEmpty()) {
+            warning = true;
+        }
+    });
 
 }
 
