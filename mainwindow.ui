@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="page_2">
      <widget class="QPushButton" name="pushButton_4">
@@ -181,7 +181,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_8">
+     <widget class="QPushButton" name="submitPlace">
       <property name="geometry">
        <rect>
         <x>360</x>
@@ -341,7 +341,7 @@
        <string>Local</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_7">
+     <widget class="QPushButton" name="cloudButton">
       <property name="geometry">
        <rect>
         <x>350</x>

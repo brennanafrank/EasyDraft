@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include "file_operations.hpp"
+#include "cloud.hpp"
 
 #include <QVBoxLayout>
 #include <QInputDialog>
@@ -15,7 +16,6 @@
 
 // Q entry list
 // Q list widget
-
 //  Upload the file and return the file
 
 
@@ -143,24 +143,6 @@ void MainWindow::on_pushButton_3_clicked()
 {
 
     ui->stackedWidget->setCurrentWidget(ui->page_5);
-
-}
-
-
-void MainWindow::on_pushButton_8_clicked()
-{
-
-    if (warning) {
-
-        changePage();
-
-    }
-    else {
-
-        QMessageBox::critical(nullptr, "Error", "Text cannot be empty.");
-        ui->warningLine->setStyleSheet("QLineEdit { background-color: red; }");
-
-    }
 
 }
 
@@ -467,25 +449,46 @@ void MainWindow::on_pushButton_6_clicked()
 
 }
 
-void MainWindow::checkChange(const QString &text) {
-
-    if (!text.isEmpty()) {
-
-        warning = true;
-    }
-
-}
-
 void MainWindow::on_pushButton_clicked()
 {
 
     // From a qt forum to check if a line is edited
-    QObject::connect(ui->warningLine, &QLineEdit::textChanged, [&]() {
+    /*QObject::connect(ui->warningLine, &QLineEdit::textChanged, [&]() {
         // Slot code
         if (!ui->warningLine->text().isEmpty()) {
             warning = true;
         }
-    });
+    });*/
 
+    if (!ui->warningLine->text().isEmpty()) {
+
+        warning = true;
+
+    }
+
+}
+
+void MainWindow::on_submitPlace_clicked()
+{
+
+    if (warning) {
+
+        changePage();
+
+    }
+    else {
+
+        QMessageBox::critical(nullptr, "Error", "Text cannot be empty.");
+        ui->warningLine->setStyleSheet("QLineEdit { background-color: red; }");
+
+    }
+
+}
+
+
+
+void MainWindow::on_cloudButton_clicked()
+{
+    int a = GD_create_easydraft();
 }
 

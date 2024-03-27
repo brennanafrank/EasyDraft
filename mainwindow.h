@@ -41,8 +41,6 @@ private slots:
 
     void on_pushButton_3_clicked();
 
-    void on_pushButton_8_clicked();
-
     void on_pushButton_5_clicked();
 
     void on_actionTrash_2_triggered();
@@ -63,18 +61,17 @@ private slots:
 
     void onTagComboBoxCurrentIndexChanged(const QString &tag);
 
-
-
     void on_actionAscending_triggered();
 
     void on_actionDescending_triggered();
 
     void on_pushButton_6_clicked();
 
-
     void on_pushButton_clicked();
 
-    void checkChange(const QString &text);
+    void on_submitPlace_clicked();
+
+    void on_cloudButton_clicked();
 
 private:
     Ui::MainWindow *ui;
