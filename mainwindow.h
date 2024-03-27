@@ -55,6 +55,7 @@ private:
     QSpinBox *pageSpinBox;
     int currentPageIndex; // Record the index before page value change for onPageChanged function
     std::string docPath;
+
 protected:
 
 private slots:

@@ -386,10 +386,44 @@ void MainWindow::updatePlaceholderValuesFromReplacements(int currentPage) {
     }
 }
 
+
+
 void MainWindow::onCompleteFillButtonlicked() {
     updateReplacementsFromInputs(pageSpinBox->value());
-    saveJsonToFile(replacements, "/Users/michael/Developer/EasyDraft/testDoc.json");
-    modifyDocument(docPath, vectorToJson(replacements));
+
+    // Ask the user for the save path
+    QString dirPath = QFileDialog::getExistingDirectory(this, tr("Select Save Directory"), QDir::homePath());
+    if (dirPath.isEmpty()) {
+        return;
+    }
+
+    // Ask the user for the file name prefix
+    bool ok;
+    QString prefix = QInputDialog::getText(this, tr("File Name Prefix"), tr("Enter the file name prefix:"), QLineEdit::Normal, "modified", &ok);
+    if (!ok || prefix.isEmpty()) {
+        return;
+    }
+
+    modifyDocument(docPath, vectorToJson(replacements), dirPath, prefix);
+
+    // Ask the user if they want to save the placeholder values to a JSON file
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Save Placeholder Values",
+                                                              "Do you want to save the placeholder values to a JSON file for future use?",
+                                                              QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        QString selectedFilter;
+        QString filePath = QFileDialog::getSaveFileName(this, "Save JSON File", QDir::homePath(), "JSON Files (*.json)", &selectedFilter);
+
+        if (!filePath.isEmpty()) {
+            try {
+                saveJsonToFile(replacements, filePath.toStdString());
+                QMessageBox::information(this, "Success", "Placeholder values saved to " + filePath);
+            } catch (const std::exception& e) {
+                QMessageBox::warning(this, "Error", QString::fromStdString(e.what()));
+            }
+        }
+    }
 }
 
 
@@ -405,14 +439,33 @@ void MainWindow::onFillFromJsonClicked()
     QString filePath = QFileDialog::getOpenFileName(this, tr("Open JSON File"), QDir::homePath(), tr("JSON Files (*.json)"));
     if (!filePath.isEmpty()) {
         try {
-            replacements = readJsonFromFile(filePath.toStdString());
+            std::vector<std::pair<std::string, std::vector<std::string>>> jsonReplacements = readJsonFromFile(filePath.toStdString());
+
+            // Check if the keys in the JSON file match the keys in replacements
+            std::vector<std::string> jsonKeys, replacementsKeys;
+            for (const auto& pair : jsonReplacements) {
+                jsonKeys.push_back(pair.first);
+            }
+            for (const auto& pair : replacements) {
+                replacementsKeys.push_back(pair.first);
+            }
+
+            std::sort(jsonKeys.begin(), jsonKeys.end());
+            std::sort(replacementsKeys.begin(), replacementsKeys.end());
+
+            if (jsonKeys != replacementsKeys) {
+                QMessageBox::warning(this, tr("Error"), tr("The keys in the JSON file do not match the placeholders in the document."));
+                return;
+            }
+
+            // If the keys match, update the placeholder values
+            replacements = jsonReplacements;
             updatePlaceholderValuesFromReplacements(currentPageIndex);
             QMessageBox::information(this, tr("Fill from JSON"), tr("Placeholders populated from JSON file."));
         } catch (const std::exception& e) {
             QMessageBox::warning(this, tr("Error"), QString::fromStdString(e.what()));
         }
     }
-
 }
 
 void MainWindow::onChooseDocPathClicked()

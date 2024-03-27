@@ -92,7 +92,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>> readJsonFromFile(c
 }
 
 
-void modifyDocument(const std::string& docPath, const std::string& replacementsJson) {
+void modifyDocument(const std::string& docPath, const std::string& replacementsJson, const QString& savePath, const QString& fileNamePrefix) {
     std::string tempJsonPath = "./tempreplacements.json";
 
     std::ofstream outFile(tempJsonPath);
@@ -103,7 +103,8 @@ void modifyDocument(const std::string& docPath, const std::string& replacementsJ
     outFile << replacementsJson;
     outFile.close();
 
-    std::string command = "/Users/michael/anaconda3/bin/python /Users/michael/Developer/EasyDraft/modify_docx.py \"" + docPath + "\" \"" + tempJsonPath + "\"";
+    // Construct the command with user-specified save path and file name prefix
+    std::string command = "/Users/michael/anaconda3/bin/python /Users/michael/Developer/EasyDraft/modify_docx.py \"" + docPath + "\" \"" + tempJsonPath + "\" \"" + savePath.toStdString() + "\" \"" + fileNamePrefix.toStdString() + "\"";
 
     int result = std::system(command.c_str());
 
