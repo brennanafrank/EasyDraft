@@ -25,7 +25,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         tagmanager.h tagmanager.cpp
         customfilesystemmodel.h customfilesystemmodel.cpp
-        placeholdermanager.h placeholdermanager.cpp
+
         nlohmann/json_fwd.hpp nlohmann/json.hpp
         parsing.h
         parsing.cpp

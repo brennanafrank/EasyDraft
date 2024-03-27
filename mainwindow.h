@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include "tagmanager.h"
-#include "placeholdermanager.h"
 #include <QListView>
 #include <QStringListModel>
 #include <QLabel>
@@ -50,7 +49,7 @@ private:
     TagManager *tagManager;
     QListView* listView;
     QStringListModel* model;
-    PlaceholderManager *placeholderManager;
+
     std::vector<std::pair<std::string, std::vector<std::string>>> replacements;
     QSpinBox *pageSpinBox;
     int currentPageIndex; // Record the index before page value change for onPageChanged function
@@ -61,9 +60,7 @@ protected:
 private slots:
     void onAddTagButtonClicked();
     void onTagComboBoxCurrentIndexChanged(const QString &tag);
-    void onAddPlaceholderClicked();
-    void onPlaceholderSelected(int index);
-    void onDeletePlaceholderClicked();
+
     void onCompleteFillButtonlicked();
     void onPageChanged(int page);
     void onFillFromJsonClicked();
