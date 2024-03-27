@@ -366,51 +366,14 @@ void MainWindow::updatePlaceholderValuesFromInputs(int currentPage) {
     // }
 }
 
-// void MainWindow::updatePlaceholderValuesFromInputs(int currentPage) {
-//     QFormLayout* layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
-//     if (!layout) return;
-
-//     std::vector<std::pair<std::string, std::string>> updatedReplacements;
-
-//     for (int i = 0; i < layout->rowCount() - 2; ++i) {
-//         // Get the label for the current row
-//         QLabel* label = qobject_cast<QLabel*>(layout->itemAt(i, QFormLayout::LabelRole)->widget());
-
-//         // Assume the QLineEdit is the first widget in the QHBoxLayout
-//         QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
-//         if (rowLayout && !rowLayout->isEmpty()) {
-//             QLineEdit* lineEdit = qobject_cast<QLineEdit*>(rowLayout->itemAt(0)->widget());
-//             if (lineEdit && label) {
-//                 // Update the temporary vector with the new values
-//                 updatedReplacements.emplace_back(label->text().toStdString(), lineEdit->text().toStdString());
-//             }
-//         }
-//     }
-
-//     // Resize replacements vectors to accommodate new page data if needed
-//     for (auto& pair : replacements) {
-//         pair.second.resize(std::max(pair.second.size(), static_cast<size_t>(currentPage)));
-//     }
-
-//     // Update replacements with the new values
-//     for (int i = 0; i < updatedReplacements.size(); ++i) {
-//         replacements[i].second[currentPage - 1] = updatedReplacements[i].second;
-//     }
-
-//     // for (const auto& pair : replacements) {
-//     //     qDebug() << "Key:" << QString::fromStdString(pair.first);
-//     //     qDebug() << "Values:";
-//     //     for (const auto& value : pair.second) {
-//     //         qDebug() << QString::fromStdString(value);
-//     //     }
-//     // }
-// }
-
 
 
 void MainWindow::onCompleteFillButtonlicked() {
     updatePlaceholderValuesFromInputs(pageSpinBox->value());
     saveJsonToFile(replacements, "/Users/michael/Developer/EasyDraft/testDoc.json");
+    std::string docPath = "/Users/michael/Developer/EasyDraft/test_doc.docx";
+    std::string JsonPath = "/Users/michael/Developer/EasyDraft/testDoc.json";
+    modifyDocument(docPath, JsonPath);
 }
 
 

@@ -29,6 +29,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         nlohmann/json_fwd.hpp nlohmann/json.hpp
         parsing.h
         parsing.cpp
+        modify_docx.py
 
 
 
