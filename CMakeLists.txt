@@ -31,6 +31,7 @@ set(PROJECT_SOURCES
         config.cpp
         config.hpp
         json.hpp
+        user-profiles.cpp
 
 )
 
