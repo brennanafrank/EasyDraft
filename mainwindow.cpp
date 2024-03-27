@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->placeholderComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onPlaceholderSelected(int)));
     connect(ui->deletePlaceholderButton, &QPushButton::clicked, this, &MainWindow::onDeletePlaceholderClicked);
 
+    connect(ui->fillFromJsonButton, &QPushButton::clicked, this, &MainWindow::onFillFromJsonClicked);
 
     // Populate the combo box with existing placeholder names if any
     ui->placeholderComboBox->addItems(placeholderManager->getPlaceholderNames());
@@ -46,7 +47,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Test dynamically generate placeholders
     std::string filePath = "/Users/michael/Developer/EasyDraft/testDoc.json";
-    replacements = readJsonFromFile(filePath);;
+    std::string docPath = "/Users/michael/Developer/EasyDraft/test_doc.docx";
+    replacements = findPlaceholdersInDocument(docPath);
     createDynamicPlaceholders(replacements);
 }
 
@@ -243,9 +245,9 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
         QLabel* label = new QLabel(QString::fromStdString(pair.first));
         QLineEdit* lineEdit = new QLineEdit(); // No initial text, will be set by onPageChanged
         lineEdit->setMaxLength(maxCharLimit);
-        if (!pair.second.empty()) {
-            lineEdit->setText(QString::fromStdString(pair.second[0]));
-        }
+        // if (!pair.second.empty()) {
+        //     lineEdit->setText(QString::fromStdString(pair.second[0]));
+        // }
 
         // Character count label
         QLabel* charCountLabel = new QLabel(QString("0/%1").arg(maxCharLimit));
@@ -295,16 +297,16 @@ void MainWindow::onPageChanged(int newPage) {
     currentPageIndex = pageSpinBox->value();
 
 
-    for (int i = 0; i < replacements.size(); ++i) {
-        QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
-        if (rowLayout && !rowLayout->isEmpty()) {
-            QLineEdit* lineEdit = qobject_cast<QLineEdit*>(rowLayout->itemAt(0)->widget());
-            if (lineEdit) {
-                lineEdit->setText(QString::fromStdString(replacements[i].second[newPage - 1]));
-            }
-        }
-    }
-
+    // for (int i = 0; i < replacements.size(); ++i) {
+    //     QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
+    //     if (rowLayout && !rowLayout->isEmpty()) {
+    //         QLineEdit* lineEdit = qobject_cast<QLineEdit*>(rowLayout->itemAt(0)->widget());
+    //         if (lineEdit) {
+    //             lineEdit->setText(QString::fromStdString(replacements[i].second[newPage - 1]));
+    //         }
+    //     }
+    // }
+    updatePlaceholderValuesFromReplacements(currentPageIndex);
 }
 
 
@@ -366,7 +368,30 @@ void MainWindow::updatePlaceholderValuesFromInputs(int currentPage) {
     // }
 }
 
+void MainWindow::updatePlaceholderValuesFromReplacements(int currentPage) {
+    QFormLayout* layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
+    if (!layout) return;
 
+    // Resize replacements vectors to accommodate new page data if needed
+    for (auto& pair : replacements) {
+        pair.second.resize(std::max(pair.second.size(), static_cast<size_t>(currentPage)));
+    }
+
+    // Update QLineEdit widgets with the values from replacements
+    for (int i = 0; i < layout->rowCount() - 2; ++i) {
+        QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
+        if (rowLayout && !rowLayout->isEmpty()) {
+            QLineEdit* lineEdit = qobject_cast<QLineEdit*>(rowLayout->itemAt(0)->widget());
+            if (lineEdit) {
+                if (currentPage - 1 < replacements[i].second.size()) {
+                    lineEdit->setText(QString::fromStdString(replacements[i].second[currentPage - 1]));
+                } else {
+                    lineEdit->clear();
+                }
+            }
+        }
+    }
+}
 
 void MainWindow::onCompleteFillButtonlicked() {
     updatePlaceholderValuesFromInputs(pageSpinBox->value());
@@ -376,6 +401,22 @@ void MainWindow::onCompleteFillButtonlicked() {
     modifyDocument(docPath, JsonPath);
 }
 
+
+
+void MainWindow::onFillFromJsonClicked()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Open JSON File"), QDir::homePath(), tr("JSON Files (*.json)"));
+    if (!filePath.isEmpty()) {
+        try {
+            replacements = readJsonFromFile(filePath.toStdString());
+            updatePlaceholderValuesFromReplacements(currentPageIndex);
+            QMessageBox::information(this, tr("Fill from JSON"), tr("Placeholders populated from JSON file."));
+        } catch (const std::exception& e) {
+            QMessageBox::warning(this, tr("Error"), QString::fromStdString(e.what()));
+        }
+    }
+
+}
 
 MainWindow::~MainWindow()
 {

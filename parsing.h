@@ -16,5 +16,6 @@ void callPythonScript(const std::string& docPath, const std::string& replacement
 void modifyDocument(const std::string& docPath, const std::string& replacementsJson);
 void saveJsonToFile(const std::vector<std::pair<std::string, std::vector<std::string>>>& replacements, const std::string& filepath);
 std::vector<std::pair<std::string, std::vector<std::string>>> readJsonFromFile(const std::string& filepath);
+std::vector<std::pair<std::string, std::vector<std::string>>> findPlaceholdersInDocument(const std::string& docPath);
 
 #endif // PARSING_H

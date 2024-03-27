@@ -17,6 +17,7 @@
 #include <QFormLayout>
 #include <QSpinBox>
 #include "parsing.h"
+#include <QFileDialog>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -38,6 +39,7 @@ public:
     void clearWidgetsFromLayout(QLayout* layout);
     void updatePlaceholderValuesFromInputs(int page);
     void updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel);
+    void updatePlaceholderValuesFromReplacements(int currentPage);
 
 private:
     Ui::MainWindow *ui;
@@ -62,5 +64,6 @@ private slots:
     void onDeletePlaceholderClicked();
     void onCompleteFillButtonlicked();
     void onPageChanged(int page);
+    void onFillFromJsonClicked();
 };
 #endif // MAINWINDOW_H

@@ -92,51 +92,31 @@ std::vector<std::pair<std::string, std::vector<std::string>>> readJsonFromFile(c
 }
 
 
-// void callPythonScript(const std::string& docPath, const std::string& replacementsPath) {
-//     std::string command = "python modify_docx.py " + docPath + " " + replacementsPath;
-//     system(command.c_str());
-// }
-
-// void modifyDocument(const std::string& docPath, const std::string& replacementsJson, const std::string& tempJsonPath) {
-//     std::ofstream outFile(tempJsonPath);
-//     if (!outFile) {
-//         std::cerr << "Error opening file for writing: " << tempJsonPath << std::endl;
-//         return;
-//     }
-//     outFile << replacementsJson;
-//     outFile.close();
-
-//     callPythonScript(docPath, tempJsonPath);
-
-//     std::remove(tempJsonPath.c_str());
-// }
-
-
-// void modifyDocument(const std::string& docPath, const std::string& replacementsJson) {
-//     QProcess process;
-//     process.setProgram("python");
-//     process.setArguments({"/Users/michael/Developer/EasyDraft/modify_docx.py", QString::fromStdString(docPath), QString::fromStdString(replacementsJson)});
-
-//     if (!process.startDetached()) {
-//         qDebug() << "Failed to start Python script:" << process.errorString();
-//         return;
-//     }
-
-//     process.waitForFinished(-1);
-//     if (process.exitCode() != 0) {
-//         qDebug() << "Python script failed:" << process.readAllStandardError();
-//     }
-// }
 
 void modifyDocument(const std::string& docPath, const std::string& replacementsJson) {
-    // 构建命令行字符串
     std::string command = "/Users/michael/anaconda3/bin/python /Users/michael/Developer/EasyDraft/modify_docx.py \"" + docPath + "\" \"" + replacementsJson + "\"";
 
-    // 调用system函数执行Python脚本
     int result = std::system(command.c_str());
 
     if (result != 0) {
-        // 根据需要处理错误
         std::cerr << "Python script failed with exit code " << result << std::endl;
     }
+}
+
+std::vector<std::pair<std::string, std::vector<std::string>>> findPlaceholdersInDocument(const std::string& docPath) {
+    std::string command = "/Users/michael/anaconda3/bin/python /Users/michael/Developer/EasyDraft/findPlaceholders.py \"" + docPath + "\"";
+    std::array<char, 128> buffer;
+    std::string result;
+
+
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(command.c_str(), "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+
+    return jsonToVector(result);
 }
