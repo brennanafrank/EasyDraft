@@ -65,5 +65,6 @@ private slots:
     void onPageChanged(int page);
     void onFillFromJsonClicked();
     void onChooseDocPathClicked();
+    void onSaveDraftClicked();
 };
 #endif // MAINWINDOW_H

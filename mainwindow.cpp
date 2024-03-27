@@ -145,8 +145,16 @@ void MainWindow::deleteTag() {
 void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::string, std::vector<std::string>>>& replacementsm, int maxCharLimit) {
     QWidget* contents = ui->scrollAreaWidgetContents;
     QFormLayout* layout = qobject_cast<QFormLayout*>(contents->layout());
+    // Create a horizontal layout for the buttons
+    QHBoxLayout* buttonLayout = new QHBoxLayout;
+
+    QPushButton* saveDraftButton = new QPushButton("Save Draft", ui->scrollAreaWidgetContents);
+    connect(saveDraftButton, &QPushButton::clicked, this, &MainWindow::onSaveDraftClicked);
+    buttonLayout->addWidget(saveDraftButton);
+
     QPushButton* completeFillButton = new QPushButton("Complete", ui->scrollAreaWidgetContents);
     connect(completeFillButton, &QPushButton::clicked, this, &MainWindow::onCompleteFillButtonlicked);
+    buttonLayout->addWidget(completeFillButton);
 
     // If the layout already exists, clear all widgets from it
     if (layout) {
@@ -193,9 +201,6 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
 
     // Add page label and spin box
     QLabel* pageLabel = new QLabel("Page:");
-
-    // ui->pageSpinBox->setMinimum(1);
-
     pageSpinBox = new QSpinBox(contents);
     pageSpinBox->setMinimum(1);
     connect(pageSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onPageChanged);
@@ -203,10 +208,11 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
     QHBoxLayout* pageLayout = new QHBoxLayout();
     pageLayout->addWidget(pageLabel);
 
+
     pageLayout->addWidget(pageSpinBox);
     layout->addRow(pageLayout);
 
-    layout->addRow(completeFillButton);
+    layout->addRow(buttonLayout);
 }
 
 
@@ -412,6 +418,21 @@ void MainWindow::onChooseDocPathClicked()
             QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
         } catch (const std::exception& e) {
             QMessageBox::warning(this, tr("Error"), QString::fromStdString(e.what()));
+        }
+    }
+}
+
+void MainWindow::onSaveDraftClicked() {
+    updateReplacementsFromInputs(pageSpinBox->value());
+    QString selectedFilter;
+    QString filePath = QFileDialog::getSaveFileName(this, "Save JSON File", QDir::homePath(), "JSON Files (*.json)", &selectedFilter);
+
+    if (!filePath.isEmpty()) {
+        try {
+            saveJsonToFile(replacements, filePath.toStdString());
+            QMessageBox::information(this, "Success", "Placeholder values saved to " + filePath);
+        } catch (const std::exception& e) {
+            QMessageBox::warning(this, "Error", QString::fromStdString(e.what()));
         }
     }
 }
