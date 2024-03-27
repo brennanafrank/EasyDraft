@@ -21,6 +21,7 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        cloud.hpp
         ${TS_FILES}
         file_operations.cpp
         file_operations.hpp
