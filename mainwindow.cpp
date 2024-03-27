@@ -44,33 +44,15 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // Test dynamically generate placeholders.
-    std::vector<std::pair<std::string, std::string>> replacements = {
-        {"Name", "Michael"},
-        {"Address", "HK"},
-        {"Occupation", "Developer"},
-        {"University", "Purdue"},
-        {"Country", "USA"},
-        {"Age", "30"},
-        {"Email", "michael@example.com"},
-        {"Phone", "+1234567890"},
-        {"Language", "English"},
-        {"Hobby", "Reading"},
-        {"City", "Lafayette"},
-        {"Company", "Google"},
-        {"JobTitle", "Software Engineer"},
-        {"Degree", "Computer Science"},
-        {"Industry", "Technology"},
-        {"Experience", "5 years"},
-        {"Skill", "Programming"},
-        {"Interest", "Music"},
-        {"Hometown", "Chicago"},
-        {"Position", "Senior Developer"}
+    std::vector<std::pair<std::string, std::vector<std::string>>> temp_replacements = {
+        {"Name", {"Michael", "Sarah", "Alex",}},
+        {"Address", {"NY", "LA", "HK"}},
+        {"Phone", {"123456", "654321", "987654"}}
     };
 
+    replacements = temp_replacements;
+
     createDynamicPlaceholders(replacements);
-
-
-
 }
 
 
@@ -236,6 +218,84 @@ void MainWindow::onDeletePlaceholderClicked() {
 }
 
 
+void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::string, std::vector<std::string>>>& replacements) {
+    QWidget* contents = ui->scrollAreaWidgetContents;
+    QFormLayout* layout = qobject_cast<QFormLayout*>(contents->layout());
+    QPushButton* completeFillButton = new QPushButton("Complete", ui->scrollAreaWidgetContents);
+    connect(completeFillButton, &QPushButton::clicked, this, &MainWindow::onCompleteFillButtonlicked);
+
+    // If the layout already exists, clear all widgets from it
+    if (layout) {
+        clearWidgetsFromLayout(layout);
+    } else {
+        // If no layout exists, create a new one
+        layout = new QFormLayout(contents);
+        contents->setLayout(layout);
+    }
+
+    int maxCharLimit = 20; // Example maximum character limit
+
+    for (const auto& pair : replacements) {
+        QLabel* label = new QLabel(QString::fromStdString(pair.first));
+        QLineEdit* lineEdit = new QLineEdit(); // No initial text, will be set by onPageChanged
+        lineEdit->setMaxLength(maxCharLimit);
+
+        // Character count label
+        QLabel* charCountLabel = new QLabel(QString("0/%1").arg(maxCharLimit));
+        updateCharCountLabel(lineEdit, charCountLabel); // Initial update
+
+        // Connect the textChanged signal to update the character count dynamically
+        connect(lineEdit, &QLineEdit::textChanged, this, [this, lineEdit, charCountLabel, maxCharLimit]() {
+            updateCharCountLabel(lineEdit, charCountLabel);
+        });
+
+        QHBoxLayout* rowLayout = new QHBoxLayout();
+        rowLayout->addWidget(lineEdit);
+        rowLayout->addWidget(charCountLabel);
+
+        layout->addRow(label, rowLayout);
+    }
+
+
+    // Add page label and spin box
+    QLabel* pageLabel = new QLabel("Page:");
+
+    // ui->pageSpinBox->setMinimum(1);
+
+    pageSpinBox = new QSpinBox(contents);
+    pageSpinBox->setMinimum(1);
+    connect(pageSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onPageChanged);
+
+
+
+
+    QHBoxLayout* pageLayout = new QHBoxLayout();
+    pageLayout->addWidget(pageLabel);
+
+    pageLayout->addWidget(pageSpinBox);
+    layout->addRow(pageLayout);
+
+    layout->addRow(completeFillButton);
+}
+
+void MainWindow::onPageChanged(int page) {
+    QFormLayout* layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
+    if (!layout) return;
+
+    // Update line edits with data for the selected page
+    for (int i = 0; i < replacements.size(); ++i) {
+        QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
+        if (rowLayout && !rowLayout->isEmpty()) {
+            QLineEdit* lineEdit = qobject_cast<QLineEdit*>(rowLayout->itemAt(0)->widget());
+            if (lineEdit) {
+                lineEdit->setText(QString::fromStdString(replacements[i].second[page - 1]));
+            }
+        }
+    }
+}
+
+
+// have not verify yet
 void MainWindow::clearWidgetsFromLayout(QLayout* layout) {
     QFormLayout* formLayout = qobject_cast<QFormLayout*>(layout);
     if (!formLayout) return;
@@ -261,48 +321,7 @@ void MainWindow::updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabe
 }
 
 
-void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::string, std::string>>& replacements) {
-    QWidget* contents = ui->scrollAreaWidgetContents;
-    QFormLayout* layout = qobject_cast<QFormLayout*>(contents->layout());
-    QPushButton* completeFillButton = new QPushButton("Complete", ui->scrollAreaWidgetContents);
-    connect(completeFillButton, &QPushButton::clicked, this, &MainWindow::onCompleteFillButtonlicked);
 
-    // If the layout already exists, clear all widgets from it
-    this->replacements = replacements; // Update the class member variable
-    if (layout) {
-        clearWidgetsFromLayout(layout);
-    } else {
-        // If no layout exists, create a new one
-        layout = new QFormLayout(contents);
-        contents->setLayout(layout);
-    }
-
-    int maxCharLimit = 20; // Example maximum character limit
-
-    for (const auto& pair : replacements) {
-        QLabel* label = new QLabel(QString::fromStdString(pair.first));
-        QLineEdit* lineEdit = new QLineEdit(QString::fromStdString(pair.second));
-        lineEdit->setMaxLength(maxCharLimit); // Set the maximum character limit
-
-        // Character count label
-        QLabel* charCountLabel = new QLabel(QString("0/%1").arg(maxCharLimit));
-        updateCharCountLabel(lineEdit, charCountLabel); // Initial update
-
-
-        // Connect the textChanged signal to update the character count dynamically
-        connect(lineEdit, &QLineEdit::textChanged, this, [this, lineEdit, charCountLabel, maxCharLimit]() {
-            updateCharCountLabel(lineEdit, charCountLabel);
-        });
-
-
-        QHBoxLayout* rowLayout = new QHBoxLayout();
-        rowLayout->addWidget(lineEdit);
-        rowLayout->addWidget(charCountLabel);
-
-        layout->addRow(label, rowLayout);
-    }
-    layout->addRow(completeFillButton);
-}
 
 
 void MainWindow::updatePlaceholderValuesFromInputs() {
@@ -311,8 +330,7 @@ void MainWindow::updatePlaceholderValuesFromInputs() {
 
     std::vector<std::pair<std::string, std::string>> updatedReplacements;
 
-    // Iterate through the form layout rows, except for the last one which is the 'Complete' button
-    for (int i = 0; i < layout->rowCount() - 1; ++i) {
+    for (int i = 0; i < layout->rowCount() - 2; ++i) {
         // Get the label for the current row
         QLabel* label = qobject_cast<QLabel*>(layout->itemAt(i, QFormLayout::LabelRole)->widget());
 
@@ -327,16 +345,29 @@ void MainWindow::updatePlaceholderValuesFromInputs() {
         }
     }
 
-    replacements = updatedReplacements;
-}
+    // Resize replacements vectors to accommodate new page data if needed
+    int currentPage = pageSpinBox->value();
+    for (auto& pair : replacements) {
+        pair.second.resize(std::max(pair.second.size(), static_cast<size_t>(currentPage)));
+    }
 
+    // Update replacements with the new values
+    for (int i = 0; i < updatedReplacements.size(); ++i) {
+        replacements[i].second[currentPage - 1] = updatedReplacements[i].second;
+    }
+
+    // for (const auto& pair : replacements) {
+    //     qDebug() << "Key:" << QString::fromStdString(pair.first);
+    //     qDebug() << "Values:";
+    //     for (const auto& value : pair.second) {
+    //         qDebug() << QString::fromStdString(value);
+    //     }
+    // }
+}
 
 void MainWindow::onCompleteFillButtonlicked() {
     updatePlaceholderValuesFromInputs();
-    // for debug
-    for (const auto &pair : replacements) {
-        qDebug() << QString::fromStdString(pair.first) << ": " << QString::fromStdString(pair.second);
-    }
+    std::string replacementsJson = vectorToJson(replacements);
 }
 
 

@@ -15,6 +15,8 @@
 #include <QDropEvent>
 #include <QMimeData>
 #include <QFormLayout>
+#include <QSpinBox>
+#include "parsing.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,7 +34,7 @@ public:
     QString getCurrentSelectedFilePath();
     void displayFilesForTag(const QString &tag);
 
-    void createDynamicPlaceholders(const std::vector<std::pair<std::string, std::string>>& replacements);
+    void createDynamicPlaceholders(const std::vector<std::pair<std::string, std::vector<std::string>>>& replacements);
     void clearWidgetsFromLayout(QLayout* layout);
     void updatePlaceholderValuesFromInputs();
     void updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel);
@@ -47,8 +49,8 @@ private:
     QListView* listView;
     QStringListModel* model;
     PlaceholderManager *placeholderManager;
-    std::vector<std::pair<std::string, std::string>> replacements;
-
+    std::vector<std::pair<std::string, std::vector<std::string>>> replacements;
+    QSpinBox *pageSpinBox;
 protected:
 
 private slots:
@@ -58,5 +60,6 @@ private slots:
     void onPlaceholderSelected(int index);
     void onDeletePlaceholderClicked();
     void onCompleteFillButtonlicked();
+    void onPageChanged(int page);
 };
 #endif // MAINWINDOW_H

@@ -1,6 +1,7 @@
 // DocumentModifier.cpp
 #include "parsing.h"
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <cstdlib>
 
