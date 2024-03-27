@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    currentPageIndex = 1;
     placeholderManager->addDefaultPlaceholders();
     placeholderManager->loadPlaceholders();
 
@@ -43,15 +44,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->placeholderComboBox->addItems(placeholderManager->getPlaceholderNames());
 
 
-    // Test dynamically generate placeholders.
-    std::vector<std::pair<std::string, std::vector<std::string>>> temp_replacements = {
-        {"Name", {"Michael", "Sarah", "Alex",}},
-        {"Address", {"NY", "LA", "HK"}},
-        {"Phone", {"123456", "654321", "987654"}}
-    };
-
-    replacements = temp_replacements;
-
+    // Test dynamically generate placeholders
+    std::string filePath = "/Users/michael/Developer/EasyDraft/testDoc.json";
+    replacements = readJsonFromFile(filePath);;
     createDynamicPlaceholders(replacements);
 }
 
@@ -233,12 +228,24 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
         contents->setLayout(layout);
     }
 
-    int maxCharLimit = 20; // Example maximum character limit
+    // debug
+    // for (const auto& pair : replacements) {
+    //     qDebug() << "Key:" << QString::fromStdString(pair.first);
+    //     qDebug() << "Values (type:" << QString::fromStdString(typeid(pair.second).name()) << ")";
+    //     for (const auto& value : pair.second) {
+    //         qDebug() << QString::fromStdString(value);
+    //     }
+    // }
 
+    int maxCharLimit = 20; // Example maximum character limit
+    int keyIndex = 0;
     for (const auto& pair : replacements) {
         QLabel* label = new QLabel(QString::fromStdString(pair.first));
         QLineEdit* lineEdit = new QLineEdit(); // No initial text, will be set by onPageChanged
         lineEdit->setMaxLength(maxCharLimit);
+        if (!pair.second.empty()) {
+            lineEdit->setText(QString::fromStdString(pair.second[0]));
+        }
 
         // Character count label
         QLabel* charCountLabel = new QLabel(QString("0/%1").arg(maxCharLimit));
@@ -256,7 +263,6 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
         layout->addRow(label, rowLayout);
     }
 
-
     // Add page label and spin box
     QLabel* pageLabel = new QLabel("Page:");
 
@@ -265,9 +271,6 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
     pageSpinBox = new QSpinBox(contents);
     pageSpinBox->setMinimum(1);
     connect(pageSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onPageChanged);
-
-
-
 
     QHBoxLayout* pageLayout = new QHBoxLayout();
     pageLayout->addWidget(pageLabel);
@@ -278,24 +281,33 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
     layout->addRow(completeFillButton);
 }
 
-void MainWindow::onPageChanged(int page) {
+
+
+void MainWindow::onPageChanged(int newPage) {
     QFormLayout* layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
     if (!layout) return;
 
-    // Update line edits with data for the selected page
+    for (auto& pair : replacements) {
+        pair.second.resize(std::max(pair.second.size(), static_cast<size_t>(newPage)));
+    }
+
+    updatePlaceholderValuesFromInputs(currentPageIndex);
+    currentPageIndex = pageSpinBox->value();
+
+
     for (int i = 0; i < replacements.size(); ++i) {
         QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
         if (rowLayout && !rowLayout->isEmpty()) {
             QLineEdit* lineEdit = qobject_cast<QLineEdit*>(rowLayout->itemAt(0)->widget());
             if (lineEdit) {
-                lineEdit->setText(QString::fromStdString(replacements[i].second[page - 1]));
+                lineEdit->setText(QString::fromStdString(replacements[i].second[newPage - 1]));
             }
         }
     }
+
 }
 
 
-// have not verify yet
 void MainWindow::clearWidgetsFromLayout(QLayout* layout) {
     QFormLayout* formLayout = qobject_cast<QFormLayout*>(layout);
     if (!formLayout) return;
@@ -324,36 +336,25 @@ void MainWindow::updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabe
 
 
 
-void MainWindow::updatePlaceholderValuesFromInputs() {
+void MainWindow::updatePlaceholderValuesFromInputs(int currentPage) {
     QFormLayout* layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
     if (!layout) return;
 
-    std::vector<std::pair<std::string, std::string>> updatedReplacements;
-
-    for (int i = 0; i < layout->rowCount() - 2; ++i) {
-        // Get the label for the current row
-        QLabel* label = qobject_cast<QLabel*>(layout->itemAt(i, QFormLayout::LabelRole)->widget());
-
-        // Assume the QLineEdit is the first widget in the QHBoxLayout
-        QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
-        if (rowLayout && !rowLayout->isEmpty()) {
-            QLineEdit* lineEdit = qobject_cast<QLineEdit*>(rowLayout->itemAt(0)->widget());
-            if (lineEdit && label) {
-                // Update the temporary vector with the new values
-                updatedReplacements.emplace_back(label->text().toStdString(), lineEdit->text().toStdString());
-            }
-        }
-    }
-
     // Resize replacements vectors to accommodate new page data if needed
-    int currentPage = pageSpinBox->value();
     for (auto& pair : replacements) {
         pair.second.resize(std::max(pair.second.size(), static_cast<size_t>(currentPage)));
     }
 
     // Update replacements with the new values
-    for (int i = 0; i < updatedReplacements.size(); ++i) {
-        replacements[i].second[currentPage - 1] = updatedReplacements[i].second;
+    for (int i = 0; i < layout->rowCount() - 2; ++i) {
+        QLabel* label = qobject_cast<QLabel*>(layout->itemAt(i, QFormLayout::LabelRole)->widget());
+        QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
+        if (rowLayout && !rowLayout->isEmpty() && label) {
+            QLineEdit* lineEdit = qobject_cast<QLineEdit*>(rowLayout->itemAt(0)->widget());
+            if (lineEdit) {
+                replacements[i].second[currentPage - 1] = lineEdit->text().toStdString();
+            }
+        }
     }
 
     // for (const auto& pair : replacements) {
@@ -365,9 +366,51 @@ void MainWindow::updatePlaceholderValuesFromInputs() {
     // }
 }
 
+// void MainWindow::updatePlaceholderValuesFromInputs(int currentPage) {
+//     QFormLayout* layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
+//     if (!layout) return;
+
+//     std::vector<std::pair<std::string, std::string>> updatedReplacements;
+
+//     for (int i = 0; i < layout->rowCount() - 2; ++i) {
+//         // Get the label for the current row
+//         QLabel* label = qobject_cast<QLabel*>(layout->itemAt(i, QFormLayout::LabelRole)->widget());
+
+//         // Assume the QLineEdit is the first widget in the QHBoxLayout
+//         QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
+//         if (rowLayout && !rowLayout->isEmpty()) {
+//             QLineEdit* lineEdit = qobject_cast<QLineEdit*>(rowLayout->itemAt(0)->widget());
+//             if (lineEdit && label) {
+//                 // Update the temporary vector with the new values
+//                 updatedReplacements.emplace_back(label->text().toStdString(), lineEdit->text().toStdString());
+//             }
+//         }
+//     }
+
+//     // Resize replacements vectors to accommodate new page data if needed
+//     for (auto& pair : replacements) {
+//         pair.second.resize(std::max(pair.second.size(), static_cast<size_t>(currentPage)));
+//     }
+
+//     // Update replacements with the new values
+//     for (int i = 0; i < updatedReplacements.size(); ++i) {
+//         replacements[i].second[currentPage - 1] = updatedReplacements[i].second;
+//     }
+
+//     // for (const auto& pair : replacements) {
+//     //     qDebug() << "Key:" << QString::fromStdString(pair.first);
+//     //     qDebug() << "Values:";
+//     //     for (const auto& value : pair.second) {
+//     //         qDebug() << QString::fromStdString(value);
+//     //     }
+//     // }
+// }
+
+
+
 void MainWindow::onCompleteFillButtonlicked() {
-    updatePlaceholderValuesFromInputs();
-    std::string replacementsJson = vectorToJson(replacements);
+    updatePlaceholderValuesFromInputs(pageSpinBox->value());
+    saveJsonToFile(replacements, "/Users/michael/Developer/EasyDraft/testDoc.json");
 }
 
 

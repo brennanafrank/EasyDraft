@@ -36,7 +36,7 @@ public:
 
     void createDynamicPlaceholders(const std::vector<std::pair<std::string, std::vector<std::string>>>& replacements);
     void clearWidgetsFromLayout(QLayout* layout);
-    void updatePlaceholderValuesFromInputs();
+    void updatePlaceholderValuesFromInputs(int page);
     void updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel);
 
 private:
@@ -51,6 +51,7 @@ private:
     PlaceholderManager *placeholderManager;
     std::vector<std::pair<std::string, std::vector<std::string>>> replacements;
     QSpinBox *pageSpinBox;
+    int currentPageIndex; // Record the index before page value change for onPageChanged function
 protected:
 
 private slots:
