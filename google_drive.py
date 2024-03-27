@@ -309,38 +309,35 @@ def delete_easydraft():
 
 
 if __name__ == '__main__':
-    match len(sys.argv):
-        case 0, 1:
-            print("Usage: python google_drive.py <function> [arguments]")
-        case 2: # No arguments for the function
-            function_name = sys.argv[1]
-            match function_name:
-                case 'create_easydraft':
-                    create_easydraft()
-                case 'delete_easydraft':
-                    delete_easydraft()
-                case _:
-                    print("Issue 2")
-        case 3: # One argument for the function
-            function_name = sys.argv[1]
-            arg_one = sys.argv[2]
-            match function_name:
-                case 'select_template':
-                    select_template(arg_one)
-                case _:
-                    print("Issue 3")
-        case 4: # Two arguments for one funciton
-            function_name = sys.argv[1]
-            arg_one = sys.argv[2]
-            arg_two = sys.argv[3]
-            match function_name:
-                case 'download_template':
-                    download_template(arg_one, arg_two)
-                case 'upload_document':
-                    upload_document(arg_one, arg_two)
-                case 'delete_file':
-                    delete_file(arg_one, arg_two)
-                case _:
-                    print("Issue 4")
-        case _: 
-            print("Issue 1")
+    num_args = len(sys.argv)
+    if num_args in [0, 1]:
+        print("Usage: python google_drive.py <function> [arguments]")
+    elif num_args == 2:  # No arguments for the function
+        function_name = sys.argv[1]
+        if function_name == 'create_easydraft':
+            create_easydraft()
+        elif function_name == 'delete_easydraft':
+            delete_easydraft()
+        else:
+            print("Issue 2")
+    elif num_args == 3:  # One argument for the function
+        function_name = sys.argv[1]
+        arg_one = sys.argv[2]
+        if function_name == 'select_template':
+            select_template(arg_one)
+        else:
+            print("Issue 3")
+    elif num_args == 4:  # Two arguments for one function
+        function_name = sys.argv[1]
+        arg_one = sys.argv[2]
+        arg_two = sys.argv[3]
+        if function_name == 'download_template':
+            download_template(arg_one, arg_two)
+        elif function_name == 'upload_document':
+            upload_document(arg_one, arg_two)
+        elif function_name == 'delete_file':
+            delete_file(arg_one, arg_two)
+        else:
+            print("Issue 4")
+    else:
+        print("Issue 1")
