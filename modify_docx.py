@@ -29,7 +29,7 @@ def replace_placeholders_and_save(doc_path, replacements):
                 if f"$${placeholder}$$" in paragraph.text:
                     paragraph.text = paragraph.text.replace(f"$${placeholder}$$", values[idx])
 
-        new_doc_path = f"/Users/michael/Developer/EasyDraft/modified_doc/modified_{idx+1}_{replacements['Name'][idx]}.docx"
+        new_doc_path = f"/Users/michael/Developer/EasyDraft/modified_doc/modified_{idx+1}.docx"
         doc.save(new_doc_path)
         print(f"Document saved as: {new_doc_path}")
 

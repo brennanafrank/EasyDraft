@@ -40,16 +40,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->deletePlaceholderButton, &QPushButton::clicked, this, &MainWindow::onDeletePlaceholderClicked);
 
     connect(ui->fillFromJsonButton, &QPushButton::clicked, this, &MainWindow::onFillFromJsonClicked);
+    connect(ui->chooseDocPathButton, &QPushButton::clicked, this, &MainWindow::onChooseDocPathClicked);
 
     // Populate the combo box with existing placeholder names if any
     ui->placeholderComboBox->addItems(placeholderManager->getPlaceholderNames());
-
-
-    // Test dynamically generate placeholders
-    std::string filePath = "/Users/michael/Developer/EasyDraft/testDoc.json";
-    std::string docPath = "/Users/michael/Developer/EasyDraft/test_doc.docx";
-    replacements = findPlaceholdersInDocument(docPath);
-    createDynamicPlaceholders(replacements);
 }
 
 
@@ -215,7 +209,7 @@ void MainWindow::onDeletePlaceholderClicked() {
 }
 
 
-void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::string, std::vector<std::string>>>& replacements) {
+void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::string, std::vector<std::string>>>& replacementsm, int maxCharLimit) {
     QWidget* contents = ui->scrollAreaWidgetContents;
     QFormLayout* layout = qobject_cast<QFormLayout*>(contents->layout());
     QPushButton* completeFillButton = new QPushButton("Complete", ui->scrollAreaWidgetContents);
@@ -239,7 +233,6 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
     //     }
     // }
 
-    int maxCharLimit = 20; // Example maximum character limit
     int keyIndex = 0;
     for (const auto& pair : replacements) {
         QLabel* label = new QLabel(QString::fromStdString(pair.first));
@@ -293,7 +286,7 @@ void MainWindow::onPageChanged(int newPage) {
         pair.second.resize(std::max(pair.second.size(), static_cast<size_t>(newPage)));
     }
 
-    updatePlaceholderValuesFromInputs(currentPageIndex);
+    updateReplacementsFromInputs(currentPageIndex);
     currentPageIndex = pageSpinBox->value();
 
 
@@ -338,7 +331,7 @@ void MainWindow::updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabe
 
 
 
-void MainWindow::updatePlaceholderValuesFromInputs(int currentPage) {
+void MainWindow::updateReplacementsFromInputs(int currentPage) {
     QFormLayout* layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
     if (!layout) return;
 
@@ -394,17 +387,21 @@ void MainWindow::updatePlaceholderValuesFromReplacements(int currentPage) {
 }
 
 void MainWindow::onCompleteFillButtonlicked() {
-    updatePlaceholderValuesFromInputs(pageSpinBox->value());
+    updateReplacementsFromInputs(pageSpinBox->value());
     saveJsonToFile(replacements, "/Users/michael/Developer/EasyDraft/testDoc.json");
-    std::string docPath = "/Users/michael/Developer/EasyDraft/test_doc.docx";
-    std::string JsonPath = "/Users/michael/Developer/EasyDraft/testDoc.json";
-    modifyDocument(docPath, JsonPath);
+    modifyDocument(docPath, vectorToJson(replacements));
 }
 
 
 
 void MainWindow::onFillFromJsonClicked()
 {
+    // check whether docPath is empty
+    if (docPath.empty()) {
+        QMessageBox::warning(this, tr("Error"), tr("Please select a document first."));
+        return;
+    }
+
     QString filePath = QFileDialog::getOpenFileName(this, tr("Open JSON File"), QDir::homePath(), tr("JSON Files (*.json)"));
     if (!filePath.isEmpty()) {
         try {
@@ -416,6 +413,21 @@ void MainWindow::onFillFromJsonClicked()
         }
     }
 
+}
+
+void MainWindow::onChooseDocPathClicked()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Open Document"), QDir::homePath(), tr("Word Documents (*.docx)"));
+    if (!filePath.isEmpty()) {
+        try {
+            docPath = filePath.toStdString();
+            replacements = findPlaceholdersInDocument(docPath);
+            createDynamicPlaceholders(replacements);
+            QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
+        } catch (const std::exception& e) {
+            QMessageBox::warning(this, tr("Error"), QString::fromStdString(e.what()));
+        }
+    }
 }
 
 MainWindow::~MainWindow()

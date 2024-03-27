@@ -77,8 +77,8 @@
    <widget class="QComboBox" name="placeholderComboBox">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>450</y>
+      <x>100</x>
+      <y>410</y>
       <width>103</width>
       <height>32</height>
      </rect>
@@ -87,8 +87,8 @@
    <widget class="QPushButton" name="addPlaceholderButton">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>490</y>
+      <x>90</x>
+      <y>450</y>
       <width>131</width>
       <height>31</height>
      </rect>
@@ -100,8 +100,8 @@
    <widget class="QPushButton" name="deletePlaceholderButton">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>530</y>
+      <x>90</x>
+      <y>490</y>
       <width>131</width>
       <height>32</height>
      </rect>
@@ -133,18 +133,31 @@
      </property>
     </widget>
    </widget>
-   <widget class="QPushButton" name="fillFromJsonButton">
+   <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>580</y>
-      <width>100</width>
-      <height>32</height>
+      <x>60</x>
+      <y>550</y>
+      <width>237</width>
+      <height>51</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Fill from Json</string>
-    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="chooseDocPathButton">
+       <property name="text">
+        <string>Select a docx</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="fillFromJsonButton">
+       <property name="text">
+        <string>Fill from Json</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

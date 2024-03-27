@@ -35,9 +35,9 @@ public:
     QString getCurrentSelectedFilePath();
     void displayFilesForTag(const QString &tag);
 
-    void createDynamicPlaceholders(const std::vector<std::pair<std::string, std::vector<std::string>>>& replacements);
+    void createDynamicPlaceholders(const std::vector<std::pair<std::string, std::vector<std::string>>>& replacementsm, int maxCharLimit=20);
     void clearWidgetsFromLayout(QLayout* layout);
-    void updatePlaceholderValuesFromInputs(int page);
+    void updateReplacementsFromInputs(int page);
     void updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel);
     void updatePlaceholderValuesFromReplacements(int currentPage);
 
@@ -54,6 +54,7 @@ private:
     std::vector<std::pair<std::string, std::vector<std::string>>> replacements;
     QSpinBox *pageSpinBox;
     int currentPageIndex; // Record the index before page value change for onPageChanged function
+    std::string docPath;
 protected:
 
 private slots:
@@ -65,5 +66,6 @@ private slots:
     void onCompleteFillButtonlicked();
     void onPageChanged(int page);
     void onFillFromJsonClicked();
+    void onChooseDocPathClicked();
 };
 #endif // MAINWINDOW_H

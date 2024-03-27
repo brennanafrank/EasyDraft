@@ -92,15 +92,26 @@ std::vector<std::pair<std::string, std::vector<std::string>>> readJsonFromFile(c
 }
 
 
-
 void modifyDocument(const std::string& docPath, const std::string& replacementsJson) {
-    std::string command = "/Users/michael/anaconda3/bin/python /Users/michael/Developer/EasyDraft/modify_docx.py \"" + docPath + "\" \"" + replacementsJson + "\"";
+    std::string tempJsonPath = "./tempreplacements.json";
+
+    std::ofstream outFile(tempJsonPath);
+    if (!outFile) {
+        std::cerr << "Error opening file for writing: " << tempJsonPath << std::endl;
+        return;
+    }
+    outFile << replacementsJson;
+    outFile.close();
+
+    std::string command = "/Users/michael/anaconda3/bin/python /Users/michael/Developer/EasyDraft/modify_docx.py \"" + docPath + "\" \"" + tempJsonPath + "\"";
 
     int result = std::system(command.c_str());
 
     if (result != 0) {
         std::cerr << "Python script failed with exit code " << result << std::endl;
     }
+
+    std::remove(tempJsonPath.c_str());
 }
 
 std::vector<std::pair<std::string, std::vector<std::string>>> findPlaceholdersInDocument(const std::string& docPath) {
