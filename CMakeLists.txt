@@ -11,6 +11,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set( CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk" CACHE STRING "" FORCE )
 
+find_package(PythonInterp 3.12 REQUIRED)
+
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
@@ -28,8 +31,7 @@ set(PROJECT_SOURCES
         config.cpp
         config.hpp
         json.hpp
-        drafts.cpp
-        drafts.hpp
+
 
 )
 
