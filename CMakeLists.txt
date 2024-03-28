@@ -31,19 +31,27 @@ set(PROJECT_SOURCES
         config.cpp
         config.hpp
         json.hpp
+        parsing.cpp
+        parsing.h
+        findPlaceholders.py
+        modify_docx.py
+
 
 
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(CS307ParsingGUIOfficial
+
+qt_add_executable(CS307ParsingGUIOfficial
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         res.qrc
         templates.h templates.cpp templates.ui
-        placeholdermanager.h placeholdermanager.cpp
+        nlohmann/json.hpp nlohmann/json_fwd.hpp
+
         tagmanager.h tagmanager.cpp
         customfilesystemmodel.h customfilesystemmodel.cpp
+
 
     )
 # Define target properties for Android with Qt 6 as:

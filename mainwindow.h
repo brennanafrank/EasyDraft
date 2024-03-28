@@ -6,14 +6,25 @@
 QT_BEGIN_NAMESPACE
 
 #include <QDir>
-
-#include "placeholdermanager.h"
 #include "tagmanager.h"
 #include "customfilesystemmodel.h"
 #include <QListView>
 #include <QStringListModel>
 #include <vector>
 #include <string>
+
+#include <QLabel>
+#include <QTreeView>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
+#include <QMimeData>
+#include <QFormLayout>
+#include <QSpinBox>
+#include "parsing.h"
+#include <QFileDialog>
 
 
 
@@ -31,6 +42,11 @@ public:
     ~MainWindow();
     QString getCurrentSelectedFilePath();
     void displayFilesForTag(const QString &tag);
+    void createDynamicPlaceholders(const std::vector<std::pair<std::string, std::vector<std::string>>>& replacementsm, int maxCharLimit=20);
+    void clearWidgetsFromLayout(QLayout* layout);
+    void updateReplacementsFromInputs(int page);
+    void updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel);
+    void updatePlaceholderValuesFromReplacements(int currentPage);
 
 
 private slots:
@@ -51,12 +67,6 @@ private slots:
 
     void filterSearch(const QString &);
 
-    void onAddPlaceholderClicked();
-
-    void onPlaceholderSelected(int index);
-
-    void onDeletePlaceholderClicked();
-
     void onAddTagButtonClicked();
 
     void onTagComboBoxCurrentIndexChanged(const QString &tag);
@@ -73,9 +83,14 @@ private slots:
 
     void on_cloudButton_clicked();
 
+    void onCompleteFillButtonlicked();
+    void onPageChanged(int page);
+    void onFillFromJsonClicked();
+    void onChooseDocPathClicked();
+    void onSaveDraftClicked();
+
 private:
     Ui::MainWindow *ui;
-    PlaceholderManager *placeholderManager;
     void createFolder();
     void deleteItem();
     void deleteTag();
@@ -83,6 +98,11 @@ private:
     QListView* listView;
     QStringListModel* model;
     std::vector<std::string> filePathsForViewing;
+
+    std::vector<std::pair<std::string, std::vector<std::string>>> replacements;
+    QSpinBox *pageSpinBox;
+    int currentPageIndex; // Record the index before page value change for onPageChanged function
+    std::string docPath;
 
 
 
