@@ -5,11 +5,11 @@ import sys
 
 def find_placeholders(doc_path):
     """
-    Find all unique placeholders in the format $$key$$ in the document and return them as a JSON string.
+    Find all unique placeholders in the format ${key} in the document and return them as a JSON string.
     Each key maps to an empty list, to match the expected input format of the jsonToVector C++ function.
     """
     doc = Document(doc_path)
-    placeholder_pattern = re.compile(r"\$\$(.*?)\$\$")
+    placeholder_pattern = re.compile(r"\$\{(.*?)\}")
     placeholders = {}
 
     for paragraph in doc.paragraphs:

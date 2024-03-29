@@ -2,6 +2,7 @@ from docx import Document
 import json
 import sys
 import os
+from python_docx_replace import docx_replace, docx_blocks
 
 def check_all_pairs_have_equal_size(replacements):
     """
@@ -16,7 +17,7 @@ def check_all_pairs_have_equal_size(replacements):
 def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_prefix):
     """
     Replace placeholders in the document with values from replacements
-    and save new documents.
+    and save new documents without losing formatting.
     """
     if not check_all_pairs_have_equal_size(replacements):
         print("Error: Not all placeholders have the same number of replacements.")
@@ -25,16 +26,18 @@ def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_p
     for idx in range(len(next(iter(replacements.values())))):
         doc = Document(doc_path)
 
-        for paragraph in doc.paragraphs:
-            for placeholder, values in replacements.items():
-                if f"$${placeholder}$$" in paragraph.text:
-                    paragraph.text = paragraph.text.replace(f"$${placeholder}$$", values[idx])
+        # Prepare the replacements for this iteration.
+        iteration_replacements = {k: v[idx] for k, v in replacements.items()}
+
+        # Replace placeholders using python-docx-replace library.
+        docx_replace(doc, **iteration_replacements)
 
         new_doc_path = os.path.join(save_path, f"{file_name_prefix}_{idx+1}.docx")
         os.makedirs(os.path.dirname(new_doc_path), exist_ok=True)
+
+        # Save the document after replacements.
         doc.save(new_doc_path)
         print(f"Document saved as: {new_doc_path}")
-
 
 if __name__ == "__main__":
     if len(sys.argv) != 5:
