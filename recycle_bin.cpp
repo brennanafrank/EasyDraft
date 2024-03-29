@@ -1,18 +1,55 @@
 #include <iostream>
 #include <cstdio>
+#include "config.hpp"
+fs::path TRASH_DIR = (fs::current_path().append("trash")).string();
 
-
-void move_to_trash(char* filename) {
+int move_template_to_trash(std::string filename) {
     // Function to move a file to the trash directory
+    // Open file in arg for reading
+    
+    std::string filename_ext = filename + ".docx";
+    fs::path filepath = IMPORT_DIR / filename_ext;
+    
+    if (!fs::exists(filepath)) {
+        // File does not exist
+        return -1;
+    }
+    // Check if the trash directory exists
+    if (!fs::exists(TRASH_DIR)) {
+        if (!fs::create_directory(TRASH_DIR)) {
+            // Could not create the directory
 
-    std::string trash_path =  "./trash/" + std::string(filename);
-
-    if (std::rename(filename, trash_path.c_str()) != 0) {
-        std::cout << "Error moving file to trash" << std::endl;
-    } else {
-        std::cout << "File moved to trash successfully" << std::endl;
+            return -1;
+        }
     }
 
-    return;
+    // Construct the full destination file path
+    fs::path destination_file = TRASH_DIR / filename_ext;
+    try {
+        std::filesystem::rename(filepath, destination_file);
+    } catch (std::filesystem::filesystem_error& e) {
+        std::cerr << e.what() << '\n';
+    }
+
+    return 0;
 }
 
+int restore_template(std::string filename) {
+    std::string filename_ext = filename + ".docx";
+    fs::path filepath = TRASH_DIR / filename_ext;
+    
+    if (!fs::exists(filepath)) {
+        // File does not exist
+        return -1;
+    }
+
+    // Construct the full destination file path
+    fs::path destination_file = IMPORT_DIR / filename_ext;
+    try {
+        std::filesystem::rename(filepath, destination_file);
+    } catch (std::filesystem::filesystem_error& e) {
+        std::cerr << e.what() << '\n';
+    }
+
+    return 0;
+}
