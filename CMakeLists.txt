@@ -31,6 +31,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         parsing.cpp
         modify_docx.py
         findPlaceholders.py
+        replacementsHelper.h
+        replacementsHelper.cpp
 
 
 

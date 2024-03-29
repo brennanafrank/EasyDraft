@@ -17,6 +17,11 @@
 #include <QSpinBox>
 #include "parsing.h"
 #include <QFileDialog>
+#include <QPropertyAnimation>
+#include <QColor>
+#include <QVariantAnimation>
+#include "replacementsHelper.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -39,6 +44,7 @@ public:
     void updateReplacementsFromInputs(int page);
     void updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel);
     void updatePlaceholderValuesFromReplacements(int currentPage);
+    void animateLineEditColorChange(QLineEdit* lineEdit, const QColor& startColor, const QColor& endColor, int duration = 500);
 
 private:
     Ui::MainWindow *ui;
@@ -54,6 +60,8 @@ private:
     QSpinBox *pageSpinBox;
     int currentPageIndex; // Record the index before page value change for onPageChanged function
     std::string docPath;
+    // QPalette originalPalette;
+
 
 protected:
 

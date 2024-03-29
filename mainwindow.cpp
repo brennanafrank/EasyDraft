@@ -260,14 +260,57 @@ void MainWindow::clearWidgetsFromLayout(QLayout* layout) {
     }
 }
 
+void MainWindow::animateLineEditColorChange(QLineEdit* lineEdit, const QColor& startColor, const QColor& endColor, int duration) {
+    if (!lineEdit) return; // Ensure the QLineEdit pointer is valid
+
+    // Create an animation object for color transition
+    QVariantAnimation *animation = new QVariantAnimation(lineEdit);
+    animation->setDuration(duration); // Set the animation duration, default is 500 milliseconds
+
+    // Set the start and end values of the animation to the provided colors
+    animation->setStartValue(startColor);
+    animation->setEndValue(endColor);
+
+    // Update the QLineEdit background color during the animation
+    connect(animation, &QVariantAnimation::valueChanged, [lineEdit](const QVariant &value) {
+        QColor color = value.value<QColor>();
+        lineEdit->setStyleSheet(QString("background-color: %1;").arg(color.name()));
+    });
+
+    // After the animation is finished, create another animation to transition the color back to the start color
+    connect(animation, &QVariantAnimation::finished, [lineEdit, startColor, endColor, duration]() {
+        QVariantAnimation *returnAnimation = new QVariantAnimation(lineEdit);
+        returnAnimation->setDuration(duration);
+        returnAnimation->setStartValue(endColor);
+        returnAnimation->setEndValue(startColor);
+
+        connect(returnAnimation, &QVariantAnimation::valueChanged, [lineEdit](const QVariant &value) {
+            QColor color = value.value<QColor>();
+            lineEdit->setStyleSheet(QString("background-color: %1;").arg(color.name()));
+        });
+
+        returnAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+    });
+
+    animation->start(QAbstractAnimation::DeleteWhenStopped); // Start the animation
+}
+
+
 void MainWindow::updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel) {
     int currentLength = lineEdit->text().length();
     int maxLength = lineEdit->maxLength();
     charCountLabel->setText(QString("%1/%2").arg(currentLength).arg(maxLength));
+
+    if (currentLength >= maxLength) {
+        // Use the current base background color of the QLineEdit as the start color for the animation
+        QColor startColor = lineEdit->palette().base().color();
+        QColor endColor = QColor("#FFCCCC"); // Animation end color, light red
+        int duration = 500; // Animation duration in milliseconds
+
+        // Call the previously defined animation function
+        animateLineEditColorChange(lineEdit, startColor, endColor, duration);
+    }
 }
-
-
-
 
 
 void MainWindow::updateReplacementsFromInputs(int currentPage) {
@@ -326,9 +369,46 @@ void MainWindow::updatePlaceholderValuesFromReplacements(int currentPage) {
 }
 
 
-
 void MainWindow::onCompleteFillButtonlicked() {
     updateReplacementsFromInputs(pageSpinBox->value());
+    removeEmptyValuesFromReplacements(replacements);
+
+    bool allEmpty = true;
+    for (const auto& pair : replacements) {
+        if (!pair.second.empty()) {
+            allEmpty = false;
+            break;
+        }
+    }
+
+    if (allEmpty) {
+        QMessageBox::warning(this, "Empty Placeholders", "Please fill in at least one placeholder before proceeding.");
+        return;
+    }
+
+    // Validate replacements before proceeding
+    if (!isReplacementsValid(replacements)) {
+        QMessageBox::warning(this, "Invalid Replacements", "One or more placeholders have empty values. Please fill in all placeholders before continuing.");
+
+        // Check if any QLineEdit on the current page is empty
+        QFormLayout* layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
+        if (layout) {
+            int currentPage = pageSpinBox->value();
+            for (int i = 0; i < layout->rowCount() - 2; ++i) {
+                QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
+                if (rowLayout && !rowLayout->isEmpty()) {
+                    QLineEdit* lineEdit = qobject_cast<QLineEdit*>(rowLayout->itemAt(0)->widget());
+                    if (lineEdit && lineEdit->text().isEmpty()) {
+                        QColor startColor = lineEdit->palette().base().color();
+                        QColor endColor = QColor("#FFCCCC"); // Light red
+                        animateLineEditColorChange(lineEdit, startColor, endColor, 1000);
+                    }
+                }
+            }
+        }
+
+        return;
+    }
 
     // Ask the user for the save path
     QString dirPath = QFileDialog::getExistingDirectory(this, tr("Select Save Directory"), QDir::homePath());
