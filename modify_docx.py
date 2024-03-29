@@ -15,7 +15,7 @@ def check_all_pairs_have_equal_size(replacements):
     expected_size = len(next(iter(replacements.values())))
     return all(len(v) == expected_size for v in replacements.values())
 
-def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_prefix, font_color, font_size):
+def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_prefix, font_color):
     """
     Replace placeholders in the document with values from replacements
     and save new documents without losing formatting.
@@ -30,7 +30,7 @@ def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_p
         # Prepare the replacements for this iteration.
         iteration_replacements = {k: v[idx] for k, v in replacements.items()}
 
-        print(font_size)
+        #print(font_size)
         print(font_color)
 
 
@@ -43,7 +43,7 @@ def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_p
         for paragraph in doc.paragraphs:
             for run in paragraph.runs:
                 # Set font properties
-                run.font.size = font_size
+                #run.font.size = font_size
                 run.font.color.rgb = RGBColor(*font_color)
 
         # Save the document after replacements.
@@ -55,7 +55,7 @@ def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_p
             file.write(new_doc_path + "\n")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 7:
+    if len(sys.argv) != 6:
         print("Usage: python script.py doc_path replacements_path save_path file_name_prefix")
         sys.exit(1)
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     save_path = sys.argv[3]
     file_name_prefix = sys.argv[4]
     color = sys.argv[5]
-    fontSize = sys.argv[6]
+    #fontSize = sys.argv[6]
 
     #print(color + "color")
     #print(fontSize + "fontsize")
@@ -82,4 +82,4 @@ if __name__ == "__main__":
     with open(replacements_path) as f:
         replacements = json.load(f)
 
-    replace_placeholders_and_save(doc_path, replacements, save_path, file_name_prefix, font_color=font_color, font_size=int(fontSize))
+    replace_placeholders_and_save(doc_path, replacements, save_path, file_name_prefix, font_color=font_color)
