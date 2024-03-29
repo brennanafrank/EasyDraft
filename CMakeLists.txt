@@ -10,6 +10,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set( CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk" CACHE STRING "" FORCE )
+
+find_package(PythonInterp 3.12 REQUIRED)
+
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt6 REQUIRED COMPONENTS Test)
@@ -25,24 +30,35 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        cloud.hpp
         ${TS_FILES}
         file_operations.cpp
         file_operations.hpp
         config.cpp
         config.hpp
         json.hpp
+        parsing.cpp
+        parsing.h
+        findPlaceholders.py
+        modify_docx.py
+
+
 
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(CS307ParsingGUIOfficial
+
+qt_add_executable(CS307ParsingGUIOfficial
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         res.qrc
         templates.h templates.cpp templates.ui
-        placeholdermanager.h placeholdermanager.cpp
+        nlohmann/json.hpp nlohmann/json_fwd.hpp
+
         tagmanager.h tagmanager.cpp
         customfilesystemmodel.h customfilesystemmodel.cpp
+        ViewDocx.py
+
 
     )
 # Define target properties for Android with Qt 6 as:
