@@ -4,6 +4,9 @@
 #include "file_operations.hpp"
 #include "cloud.hpp"
 
+#include <fstream>
+
+
 #include <QVBoxLayout>
 #include <QInputDialog>
 #include <QFileDialog>
@@ -113,6 +116,9 @@ void MainWindow::on_actionBack_triggered()
 
     }
 
+    ui->textBrowser->setVisible(false);
+    ui->viewPathsListWidget->setVisible(true);
+
 }
 
 
@@ -129,6 +135,41 @@ void MainWindow::on_pushButton_4_clicked()
         ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() + 1);
 
         ui->label->setText(ui->listWidget->currentItem()->text());
+
+        std::ifstream file("paths.txt");
+
+        if (file.is_open()) {
+
+            std::string line;
+
+            while (std::getline(file, line)) {
+
+                pathsofFiles.push_back(QString::fromStdString(line));
+
+            }
+
+            file.close();
+
+        }
+
+
+
+        QString filePath;
+
+        for (int i = 0; i < pathsofFiles.size(); ++i) {
+
+            if (pathsofFiles[i].contains(ui->listWidget->currentItem()->text())) {
+
+                filePath = pathsofFiles[i];
+
+            }
+
+        }
+
+        docPath = filePath.toStdString();
+        replacements = findPlaceholdersInDocument(docPath);
+        createDynamicPlaceholders(replacements);
+        QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
 
     }
 
@@ -360,7 +401,33 @@ void MainWindow::on_actionDescending_triggered()
 void MainWindow::on_pushButton_6_clicked()
 {
 
+
+    std::ifstream file("savedpaths.txt");
+
+    if (file.is_open()) {
+
+        std::string line;
+
+        while (std::getline(file, line)) {
+
+            viewPaths.push_back(line);
+
+        }
+
+        file.close();
+
+    }
     // This is a work in progress code for reading a docx file
+
+    ui->textBrowser->setVisible(false);
+
+    for (int i = 0; i < viewPaths.size(); ++i) {
+
+        QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(viewPaths[i]));
+
+        ui->viewPathsListWidget->addItem(item);
+
+    }
 
     changePage();
 
@@ -395,14 +462,6 @@ void MainWindow::on_pushButton_6_clicked()
 
 void MainWindow::on_pushButton_clicked()
 {
-
-    // From a qt forum to check if a line is edited
-    /*QObject::connect(ui->warningLine, &QLineEdit::textChanged, [&]() {
-        // Slot code
-        if (!ui->warningLine->text().isEmpty()) {
-            warning = true;
-        }
-    });*/
 
     if (!ui->warningLine->text().isEmpty()) {
 
@@ -638,7 +697,10 @@ void MainWindow::onCompleteFillButtonlicked() {
         return;
     }
 
-    modifyDocument(docPath, vectorToJson(replacements), dirPath, prefix);
+    qDebug() << fontSize;
+
+    modifyDocument(docPath, vectorToJson(replacements), dirPath, prefix, color, fontSize);
+
 
     // Ask the user if they want to save the placeholder values to a JSON file
     QMessageBox::StandardButton reply = QMessageBox::question(this, "Save Placeholder Values",
@@ -713,6 +775,16 @@ void MainWindow::onChooseDocPathClicked()
             QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
 
 
+            std::ofstream file("paths.txt", std::ios::app);
+
+            if (file.is_open()) {
+
+                file << docPath;
+
+                file.close();
+
+            }
+
 
             std::filesystem::path name = filePath.toStdString();
 
@@ -754,3 +826,57 @@ void MainWindow::onSaveDraftClicked() {
         }
     }
 }
+
+void MainWindow::on_selectFileToView_clicked()
+{
+
+    QString path = ui->viewPathsListWidget->currentItem()->text();
+
+    std::string commandString = "/opt/homebrew/bin/pandoc -f docx -t plain " + path.toStdString() + " -o output.txt";
+
+    const char * command = commandString.c_str();
+
+    int status = system(command);
+
+    qDebug() << status;
+
+    if (status != 0) {
+
+        perror("Bad status");
+        exit(1);
+
+    }
+
+    QFile file("output.txt");
+
+    if (!file.open(QIODevice::ReadOnly)) {
+
+        QMessageBox::information(0, "info", file.errorString());
+
+    }
+
+    QTextStream in (&file);
+
+    ui->textBrowser->setText(in.readAll());
+
+    ui->viewPathsListWidget->setVisible(false);
+    ui->textBrowser->setVisible(true);
+
+
+}
+
+
+void MainWindow::on_fontButton_clicked()
+{
+
+    fontSize = ui->fontSelector->currentText().toStdString();
+
+}
+
+
+void MainWindow::on_ColorButton_clicked()
+{
+    color = ui->ColorSelector->currentText().toStdString();
+
+}
+
