@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <filesystem>
+#include <ctime>
 #include "json.hpp"
 
 using json = nlohmann::json;
@@ -23,9 +24,11 @@ extern fs::path CURRENT_DIR;
 extern fs::path IMPORT_DIR;
 extern fs::path EXPORT_DIR;
 extern fs::path DRAFTS_DIR;
+extern fs::path LOG_DIR;
 
 // "misc"
 extern std::string CONVERTER;
+extern std::chrono::hours LOG_DELETE_TIME;
 
 extern int err_count;
 
