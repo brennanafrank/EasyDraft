@@ -89,6 +89,12 @@ private slots:
     void onChooseDocPathClicked();
     void onSaveDraftClicked();
 
+    void on_selectFileToView_clicked();
+
+    void on_fontButton_clicked();
+
+    void on_ColorButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     void createFolder();
@@ -104,7 +110,17 @@ private:
     int currentPageIndex; // Record the index before page value change for onPageChanged function
     std::string docPath;
 
+    //Create a vector of filePaths
+    std::vector<QString> pathsofFiles;
 
+    //Create a vector of filePaths to view if User wants to
+    std::vector<std::string> viewPaths;
+
+    std::string color;
+    std::string fontSize;
+    bool underline;
+    bool italicize;
+    bool bold;
 
     // This is for testing warning only; remove for later
     bool warning;
