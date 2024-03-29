@@ -15,7 +15,7 @@ def check_all_pairs_have_equal_size(replacements):
     expected_size = len(next(iter(replacements.values())))
     return all(len(v) == expected_size for v in replacements.values())
 
-def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_prefix, color, fontSize):
+def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_prefix, font_color, font_size):
     """
     Replace placeholders in the document with values from replacements
     and save new documents without losing formatting.
@@ -24,36 +24,14 @@ def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_p
         print("Error: Not all placeholders have the same number of replacements.")
         return
 
-
-    try:
-            font_size = int(fontSize)
-    except ValueError:
-            print("Error: Invalid font size value. Defaulting to 12 points.")
-            font_size = "12"  # Default font size
-            color = "blue"
-
     for idx in range(len(next(iter(replacements.values())))):
         doc = Document(doc_path)
 
         # Prepare the replacements for this iteration.
         iteration_replacements = {k: v[idx] for k, v in replacements.items()}
 
-        print(type(color))
-        print(type(fontSize))
-
-        for paragraph in doc.paragraphs:
-               for run in paragraph.runs:
-                   # Set font color to red
-
-                   run.font.color.rgb = RGBColor(255, 0, 0)  # RGB color values (red)
-
-                   run.font.color.rgb = RGBColor(0, 0, 255)
-
-                   run.font.color.rgb = RGBColor(255, 255, 0)
-
-
-                   # Set font size
-                   run.font.size = 12  # Set font size to 12 points
+        print(font_size)
+        print(font_color)
 
 
         # Replace placeholders using python-docx-replace library.
@@ -61,6 +39,12 @@ def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_p
 
         new_doc_path = os.path.join(save_path, f"{file_name_prefix}_{idx+1}.docx")
         os.makedirs(os.path.dirname(new_doc_path), exist_ok=True)
+
+        for paragraph in doc.paragraphs:
+            for run in paragraph.runs:
+                # Set font properties
+                run.font.size = font_size
+                run.font.color.rgb = RGBColor(*font_color)
 
         # Save the document after replacements.
         doc.save(new_doc_path)
@@ -85,7 +69,17 @@ if __name__ == "__main__":
     #print(color + "color")
     #print(fontSize + "fontsize")
 
+    font_color = (0,0,0)
+
+    if color == "Red":
+        font_color = (255, 0, 0)  # Red
+    elif color == "Blue":
+        font_color = (0, 0, 255)  # Blue
+    elif color == "Yellow":
+        font_color = (255, 255, 0)  # Yellow
+
+
     with open(replacements_path) as f:
         replacements = json.load(f)
 
-    replace_placeholders_and_save(doc_path, replacements, save_path, file_name_prefix, color, fontSize)
+    replace_placeholders_and_save(doc_path, replacements, save_path, file_name_prefix, font_color=font_color, font_size=int(fontSize))
