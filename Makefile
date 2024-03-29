@@ -1,6 +1,6 @@
 CC = g++
 CFLAGS = -std=c++17 -Wall -Werror
-SRCS = TemplateParser.cpp file_operations.cpp config.cpp main.cpp
+SRCS = config.cpp main.cpp
 OBJS = $(SRCS:.cpp=.o)
 TARGET = run
 

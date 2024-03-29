@@ -1,3 +1,7 @@
+/*
+ * Kye Jocham
+*/
+
 #include "drafts.hpp"
 
 // Fucntion to create the directory for drafts
@@ -46,14 +50,14 @@ PlaceholderPair use_draft(std::string draft_name) {
     // Check for directory
     if (!fs::exists(DRAFTS_DIR)) {
         if (create_draft_dir() != 0) {
-            return {{"error", "-1"}};
+            return {{"error", {"-1"}}};
         }
     } 
     
     // Open the json file
     std::ifstream draft_file(DRAFTS_DIR / fs::path(draft_name).replace_extension(".json"));
     if (!draft_file.is_open()) {
-        return {{"error", "-2"}};
+        return {{"error", {"-2"}}};
     }
     
     // Fill vector with json file info
@@ -68,7 +72,7 @@ PlaceholderPair use_draft(std::string draft_name) {
     }
 
     if (delete_draft(draft_name) != 0) {
-        return {{"error", "-3"}};
+        return {{"error", {"-3"}}};
     }
     return inputs;
 }

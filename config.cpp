@@ -1,3 +1,7 @@
+/*
+ * Kye Jocham
+*/
+
 #include "config.hpp"
 
 int err_count;
