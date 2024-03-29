@@ -25,7 +25,10 @@ QT_BEGIN_NAMESPACE
 #include <QSpinBox>
 #include "parsing.h"
 #include <QFileDialog>
-
+#include <QPropertyAnimation>
+#include <QColor>
+#include <QVariantAnimation>
+#include "replacementsHelper.h"
 
 
 namespace Ui {
@@ -47,6 +50,7 @@ public:
     void updateReplacementsFromInputs(int page);
     void updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel);
     void updatePlaceholderValuesFromReplacements(int currentPage);
+    void animateLineEditColorChange(QLineEdit* lineEdit, const QColor& startColor, const QColor& endColor, int duration = 500);
 
 
 private slots:
@@ -124,6 +128,8 @@ private:
 
     // This is for testing warning only; remove for later
     bool warning;
+
+    bool dontAdd;
 
 
 };

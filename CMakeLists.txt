@@ -52,6 +52,8 @@ qt_add_executable(CS307ParsingGUIOfficial
         tagmanager.h tagmanager.cpp
         customfilesystemmodel.h customfilesystemmodel.cpp
         ViewDocx.py
+        replacementsHelper.h
+        replacementsHelper.cpp
 
 
     )

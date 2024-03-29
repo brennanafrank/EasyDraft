@@ -17,7 +17,7 @@ std::vector<std::pair<std::string, std::vector<std::string>>> jsonToVector(const
 
 void callPythonScript(const std::string& docPath, const std::string& replacementsPath);
 
-void modifyDocument(const std::string& docPath, const std::string& replacementsJson, const QString& savePath, const QString& fileNamePrefix, const std::string& colorVal, const std::string& fontVal);
+void modifyDocument(const std::string& docPath, const std::string& replacementsJson, const QString& savePath, const QString& fileNamePrefix, const std::string& colorVal);
 
 void saveJsonToFile(const std::vector<std::pair<std::string, std::vector<std::string>>>& replacements, const std::string& filepath);
 
