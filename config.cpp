@@ -22,7 +22,9 @@ fs::path IMPORT_DIR = (fs::current_path().append("templates")).string();
 //fs::path EXPORT_DIR = (fs::current_path().append("output")).string();
 fs::path EXPORT_DIR = ("/Users/aneeshpendyala/Desktop/ExportTemplates");
 fs::path DRAFTS_DIR = (fs::current_path().append("drafts")).string();
+fs::path LOG_DIR = (fs::current_path().append("logs")).string();
 std::string CONVERTER = "None";
+std::chrono::hours LOG_DELETE_TIME(24); // One day
 
 // Function to read the configuration file and
 // fill out the variables that have values in
