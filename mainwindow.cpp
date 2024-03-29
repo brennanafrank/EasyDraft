@@ -431,33 +431,6 @@ void MainWindow::on_pushButton_6_clicked()
 
     changePage();
 
-    QFile fileView("/Users/aneeshpendyala/Desktop/Templates/oneq.docx");
-
-    /*for (int i = 0; i < filePathsForViewing.size(); i++) {
-
-        if (filePathsForViewing[i].find(ui->listWidget->currentItem()->text().toStdString() + ".docx") != std::string::npos) {
-
-            QFile fileView(QString::fromStdString(filePathsForViewing[i]));
-
-        }
-
-
-    }*/
-
-
-    if (!fileView.open(QIODevice::ReadOnly)) {
-
-        QMessageBox::information(0, "Info", fileView.errorString());
-
-    }
-
-
-    QTextStream readIn(&fileView);
-
-    ui->textBrowser->setText(readIn.readAll());
-
-    fileView.close();
-
 }
 
 void MainWindow::on_pushButton_clicked()
