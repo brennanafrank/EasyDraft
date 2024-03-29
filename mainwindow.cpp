@@ -711,10 +711,33 @@ void MainWindow::onChooseDocPathClicked()
             replacements = findPlaceholdersInDocument(docPath);
             createDynamicPlaceholders(replacements);
             QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
+
+
+
+            std::filesystem::path name = filePath.toStdString();
+
+            upload_template(name);
+
+            ui->listWidget->clear();
+
+            if (!template_list().empty()) {
+
+                for (int i = 0; i < template_list().size(); i++) {
+
+                    QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(template_list()[i]));
+                    ui->listWidget->addItem(item);
+
+                }
+
+            }
+
+
+
         } catch (const std::exception& e) {
             QMessageBox::warning(this, tr("Error"), QString::fromStdString(e.what()));
         }
     }
+
 }
 
 void MainWindow::onSaveDraftClicked() {
