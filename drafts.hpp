@@ -1,3 +1,7 @@
+/*
+ * Kye Jocham
+*/
+
 #ifndef DRAFTS_H
 #define DRAFTS_H
 
