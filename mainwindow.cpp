@@ -442,31 +442,10 @@ void MainWindow::on_pushButton_6_clicked()
 
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-
-    if (!ui->warningLine->text().isEmpty()) {
-
-        warning = true;
-
-    }
-
-}
-
 void MainWindow::on_submitPlace_clicked()
 {
 
-    if (warning) {
-
-        changePage();
-
-    }
-    else {
-
-        QMessageBox::critical(nullptr, "Error", "Text cannot be empty.");
-        ui->warningLine->setStyleSheet("QLineEdit { background-color: red; }");
-
-    }
+   changePage();
 
 }
 
@@ -482,6 +461,8 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
     QFormLayout* layout = qobject_cast<QFormLayout*>(contents->layout());
     // Create a horizontal layout for the buttons
     QHBoxLayout* buttonLayout = new QHBoxLayout;
+
+    dontAdd = false;
 
     QPushButton* saveDraftButton = new QPushButton("Save Draft", ui->scrollAreaWidgetContents);
     connect(saveDraftButton, &QPushButton::clicked, this, &MainWindow::onSaveDraftClicked);

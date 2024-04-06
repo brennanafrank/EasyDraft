@@ -81,8 +81,6 @@ private slots:
 
     void on_pushButton_6_clicked();
 
-    void on_pushButton_clicked();
-
     void on_submitPlace_clicked();
 
     void on_cloudButton_clicked();
