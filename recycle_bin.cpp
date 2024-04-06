@@ -1,15 +1,12 @@
-#include <iostream>
-#include <cstdio>
-#include "config.hpp"
-fs::path TRASH_DIR = (fs::current_path().append("trash")).string();
+#include "recycle_bin.hpp"
 
 int move_template_to_trash(std::string filename) {
     // Function to move a file to the trash directory
     // Open file in arg for reading
     
     std::string filename_ext = filename + ".docx";
-    fs::path filepath = IMPORT_DIR / filename_ext;
-    
+    fs::path filepath = fs::current_path().parent_path().string();
+    std::cout << filepath << std::endl;
     if (!fs::exists(filepath)) {
         // File does not exist
         return -1;
