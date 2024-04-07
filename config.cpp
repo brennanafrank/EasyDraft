@@ -29,6 +29,10 @@ fs::path DRAFTS_DIR = (fs::current_path().append("drafts")).string();
 fs::path LOG_DIR = (fs::current_path().append("logs")).string();
 std::string CONVERTER = "None";
 std::chrono::hours LOG_DELETE_TIME(24); // One day
+const std::string PYTHON_EXEC_PATH = "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3";
+const std::string PROJECT_PATH = "/Users/aneeshpendyala/Desktop/EasyDraft";
+const QString TAG_MANAGER_JSON_PATH = "/Users/aneeshpendyala/Desktop/Json Directory/config.json";
+const QString TEMPLATES_PATH = "/Users/aneeshpendyala/Desktop";
 
 // Function to read the configuration file and
 // fill out the variables that have values in

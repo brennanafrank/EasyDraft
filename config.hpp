@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <ctime>
 #include "json.hpp"
+#include <QString>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
@@ -29,6 +30,10 @@ extern fs::path IMPORT_DIR;
 extern fs::path EXPORT_DIR;
 extern fs::path DRAFTS_DIR;
 extern fs::path LOG_DIR;
+extern const std::string PYTHON_EXEC_PATH;
+extern const std::string PROJECT_PATH;
+extern const QString TAG_MANAGER_JSON_PATH;
+extern const QString TEMPLATES_PATH;
 
 // "misc"
 extern std::string CONVERTER;

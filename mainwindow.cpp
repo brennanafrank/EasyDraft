@@ -16,6 +16,9 @@
 #include <QTreeView>
 
 
+#include <QDebug>
+
+
 
 // Q entry list
 // Q list widget
@@ -26,12 +29,12 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , tagManager(new TagManager("/Users/aneeshpendyala/Desktop/Json Directory/config.json"))
+    , tagManager(new TagManager(TAG_MANAGER_JSON_PATH))
 {
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(0);
     currentPageIndex = 1;
-
+    // qDebug() << IMPORT_DIR;
     std::vector<std::string> templates = template_list();
     for (int i = 0;  i < templates.size(); i++)
     {
@@ -46,22 +49,20 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    CustomFileSystemModel *fileSystemModel = new CustomFileSystemModel(this);
+    fileSystemModel = new CustomFileSystemModel(this);
     fileSystemModel->setRootPath(QDir::currentPath());
     fileSystemModel->setTagManager(tagManager);
+
+
     ui->pathViewer->setModel(fileSystemModel);
-    ui->pathViewer->setRootIndex(fileSystemModel->index("/Users/aneeshpendyala/Desktop/Json Directory"));
+    ui->pathViewer->setRootIndex(fileSystemModel->index(TEMPLATES_PATH));
+    ui->pathViewer->setContextMenuPolicy(Qt::CustomContextMenu);
+    ui->pathViewer->setColumnWidth(0, 200); // set width of Name
+    ui->pathViewer->setColumnWidth(3, 120); // Set width of date modified
 
 
-    ui->pathViewer->setDragEnabled(true);
-    ui->pathViewer->setAcceptDrops(true);
-    ui->pathViewer->setDropIndicatorShown(true);
 
-
-    connect(ui->createFolderButton, &QPushButton::clicked, this, &MainWindow::createFolder);
-    connect(ui->deleteItemButton, &QPushButton::clicked, this, &MainWindow::deleteItem);
-    connect(ui->deleteTagButton, &QPushButton::clicked, this, &MainWindow::deleteTag);
-    connect(ui->addTagButton, &QPushButton::clicked, this, &MainWindow::onAddTagButtonClicked);
+    connect(ui->pathViewer, &QWidget::customContextMenuRequested, this, &MainWindow::showContextMenuForPathViewer);
 
     connect(ui->fillFromJsonButton, &QPushButton::clicked, this, &MainWindow::onFillFromJsonClicked);
     connect(ui->chooseDocPathButton, &QPushButton::clicked, this, &MainWindow::onChooseDocPathClicked);
@@ -125,10 +126,10 @@ void MainWindow::on_actionBack_triggered()
 
 void MainWindow::on_pushButton_4_clicked()
 {
-
     if (ui->listWidget->count() == 0) {
 
         QMessageBox::warning(nullptr, "Warning", "No documents!");
+        return;
 
     }
     else {
@@ -138,20 +139,25 @@ void MainWindow::on_pushButton_4_clicked()
         ui->label->setText(ui->listWidget->currentItem()->text());
 
         std::ifstream file("paths.txt");
-
-        if (file.is_open()) {
-
-            std::string line;
-
-            while (std::getline(file, line)) {
-
-                pathsofFiles.push_back(QString::fromStdString(line));
-
+        if (!file) {  // Check if the file could not be opened
+            // Create the file if it does not exist
+            std::ofstream createFile("paths.txt");
+            if (!createFile) {
+                qDebug() << "Failed to create file.";
+                return;
             }
-
-            file.close();
-
+            createFile.close(); // Close the newly created file
+            qDebug() << "File created, but no data to read.";
+            return;
         }
+
+        // File exists and is open for reading
+        std::string line;
+        while (std::getline(file, line)) {
+            pathsofFiles.push_back(QString::fromStdString(line));
+        }
+
+        file.close(); // Close the file after reading
 
 
 
@@ -166,7 +172,7 @@ void MainWindow::on_pushButton_4_clicked()
             }
 
         }
-
+        // qDebug() << "filepath = " << filePath;
         docPath = filePath.toStdString();
         replacements = findPlaceholdersInDocument(docPath);
         createDynamicPlaceholders(replacements);
@@ -235,7 +241,7 @@ void MainWindow::on_actionDownload_2_triggered()
     QString path = QFileDialog::getOpenFileName(this, "...", QDir::homePath());
 
     std::filesystem::path name = path.toStdString();
-
+    qDebug()<< "testing"<<path;
     upload_template(name);
 
     ui->listWidget->clear();
@@ -277,10 +283,10 @@ void MainWindow::filterSearch(const QString &text) {
 }
 
 
-void MainWindow::onTagComboBoxCurrentIndexChanged(const QString &tag) {
-    auto *model = static_cast<CustomFileSystemModel*>(ui->pathViewer->model());
-    model->setFilterTag(tag);
-}
+// void MainWindow::onTagComboBoxCurrentIndexChanged(const QString &tag) {
+//     auto *model = static_cast<CustomFileSystemModel*>(ui->pathViewer->model());
+//     model->setFilterTag(tag);
+// }
 
 
 
@@ -320,15 +326,22 @@ void MainWindow::createFolder() {
 
 void MainWindow::deleteItem() {
     QModelIndex index = ui->pathViewer->currentIndex();
+
     if (!index.isValid()) return;
 
-    if (QMessageBox::question(this, tr("Delete Item"), tr("Are you sure?"), QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {
-        QFileSystemModel *model = static_cast<QFileSystemModel *>(ui->pathViewer->model());
+    QFileSystemModel *model = static_cast<QFileSystemModel *>(ui->pathViewer->model());
+
+    QString fileName = model->fileName(index);
+
+    QString prompt = tr("Are you sure you want to delete '%1'?").arg(fileName);
+
+    if (QMessageBox::question(this, tr("Delete Item"), prompt, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {
         if (!model->remove(index)) {
             QMessageBox::warning(this, tr("Delete Item"), tr("Failed to delete item."));
         }
     }
 }
+
 
 QString MainWindow::getCurrentSelectedFilePath() {
     QModelIndex currentIndex = ui->pathViewer->currentIndex();
@@ -341,7 +354,7 @@ QString MainWindow::getCurrentSelectedFilePath() {
 }
 
 
-void MainWindow::onAddTagButtonClicked() {
+void MainWindow::addTag() {
     QString filePath = getCurrentSelectedFilePath();
     if (filePath.isEmpty()) {
         return;
@@ -825,7 +838,6 @@ void MainWindow::onChooseDocPathClicked()
             createDynamicPlaceholders(replacements);
             QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
 
-
             std::ofstream file("paths.txt", std::ios::app);
 
             if (file.is_open()) {
@@ -835,7 +847,6 @@ void MainWindow::onChooseDocPathClicked()
                 file.close();
 
             }
-
 
             std::filesystem::path name = filePath.toStdString();
 
@@ -853,9 +864,6 @@ void MainWindow::onChooseDocPathClicked()
                 }
 
             }
-
-
-
         } catch (const std::exception& e) {
             QMessageBox::warning(this, tr("Error"), QString::fromStdString(e.what()));
         }
@@ -929,5 +937,53 @@ void MainWindow::on_ColorButton_clicked()
 {
     color = ui->ColorSelector->currentText().toStdString();
 
+}
+
+
+
+void MainWindow::showContextMenuForPathViewer(const QPoint &pos)
+{
+    QMenu contextMenu(tr("Context Menu"), this);
+
+    QAction *newFolderAction = new QAction(tr("New Folder"), this);
+    connect(newFolderAction, &QAction::triggered, this, &MainWindow::createFolder);
+    contextMenu.addAction(newFolderAction);
+
+    QAction *deleteItemAction = new QAction(tr("Delete"), this);
+    connect(deleteItemAction, &QAction::triggered, this, &MainWindow::deleteItem);
+    contextMenu.addAction(deleteItemAction);
+
+
+    QAction *addTagAction = new QAction(tr("Add Tag"), this);
+    connect(addTagAction, &QAction::triggered, this, &MainWindow::addTag);
+    contextMenu.addAction(addTagAction);
+
+
+    QAction *deleteTagAction = new QAction(tr("Delete Tag"), this);
+    connect(deleteTagAction, &QAction::triggered, this, &MainWindow::deleteTag);
+    contextMenu.addAction(deleteTagAction);
+
+    QPoint globalPos = ui->pathViewer->viewport()->mapToGlobal(pos);
+
+    contextMenu.exec(globalPos);
+}
+
+
+void MainWindow::on_pathViewer_doubleClicked(const QModelIndex &index)
+{
+    QString currentPath = fileSystemModel->filePath(index);
+    docPath = currentPath.toStdString();
+
+    // qDebug() << "Selected path:" << QString::fromStdString(docPath);
+
+    if (!currentPath.endsWith(".docx", Qt::CaseInsensitive)) {
+        QMessageBox::warning(this, tr("Invalid File"), tr("The selected file is not a .docx document."));
+        return;
+    }
+
+    ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() + 1);
+    replacements = findPlaceholdersInDocument(docPath);
+    createDynamicPlaceholders(replacements);
+    // QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
 }
 

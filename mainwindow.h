@@ -51,6 +51,7 @@ public:
     void updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel);
     void updatePlaceholderValuesFromReplacements(int currentPage);
     void animateLineEditColorChange(QLineEdit* lineEdit, const QColor& startColor, const QColor& endColor, int duration = 500);
+    void showContextMenuForPathViewer(const QPoint &pos);
 
 
 private slots:
@@ -71,9 +72,7 @@ private slots:
 
     void filterSearch(const QString &);
 
-    void onAddTagButtonClicked();
-
-    void onTagComboBoxCurrentIndexChanged(const QString &tag);
+    // void onTagComboBoxCurrentIndexChanged(const QString &tag);
 
     void on_actionAscending_triggered();
 
@@ -97,15 +96,19 @@ private slots:
 
     void on_ColorButton_clicked();
 
+    void on_pathViewer_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
     void createFolder();
     void deleteItem();
+    void addTag();
     void deleteTag();
     TagManager *tagManager;
     QListView* listView;
     QStringListModel* model;
     std::vector<std::string> filePathsForViewing;
+    CustomFileSystemModel *fileSystemModel;
 
     std::vector<std::pair<std::string, std::vector<std::string>>> replacements;
     QSpinBox *pageSpinBox;

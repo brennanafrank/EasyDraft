@@ -2,8 +2,10 @@ from docx import Document
 import json
 import sys
 import os
-from python_docx_replace import docx_replace, docx_blocks
+from replace_helper import *
+# from python_docx_replace import docx_replace
 from docx.shared import RGBColor
+
 
 def check_all_pairs_have_equal_size(replacements):
     """
@@ -31,7 +33,7 @@ def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_p
         iteration_replacements = {k: v[idx] for k, v in replacements.items()}
 
         #print(font_size)
-        print(font_color)
+        # print(font_color)
 
 
         # Replace placeholders using python-docx-replace library.
@@ -40,11 +42,11 @@ def replace_placeholders_and_save(doc_path, replacements, save_path, file_name_p
         new_doc_path = os.path.join(save_path, f"{file_name_prefix}_{idx+1}.docx")
         os.makedirs(os.path.dirname(new_doc_path), exist_ok=True)
 
-        for paragraph in doc.paragraphs:
-            for run in paragraph.runs:
-                # Set font properties
-                #run.font.size = font_size
-                run.font.color.rgb = RGBColor(*font_color)
+        # for paragraph in doc.paragraphs:
+        #     for run in paragraph.runs:
+        #         # Set font properties
+        #         #run.font.size = font_size
+        #         run.font.color.rgb = RGBColor(*font_color)
 
         # Save the document after replacements.
         doc.save(new_doc_path)
