@@ -289,23 +289,26 @@ void MainWindow::filterSearch(const QString &text) {
 // }
 
 
-
-void MainWindow::createFolder() {
-    // Get the current chosen path
-    QModelIndex index = ui->pathViewer->currentIndex();
-    if (!index.isValid()) return;
-
+void MainWindow::createFolder(const QModelIndex &index)
+{
     // convert the model into FileSystemModel
     QFileSystemModel *model = static_cast<QFileSystemModel *>(ui->pathViewer->model());
     QString itemPath = model->filePath(index);
     QFileInfo fileInfo(itemPath);
 
-    // Determine whether it is directory
     QString targetPath;
-    if (fileInfo.isDir()) {
-        targetPath = itemPath;
+
+    if (index.isValid() && index.flags() & Qt::ItemIsSelectable) {
+        // If a valid item is clicked, create a folder in that directory
+        // Determine whether it is directory
+            if (fileInfo.isDir()) {
+                targetPath = itemPath;
+            } else {
+                targetPath = fileInfo.path();
+            }
     } else {
-        targetPath = fileInfo.path();
+        // If clicked on a blank area or an invalid item, create a folder in the template path
+        targetPath = TEMPLATES_PATH;
     }
 
     // Get new file name from user
@@ -321,7 +324,6 @@ void MainWindow::createFolder() {
     } else {
         QMessageBox::information(this, tr("Create Folder"), tr("Folder created successfully."));
     }
-
 }
 
 void MainWindow::deleteItem() {
@@ -943,30 +945,31 @@ void MainWindow::on_ColorButton_clicked()
 
 void MainWindow::showContextMenuForPathViewer(const QPoint &pos)
 {
-    QMenu contextMenu(tr("Context Menu"), this);
+    QModelIndex index = ui->pathViewer->indexAt(pos); // Check the clicking position
 
+    QMenu contextMenu(tr("Context Menu"), this);
     QAction *newFolderAction = new QAction(tr("New Folder"), this);
-    connect(newFolderAction, &QAction::triggered, this, &MainWindow::createFolder);
+    connect(newFolderAction, &QAction::triggered, this, [this, index]() {
+        createFolder(index);
+    });
     contextMenu.addAction(newFolderAction);
 
     QAction *deleteItemAction = new QAction(tr("Delete"), this);
     connect(deleteItemAction, &QAction::triggered, this, &MainWindow::deleteItem);
     contextMenu.addAction(deleteItemAction);
 
-
     QAction *addTagAction = new QAction(tr("Add Tag"), this);
     connect(addTagAction, &QAction::triggered, this, &MainWindow::addTag);
     contextMenu.addAction(addTagAction);
-
 
     QAction *deleteTagAction = new QAction(tr("Delete Tag"), this);
     connect(deleteTagAction, &QAction::triggered, this, &MainWindow::deleteTag);
     contextMenu.addAction(deleteTagAction);
 
     QPoint globalPos = ui->pathViewer->viewport()->mapToGlobal(pos);
-
     contextMenu.exec(globalPos);
 }
+
 
 
 void MainWindow::on_pathViewer_doubleClicked(const QModelIndex &index)

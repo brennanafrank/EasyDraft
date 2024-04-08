@@ -100,7 +100,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    void createFolder();
+    void createFolder(const QModelIndex &index);
     void deleteItem();
     void addTag();
     void deleteTag();
