@@ -1,4 +1,4 @@
-/*
+
  * Kye Jocham
 */
 
@@ -33,7 +33,7 @@ int start_template_log() {
         if (size > 0) {
             log_file.close();
             return 0;
-        } 
+        }
     }
 
     // Input defualt info
@@ -271,4 +271,4 @@ void lerror(std::string error) {
     log_file.close();
 }
 */
-#endif /* TEMPLATE_LOG_H */
+#endif /* TEMPLATE_LOG_H
