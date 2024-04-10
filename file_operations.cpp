@@ -109,21 +109,22 @@ int export_document(std::string filename) {
 
 
 std::vector<std::string> template_list() {
+    // Check if IMPORT_DIR exists; if not, create it
+    if (!fs::exists(IMPORT_DIR)) {
+        fs::create_directory(IMPORT_DIR);  // Ensure creation was successful
+    }
+
     std::vector<std::string> templates;
 
+    // Iterate over directories within IMPORT_DIR
     for (const auto& entry : fs::directory_iterator(IMPORT_DIR)) {
-        if (fs::is_directory(entry.path())) {
+        if (fs::is_directory(entry)) {
             templates.push_back(entry.path().filename().string());
         }
     }
 
-    if (templates.empty()) {
-        return {};
-    }
-
     return templates;
 }
-
 
 // Function to search the vector to find templates
 // that include the key value.

@@ -30,7 +30,7 @@ fs::path LOG_DIR = (fs::current_path().append("logs")).string();
 std::string CONVERTER = "None";
 std::chrono::hours LOG_DELETE_TIME(24); // One day
 const std::string PYTHON_EXEC_PATH = "/Users/michael/anaconda3/bin/python";
-const std::string PROJECT_PATH = "/Users/michael/Developer/mainFix";
+const std::string PROJECT_PATH = "/Users/michael/Developer/EasyDraft";
 const QString TAG_MANAGER_JSON_PATH = "/Users/michael/Downloads/Test_Folder/tag.json";
 const QString TEMPLATES_PATH = "/Users/michael/Desktop";
 
