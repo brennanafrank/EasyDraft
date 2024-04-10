@@ -57,35 +57,22 @@ MainWindow::MainWindow(QWidget *parent)
     fileSystemModel->setRootPath(TEMPLATES_PATH);
     fileSystemModel->setTagManager(tagManager);
 
-    // proxyModel = new CustomTagSortModel (this);
-    // // proxyModel = new QSortFilterProxyModel (this);
-    // proxyModel->setSourceModel(fileSystemModel);
-    // ui->pathViewer->setModel(proxyModel);
+    QModelIndex templateIndex = fileSystemModel->index(TEMPLATES_PATH);
 
-    // proxyIndex = proxyModel->mapFromSource(fileSystemModel->index(TEMPLATES_PATH));
-
-    // // If indexes are valid, set the root index in the view
-    // if (proxyIndex.isValid()) {
-    //     ui->pathViewer->setRootIndex(proxyIndex);
-    // } else {
-    //     qDebug() << "Failed to set root index: Invalid proxy index";
-    // }
-
-
-    // ui->pathViewer->show();
     ui->pathViewer->setModel(fileSystemModel);
-    ui->pathViewer->setRootIndex(fileSystemModel->index(TEMPLATES_PATH));
+    ui->pathViewer->setRootIndex(templateIndex);
     ui->pathViewer->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->pathViewer->setColumnWidth(0, 200); // set width of Name
     ui->pathViewer->setColumnWidth(3, 120); // Set width of date modified
     ui->pathViewer->setSortingEnabled(true);
 
+    expandAllNodes(templateIndex);
 
     connect(ui->pathViewer, &QWidget::customContextMenuRequested, this, &MainWindow::showContextMenuForPathViewer);
-
     connect(ui->fillFromJsonButton, &QPushButton::clicked, this, &MainWindow::onFillFromJsonClicked);
     connect(ui->chooseDocPathButton, &QPushButton::clicked, this, &MainWindow::onChooseDocPathClicked);
     ui->charMaxLimitSpinBox->setValue(maxCharLimit);
+
 
 
     // Setting up all the fonts that a user can select
@@ -1034,6 +1021,16 @@ void MainWindow::onTagSelected(int index) {
     }
 }
 
+
+void MainWindow::updateTagComboBox() {
+    QStringList tags = tagManager->getAllTags();
+    tags.insert(0, "All Tags");
+
+    ui->tagComboBox->clear();
+    ui->tagComboBox->addItems(tags);
+}
+
+
 // void MainWindow::filterFilesByTag(const QString &tag)
 // {
 //     // qDebug() << "Starting file filtering for tag:" << tag;
@@ -1067,28 +1064,39 @@ void MainWindow::onTagSelected(int index) {
 //     // qDebug() << "Finished file filtering.";
 // }
 
+
 void MainWindow::filterFilesByTag(const QString &tag) {
     qDebug() << "Starting file filtering for tag:" << tag;
 
-
-    expandAllNodes(fileSystemModel->index(TEMPLATES_PATH));
-
     QModelIndex rootIndex = fileSystemModel->index(TEMPLATES_PATH);
+    expandAllNodes(rootIndex);
+
     filterIndexByTag(rootIndex, tag);
     qDebug() << "Finished file filtering.";
 }
 
+
 void MainWindow::expandAllNodes(const QModelIndex &index) {
+    // temporary disable update to hidden the expand process
+    ui->pathViewer->setUpdatesEnabled(false);
+
     int rowCount = fileSystemModel->rowCount(index);
     for (int i = 0; i < rowCount; ++i) {
         QModelIndex childIndex = fileSystemModel->index(i, 0, index);
-        if (fileSystemModel->isDir(childIndex) && !ui->pathViewer->isExpanded(childIndex)) {
+        if (!childIndex.isValid()) {
+            continue;
+        }
+        if (fileSystemModel->isDir(childIndex)) {
             ui->pathViewer->expand(childIndex);
+            QApplication::processEvents();
             expandAllNodes(childIndex);
-            ui->pathViewer->collapse(childIndex);
         }
     }
+    ui->pathViewer->collapse(index);
+
+    ui->pathViewer->setUpdatesEnabled(true);
 }
+
 
 
 bool MainWindow::filterIndexByTag(const QModelIndex &index, const QString &tag) {
@@ -1118,11 +1126,4 @@ bool MainWindow::filterIndexByTag(const QModelIndex &index, const QString &tag) 
 
 
 
-void MainWindow::updateTagComboBox() {
-    QStringList tags = tagManager->getAllTags();
-    tags.insert(0, "All Tags");
-
-    ui->tagComboBox->clear();
-    ui->tagComboBox->addItems(tags);
-}
 
