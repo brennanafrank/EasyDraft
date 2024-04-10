@@ -80,3 +80,14 @@ QStringList TagManager::getTags(const QString &filePath) {
     return filePaths;
 }
 
+
+QStringList TagManager::getAllTags() const {
+    QSet<QString> allTagsSet;
+    for (auto it = tagData.begin(); it != tagData.end(); ++it) {
+        QJsonArray tags = it.value().toArray();
+        for (const QJsonValue& value : tags) {
+            allTagsSet.insert(value.toString());
+        }
+    }
+    return QStringList(allTagsSet.begin(), allTagsSet.end());
+}

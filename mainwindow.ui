@@ -91,9 +91,9 @@
      <widget class="QWidget" name="verticalLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>770</x>
+        <x>760</x>
         <y>330</y>
-        <width>81</width>
+        <width>111</width>
         <height>80</height>
        </rect>
       </property>
@@ -112,6 +112,40 @@
  Characters</string>
          </property>
         </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>760</x>
+        <y>260</y>
+        <width>110</width>
+        <height>58</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>1</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>  Filter by Tag</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="tagComboBox"/>
        </item>
       </layout>
      </widget>

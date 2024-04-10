@@ -48,19 +48,37 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->listWidget->setSortingEnabled(true);
 
+    updateTagComboBox();
+    connect(ui->tagComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onTagSelected(int)));
+
 
 
     fileSystemModel = new CustomFileSystemModel(this);
-    fileSystemModel->setRootPath(QDir::currentPath());
+    fileSystemModel->setRootPath(TEMPLATES_PATH);
     fileSystemModel->setTagManager(tagManager);
 
+    // proxyModel = new CustomTagSortModel (this);
+    // // proxyModel = new QSortFilterProxyModel (this);
+    // proxyModel->setSourceModel(fileSystemModel);
+    // ui->pathViewer->setModel(proxyModel);
 
+    // proxyIndex = proxyModel->mapFromSource(fileSystemModel->index(TEMPLATES_PATH));
+
+    // // If indexes are valid, set the root index in the view
+    // if (proxyIndex.isValid()) {
+    //     ui->pathViewer->setRootIndex(proxyIndex);
+    // } else {
+    //     qDebug() << "Failed to set root index: Invalid proxy index";
+    // }
+
+
+    // ui->pathViewer->show();
     ui->pathViewer->setModel(fileSystemModel);
     ui->pathViewer->setRootIndex(fileSystemModel->index(TEMPLATES_PATH));
     ui->pathViewer->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->pathViewer->setColumnWidth(0, 200); // set width of Name
     ui->pathViewer->setColumnWidth(3, 120); // Set width of date modified
-
+    ui->pathViewer->setSortingEnabled(true);
 
 
     connect(ui->pathViewer, &QWidget::customContextMenuRequested, this, &MainWindow::showContextMenuForPathViewer);
@@ -370,6 +388,7 @@ void MainWindow::addTag() {
                                         QDir::home().dirName(), &ok);
     if (ok && !tag.isEmpty()) {
         tagManager->addTag(filePath, tag);
+        updateTagComboBox();
     }
 }
 
@@ -392,8 +411,7 @@ void MainWindow::deleteTag() {
     if (ok && !tagToDelete.isEmpty()) {
         tagManager->removeTag(filePath, tagToDelete);
         QMessageBox::information(this, tr("Info"), tr("Tag deleted successfully."));
-
-        // Optionally refresh the view if necessary
+        updateTagComboBox();
     }
 }
 
@@ -1006,3 +1024,105 @@ void MainWindow::loadSettings() {
     QSettings settings("CS307_Gp37", "EasyDraft");
     maxCharLimit = settings.value("maxCharLimit", 20).toInt();
 }
+
+void MainWindow::onTagSelected(int index) {
+    if (index >= 0) {
+        QString tag = ui->tagComboBox->itemText(index);
+        filterFilesByTag(tag);
+    } else {
+        filterFilesByTag("");
+    }
+}
+
+// void MainWindow::filterFilesByTag(const QString &tag)
+// {
+//     // qDebug() << "Starting file filtering for tag:" << tag;
+//     QModelIndex rootIndex = fileSystemModel->index(TEMPLATES_PATH);
+//     int rowCount = fileSystemModel->rowCount(rootIndex);
+//     // qDebug() << "Total rows to check:" << rowCount;
+
+//     ui->pathViewer->setUpdatesEnabled(false);
+
+//     for (int i = 0; i < rowCount; ++i) {
+//         QModelIndex index = fileSystemModel->index(i, 0, rootIndex);
+//         if (!index.isValid()) {
+//             // qDebug() << "Invalid index at row:" << i;
+//             continue;
+//         }
+
+//         QString filePath = fileSystemModel->filePath(index);
+//         QStringList tags = tagManager->getTags(filePath);
+//         // qDebug() << "File at row" << i << ":" << filePath << "Tags:" << tags;
+
+//         if (tag.isEmpty() || tag == "All Tags" || tags.contains(tag, Qt::CaseInsensitive)) {
+//             ui->pathViewer->setRowHidden(i, rootIndex, false);
+//             // qDebug() << "Row" << i << "shown.";
+//         } else {
+//             ui->pathViewer->setRowHidden(i, rootIndex, true);
+//             // qDebug() << "Row" << i << "hidden.";
+//         }
+//     }
+
+//     ui->pathViewer->setUpdatesEnabled(true);
+//     // qDebug() << "Finished file filtering.";
+// }
+
+void MainWindow::filterFilesByTag(const QString &tag) {
+    qDebug() << "Starting file filtering for tag:" << tag;
+
+
+    expandAllNodes(fileSystemModel->index(TEMPLATES_PATH));
+
+    QModelIndex rootIndex = fileSystemModel->index(TEMPLATES_PATH);
+    filterIndexByTag(rootIndex, tag);
+    qDebug() << "Finished file filtering.";
+}
+
+void MainWindow::expandAllNodes(const QModelIndex &index) {
+    int rowCount = fileSystemModel->rowCount(index);
+    for (int i = 0; i < rowCount; ++i) {
+        QModelIndex childIndex = fileSystemModel->index(i, 0, index);
+        if (fileSystemModel->isDir(childIndex) && !ui->pathViewer->isExpanded(childIndex)) {
+            ui->pathViewer->expand(childIndex);
+            expandAllNodes(childIndex);
+            ui->pathViewer->collapse(childIndex);
+        }
+    }
+}
+
+
+bool MainWindow::filterIndexByTag(const QModelIndex &index, const QString &tag) {
+    int rowCount = fileSystemModel->rowCount(index);
+    bool anyVisible = false;
+
+    for (int i = 0; i < rowCount; ++i) {
+        QModelIndex childIndex = fileSystemModel->index(i, 0, index);
+        if (!childIndex.isValid()) {
+            continue;
+        }
+
+        QString filePath = fileSystemModel->filePath(childIndex);
+        QStringList tags = tagManager->getTags(filePath);
+        bool isVisible = tag == "All Tags" || tag.isEmpty() || tags.contains(tag, Qt::CaseInsensitive);
+
+        if (fileSystemModel->isDir(childIndex)) {
+            isVisible = filterIndexByTag(childIndex, tag) || isVisible;
+        }
+
+        ui->pathViewer->setRowHidden(i, index, !isVisible);
+        anyVisible = anyVisible || isVisible;
+    }
+
+    return anyVisible;
+}
+
+
+
+void MainWindow::updateTagComboBox() {
+    QStringList tags = tagManager->getAllTags();
+    tags.insert(0, "All Tags");
+
+    ui->tagComboBox->clear();
+    ui->tagComboBox->addItems(tags);
+}
+

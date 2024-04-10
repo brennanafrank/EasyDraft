@@ -12,6 +12,7 @@ public:
     void removeTag(const QString &filePath, const QString &tag);
     QStringList getTags(const QString &filePath);
     QStringList getFilesByTag(const QString& tag) const;
+    QStringList getAllTags() const;
 
 private:
     QString configFilePath;
