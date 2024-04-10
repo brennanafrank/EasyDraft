@@ -6,6 +6,7 @@
 #include <vector>
 #include <QProcess>
 #include <QDebug>
+#include "config.hpp"
 
 #include "nlohmann/json.hpp"
 

@@ -24,16 +24,16 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page_2">
      <widget class="QPushButton" name="pushButton_4">
       <property name="geometry">
        <rect>
-        <x>360</x>
-        <y>430</y>
-        <width>141</width>
-        <height>71</height>
+        <x>760</x>
+        <y>470</y>
+        <width>101</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="text">
@@ -53,10 +53,10 @@
      <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>30</x>
         <y>30</y>
-        <width>761</width>
-        <height>381</height>
+        <width>701</width>
+        <height>501</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -64,74 +64,56 @@
         <widget class="QListWidget" name="listWidget"/>
        </item>
        <item>
-        <widget class="QTreeView" name="pathViewer"/>
+        <widget class="QTreeView" name="pathViewer">
+         <property name="dragEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="dragDropOverwriteMode">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
-     </widget>
-     <widget class="QPushButton" name="createFolderButton">
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>430</y>
-        <width>100</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Create folder</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="deleteItemButton">
-      <property name="geometry">
-       <rect>
-        <x>220</x>
-        <y>430</y>
-        <width>100</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Delete Item</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="addTagButton">
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>470</y>
-        <width>100</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Add Tag</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="deleteTagButton">
-      <property name="geometry">
-       <rect>
-        <x>220</x>
-        <y>470</y>
-        <width>100</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Delete Tag</string>
-      </property>
      </widget>
      <widget class="QPushButton" name="chooseDocPathButton">
       <property name="geometry">
        <rect>
-        <x>580</x>
-        <y>440</y>
-        <width>161</width>
+        <x>760</x>
+        <y>430</y>
+        <width>111</width>
         <height>32</height>
        </rect>
       </property>
       <property name="text">
        <string>Select a Docx</string>
       </property>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>770</x>
+        <y>330</y>
+        <width>81</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QSpinBox" name="charMaxLimitSpinBox">
+         <property name="value">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="charMaxLimitButton">
+         <property name="text">
+          <string>Limit 
+ Characters</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
     <widget class="QWidget" name="page_3">
@@ -151,10 +133,10 @@
      <widget class="QPushButton" name="submitPlace">
       <property name="geometry">
        <rect>
-        <x>360</x>
-        <y>400</y>
+        <x>640</x>
+        <y>170</y>
         <width>151</width>
-        <height>71</height>
+        <height>41</height>
        </rect>
       </property>
       <property name="text">
@@ -233,10 +215,10 @@
      <widget class="QScrollArea" name="scrollArea">
       <property name="geometry">
        <rect>
-        <x>390</x>
-        <y>30</y>
-        <width>471</width>
-        <height>191</height>
+        <x>40</x>
+        <y>10</y>
+        <width>511</width>
+        <height>521</height>
        </rect>
       </property>
       <property name="widgetResizable">
@@ -247,8 +229,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>469</width>
-         <height>189</height>
+         <width>509</width>
+         <height>519</height>
         </rect>
        </property>
       </widget>
@@ -256,8 +238,8 @@
      <widget class="QWidget" name="horizontalLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>330</x>
-        <y>250</y>
+        <x>610</x>
+        <y>60</y>
         <width>237</width>
         <height>41</height>
        </rect>
@@ -372,7 +354,7 @@
      <x>0</x>
      <y>0</y>
      <width>870</width>
-     <height>37</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="defaultUp">

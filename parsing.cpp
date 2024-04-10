@@ -104,7 +104,7 @@ void modifyDocument(const std::string& docPath, const std::string& replacementsJ
     outFile.close();
 
     // Construct the command with user-specified save path and file name prefix
-    std::string command = "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3 /Users/aneeshpendyala/Desktop/EasyDraft/modify_docx.py \"" + docPath + "\" \"" + tempJsonPath + "\" \"" + savePath.toStdString() + "\" \"" + fileNamePrefix.toStdString() + "\" \"" + colorVal + "\"";
+    std::string command = PYTHON_EXEC_PATH + " " + PROJECT_PATH + "/modify_docx.py \"" + docPath + "\" \"" + tempJsonPath + "\" \"" + savePath.toStdString() + "\" \"" + fileNamePrefix.toStdString() + "\" \"" + colorVal + "\"";
 
     int result = std::system(command.c_str());
 
@@ -116,7 +116,7 @@ void modifyDocument(const std::string& docPath, const std::string& replacementsJ
 }
 
 std::vector<std::pair<std::string, std::vector<std::string>>> findPlaceholdersInDocument(const std::string& docPath) {
-    std::string command = "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3 /Users/aneeshpendyala/Desktop/EasyDraft/findPlaceholders.py \"" + docPath + "\"";
+    std::string command = PYTHON_EXEC_PATH + " " + PROJECT_PATH + "/findPlaceholders.py \"" + docPath + "\"";
     std::array<char, 128> buffer;
     std::string result;
 
