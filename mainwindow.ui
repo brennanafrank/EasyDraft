@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page_2">
      <widget class="QPushButton" name="pushButton_4">
@@ -53,7 +53,7 @@
      <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>30</x>
         <y>30</y>
         <width>701</width>
         <height>501</height>
@@ -88,6 +88,33 @@
        <string>Select a Docx</string>
       </property>
      </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>770</x>
+        <y>330</y>
+        <width>81</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QSpinBox" name="charMaxLimitSpinBox">
+         <property name="value">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="charMaxLimitButton">
+         <property name="text">
+          <string>Limit 
+ Characters</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_3">
      <widget class="QLabel" name="label">
@@ -107,9 +134,9 @@
       <property name="geometry">
        <rect>
         <x>640</x>
-        <y>140</y>
+        <y>170</y>
         <width>151</width>
-        <height>71</height>
+        <height>41</height>
        </rect>
       </property>
       <property name="text">

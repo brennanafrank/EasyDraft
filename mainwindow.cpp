@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     , tagManager(new TagManager(TAG_MANAGER_JSON_PATH))
 {
     ui->setupUi(this);
+    loadSettings();
     ui->stackedWidget->setCurrentIndex(0);
     currentPageIndex = 1;
     // qDebug() << IMPORT_DIR;
@@ -66,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->fillFromJsonButton, &QPushButton::clicked, this, &MainWindow::onFillFromJsonClicked);
     connect(ui->chooseDocPathButton, &QPushButton::clicked, this, &MainWindow::onChooseDocPathClicked);
+    ui->charMaxLimitSpinBox->setValue(maxCharLimit);
 
 
     // Setting up all the fonts that a user can select
@@ -555,10 +557,8 @@ void MainWindow::onPageChanged(int newPage) {
     for (auto& pair : replacements) {
         pair.second.resize(std::max(pair.second.size(), static_cast<size_t>(newPage)));
     }
-    qDebug() << "test";
     updateReplacementsFromInputs(currentPageIndex);
     currentPageIndex = pageSpinBox->value();
-    qDebug() << "test2";
 
     // for (int i = 0; i < replacements.size(); ++i) {
     //     QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
@@ -570,7 +570,6 @@ void MainWindow::onPageChanged(int newPage) {
     //     }
     // }
     updatePlaceholderValuesFromReplacements(currentPageIndex);
-    qDebug() << "test3";
 }
 
 
@@ -837,7 +836,7 @@ void MainWindow::onChooseDocPathClicked()
         try {
             docPath = filePath.toStdString();
             replacements = findPlaceholdersInDocument(docPath);
-            createDynamicPlaceholders(replacements);
+            createDynamicPlaceholders(replacements, maxCharLimit);
             QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
 
             std::ofstream file("paths.txt", std::ios::app);
@@ -986,7 +985,24 @@ void MainWindow::on_pathViewer_doubleClicked(const QModelIndex &index)
 
     ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() + 1);
     replacements = findPlaceholdersInDocument(docPath);
-    createDynamicPlaceholders(replacements);
+    createDynamicPlaceholders(replacements, maxCharLimit);
     // QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
 }
 
+
+void MainWindow::on_charMaxLimitButton_clicked()
+{
+    maxCharLimit = ui->charMaxLimitSpinBox->value();
+    saveSettings();
+}
+
+void MainWindow::saveSettings() {
+    QSettings settings("CS307_Gp37", "EasyDraft");
+    settings.setValue("maxCharLimit", maxCharLimit);
+}
+
+
+void MainWindow::loadSettings() {
+    QSettings settings("CS307_Gp37", "EasyDraft");
+    maxCharLimit = settings.value("maxCharLimit", 20).toInt();
+}

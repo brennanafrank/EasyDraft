@@ -29,6 +29,8 @@ QT_BEGIN_NAMESPACE
 #include <QColor>
 #include <QVariantAnimation>
 #include "replacementsHelper.h"
+#include <QSettings>
+
 
 
 namespace Ui {
@@ -98,6 +100,13 @@ private slots:
 
     void on_pathViewer_doubleClicked(const QModelIndex &index);
 
+    void on_charMaxLimitButton_clicked();
+
+    void saveSettings();
+
+    void loadSettings();
+
+
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);
@@ -113,6 +122,7 @@ private:
     std::vector<std::pair<std::string, std::vector<std::string>>> replacements;
     QSpinBox *pageSpinBox;
     int currentPageIndex; // Record the index before page value change for onPageChanged function
+    int maxCharLimit;
     std::string docPath;
 
     //Create a vector of filePaths
