@@ -115,6 +115,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);
+    void deleteTagsRecursively(const QString &path);
     void deleteItem();
     void addTag();
     void deleteTag();
