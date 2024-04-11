@@ -33,6 +33,9 @@ QT_BEGIN_NAMESPACE
 
 
 
+
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -54,6 +57,7 @@ public:
     void updatePlaceholderValuesFromReplacements(int currentPage);
     void animateLineEditColorChange(QLineEdit* lineEdit, const QColor& startColor, const QColor& endColor, int duration = 500);
     void showContextMenuForPathViewer(const QPoint &pos);
+    void updateTagComboBox();
 
 
 private slots:
@@ -106,10 +110,12 @@ private slots:
 
     void loadSettings();
 
+    void onTagSelected(int index);
 
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);
+    void deleteTagsRecursively(const QString &path);
     void deleteItem();
     void addTag();
     void deleteTag();
@@ -118,6 +124,7 @@ private:
     QStringListModel* model;
     std::vector<std::string> filePathsForViewing;
     CustomFileSystemModel *fileSystemModel;
+
 
     std::vector<std::pair<std::string, std::vector<std::string>>> replacements;
     QSpinBox *pageSpinBox;
@@ -141,6 +148,10 @@ private:
     bool warning;
 
     bool dontAdd;
+
+    void filterFilesByTag(const QString &tag); // Method to filter files
+    bool filterIndexByTag(const QModelIndex &index, const QString &tag);
+    void expandAllNodes(const QModelIndex &index);
 
 
 };
