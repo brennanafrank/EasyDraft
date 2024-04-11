@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="page_2">
      <widget class="QPushButton" name="pushButton_4">
@@ -388,7 +388,7 @@
      <x>0</x>
      <y>0</y>
      <width>870</width>
-     <height>24</height>
+     <height>37</height>
     </rect>
    </property>
    <property name="defaultUp">
