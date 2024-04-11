@@ -22,10 +22,10 @@ inline fs::path IMPORT_DIR = (fs::current_path().append("templates")).string();
 inline fs::path EXPORT_DIR = "/Users/aneeshpendyala/Desktop/ExportTemplates";
 inline fs::path DRAFTS_DIR = (fs::current_path().append("drafts")).string();
 inline fs::path LOG_DIR = (fs::current_path().append("logs")).string();
-inline const std::string PYTHON_EXEC_PATH = "/Users/michael/anaconda3/bin/python";
-inline const std::string PROJECT_PATH = "/Users/michael/Developer/EasyDraft";
+inline const std::string PYTHON_EXEC_PATH = "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3";
+inline const std::string PROJECT_PATH = "/Users/aneeshpendyala/Desktop/EasyDraft";
 inline const QString TAG_MANAGER_JSON_PATH = QString::fromStdString((fs::current_path() / "tag.json").string());
-inline const QString TEMPLATES_PATH = "/Users/michael/Desktop";
+inline const QString TEMPLATES_PATH = "/Users/aneeshpendyala/Desktop";
 
 // Inline global variables for misc
 inline std::string CONVERTER = "None";
