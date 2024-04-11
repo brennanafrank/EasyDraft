@@ -28,13 +28,13 @@ set(PROJECT_SOURCES
         ${TS_FILES}
         file_operations.cpp
         file_operations.hpp
-        config.cpp
         config.hpp
         json.hpp
         parsing.cpp
         parsing.h
         findPlaceholders.py
         modify_docx.py
+        replace_helper.py
 
 
 
