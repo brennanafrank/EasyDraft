@@ -17,8 +17,6 @@ public:
     void setFilterTag(const QString& tag);
 
 protected:
-           // Uncomment if needed
-           // bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
 private:
     TagManager *tagManager;

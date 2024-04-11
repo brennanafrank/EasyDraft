@@ -18,6 +18,7 @@ QVariant CustomFileSystemModel::data(const QModelIndex &index, int role) const {
     return QFileSystemModel::data(index, role);
 }
 
+
 int CustomFileSystemModel::columnCount(const QModelIndex &parent) const {
     return QFileSystemModel::columnCount(parent) + 1;
 }
@@ -30,5 +31,3 @@ QVariant CustomFileSystemModel::headerData(int section, Qt::Orientation orientat
     }
     return QFileSystemModel::headerData(section, orientation, role);
 }
-
-// Optionally, implement filtering and other functionalities as needed
