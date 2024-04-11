@@ -328,10 +328,33 @@ void MainWindow::createFolder(const QModelIndex &index)
     // attempt to create folder
     if (!QDir().mkdir(folderPath)) {
         QMessageBox::warning(this, tr("Create Folder"), tr("Failed to create folder at %1.").arg(folderPath));
-    } else {
-        QMessageBox::information(this, tr("Create Folder"), tr("Folder created successfully."));
     }
 }
+
+
+void MainWindow::deleteTagsRecursively(const QString &path) {
+    QDir directory(path);
+    QFileInfoList entries = directory.entryInfoList(QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs);
+
+    for (const QFileInfo &entry : entries) {
+        if (entry.isDir()) {
+            deleteTagsRecursively(entry.absoluteFilePath());
+        } else {
+            QStringList tags = tagManager->getTags(entry.absoluteFilePath());
+            for (const QString &tag : tags) {
+                tagManager->removeTag(entry.absoluteFilePath(), tag);
+            }
+        }
+    }
+
+    // Remove tag of current dir
+    QStringList dirTags = tagManager->getTags(path);
+    for (const QString &tag : dirTags) {
+        tagManager->removeTag(path, tag);
+    }
+}
+
+
 
 void MainWindow::deleteItem() {
     QModelIndex index = ui->pathViewer->currentIndex();
@@ -340,16 +363,35 @@ void MainWindow::deleteItem() {
 
     QFileSystemModel *model = static_cast<QFileSystemModel *>(ui->pathViewer->model());
 
-    QString fileName = model->fileName(index);
+    // Get the 0 column index for fileName no matter which row selected
+    QModelIndex nameIndex = index.siblingAtColumn(0);
+    QString itemPath = model->filePath(nameIndex);
+    QString fileName = model->fileName(nameIndex);
 
     QString prompt = tr("Are you sure you want to delete '%1'?").arg(fileName);
 
     if (QMessageBox::question(this, tr("Delete Item"), prompt, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {
-        if (!model->remove(index)) {
+        QFileInfo fileInfo(itemPath);
+        if (fileInfo.isDir()) {
+            deleteTagsRecursively(itemPath);
+        } else {
+            QStringList tags = tagManager->getTags(itemPath);
+            for (const QString &tag : tags) {
+                tagManager->removeTag(itemPath, tag);
+            }
+        }
+
+        if (!model->remove(nameIndex)) {
             QMessageBox::warning(this, tr("Delete Item"), tr("Failed to delete item."));
+        } else {
+            updateTagComboBox();
         }
     }
 }
+
+
+
+
 
 
 QString MainWindow::getCurrentSelectedFilePath() {
@@ -388,16 +430,15 @@ void MainWindow::deleteTag() {
 
     QStringList tags = tagManager->getTags(filePath);
     if (tags.isEmpty()) {
-        QMessageBox::information(this, tr("Info"), tr("Selected file has no tags to delete."));
+        QMessageBox::information(this, tr("Info"), tr("Selected file has no tags to remove."));
         return;
     }
 
     bool ok;
-    QString tagToDelete = QInputDialog::getItem(this, tr("Delete Tag"),
-                                                tr("Select a tag to delete:"), tags, 0, false, &ok);
+    QString tagToDelete = QInputDialog::getItem(this, tr("Remove Tag"),
+                                                tr("Select a tag to remove:"), tags, 0, false, &ok);
     if (ok && !tagToDelete.isEmpty()) {
         tagManager->removeTag(filePath, tagToDelete);
-        QMessageBox::information(this, tr("Info"), tr("Tag deleted successfully."));
         updateTagComboBox();
     }
 }
@@ -958,15 +999,16 @@ void MainWindow::showContextMenuForPathViewer(const QPoint &pos)
     });
     contextMenu.addAction(newFolderAction);
 
-    QAction *deleteItemAction = new QAction(tr("Delete"), this);
-    connect(deleteItemAction, &QAction::triggered, this, &MainWindow::deleteItem);
-    contextMenu.addAction(deleteItemAction);
-
     QAction *addTagAction = new QAction(tr("Add Tag"), this);
     connect(addTagAction, &QAction::triggered, this, &MainWindow::addTag);
     contextMenu.addAction(addTagAction);
 
-    QAction *deleteTagAction = new QAction(tr("Delete Tag"), this);
+
+    QAction *deleteItemAction = new QAction(tr("Delete"), this);
+    connect(deleteItemAction, &QAction::triggered, this, &MainWindow::deleteItem);
+    contextMenu.addAction(deleteItemAction);
+
+    QAction *deleteTagAction = new QAction(tr("Remove Tag"), this);
     connect(deleteTagAction, &QAction::triggered, this, &MainWindow::deleteTag);
     contextMenu.addAction(deleteTagAction);
 
@@ -1031,48 +1073,15 @@ void MainWindow::updateTagComboBox() {
 }
 
 
-// void MainWindow::filterFilesByTag(const QString &tag)
-// {
-//     // qDebug() << "Starting file filtering for tag:" << tag;
-//     QModelIndex rootIndex = fileSystemModel->index(TEMPLATES_PATH);
-//     int rowCount = fileSystemModel->rowCount(rootIndex);
-//     // qDebug() << "Total rows to check:" << rowCount;
-
-//     ui->pathViewer->setUpdatesEnabled(false);
-
-//     for (int i = 0; i < rowCount; ++i) {
-//         QModelIndex index = fileSystemModel->index(i, 0, rootIndex);
-//         if (!index.isValid()) {
-//             // qDebug() << "Invalid index at row:" << i;
-//             continue;
-//         }
-
-//         QString filePath = fileSystemModel->filePath(index);
-//         QStringList tags = tagManager->getTags(filePath);
-//         // qDebug() << "File at row" << i << ":" << filePath << "Tags:" << tags;
-
-//         if (tag.isEmpty() || tag == "All Tags" || tags.contains(tag, Qt::CaseInsensitive)) {
-//             ui->pathViewer->setRowHidden(i, rootIndex, false);
-//             // qDebug() << "Row" << i << "shown.";
-//         } else {
-//             ui->pathViewer->setRowHidden(i, rootIndex, true);
-//             // qDebug() << "Row" << i << "hidden.";
-//         }
-//     }
-
-//     ui->pathViewer->setUpdatesEnabled(true);
-//     // qDebug() << "Finished file filtering.";
-// }
-
 
 void MainWindow::filterFilesByTag(const QString &tag) {
-    qDebug() << "Starting file filtering for tag:" << tag;
+    // qDebug() << "Starting file filtering for tag:" << tag;
 
     QModelIndex rootIndex = fileSystemModel->index(TEMPLATES_PATH);
     expandAllNodes(rootIndex);
 
     filterIndexByTag(rootIndex, tag);
-    qDebug() << "Finished file filtering.";
+    // qDebug() << "Finished file filtering.";
 }
 
 

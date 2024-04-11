@@ -31,7 +31,7 @@ std::string CONVERTER = "None";
 std::chrono::hours LOG_DELETE_TIME(24); // One day
 const std::string PYTHON_EXEC_PATH = "/Users/michael/anaconda3/bin/python";
 const std::string PROJECT_PATH = "/Users/michael/Developer/EasyDraft";
-const QString TAG_MANAGER_JSON_PATH = "/Users/michael/Downloads/Test_Folder/tag.json";
+const QString TAG_MANAGER_JSON_PATH = QString::fromStdString((fs::current_path() / "tag.json").string());
 const QString TEMPLATES_PATH = "/Users/michael/Desktop";
 
 // Function to read the configuration file and
