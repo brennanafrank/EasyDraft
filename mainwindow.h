@@ -112,6 +112,8 @@ private slots:
 
     void onTagSelected(int index);
 
+    void on_PDFButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);
@@ -143,6 +145,8 @@ private:
     bool underline;
     bool italicize;
     bool bold;
+
+    int typeOfExport;
 
     // This is for testing warning only; remove for later
     bool warning;
