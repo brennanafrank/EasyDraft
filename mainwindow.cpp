@@ -237,17 +237,15 @@ void MainWindow::on_pushButton_5_clicked()
         return;
     }
 
-    if (typeOfExport == 1) {
+    QMessageBox::information(this, "Success", "Exported File" + dirPath);
 
-        std::string command = PYTHON_EXEC_PATH + " " + PROJECT_PATH + "/ExportDoc.py \"" + dirPath.toStdString() + "\" \"" + mainStringExport + "\"";
-        int result = std::system(command.c_str());
 
-        if (result != 0) {
-            std::cerr << "Python script failed with exit code " << result << std::endl;
-        }
+    std::string command = PYTHON_EXEC_PATH + " " + PROJECT_PATH + "/ExportDoc.py \"" + dirPath.toStdString() + "\" \"" + mainStringExport + "\" \"" + std::to_string(typeOfExport) + "\"";
+    int result = std::system(command.c_str());
 
+    if (result != 0) {
+        std::cerr << "Python script failed with exit code " << result << std::endl;
     }
-
 
 }
 
@@ -257,6 +255,22 @@ void MainWindow::on_PDFButton_clicked()
 {
 
     MainWindow::typeOfExport = 1;
+
+}
+
+void MainWindow::on_TXTButton_clicked()
+{
+
+    MainWindow::typeOfExport = 2;
+
+}
+
+
+void MainWindow::on_HTMLButton_clicked()
+{
+
+    MainWindow::typeOfExport = 3;
+
 
 }
 
@@ -1175,4 +1189,3 @@ bool MainWindow::filterIndexByTag(const QModelIndex &index, const QString &tag) 
 
     return anyVisible;
 }
-

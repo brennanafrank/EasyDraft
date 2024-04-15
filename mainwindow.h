@@ -114,6 +114,10 @@ private slots:
 
     void on_PDFButton_clicked();
 
+    void on_TXTButton_clicked();
+
+    void on_HTMLButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);
