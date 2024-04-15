@@ -64,7 +64,19 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pathViewer->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->pathViewer->setColumnWidth(0, 200); // set width of Name
     ui->pathViewer->setColumnWidth(3, 120); // Set width of date modified
+
+    // Enable sorting and set initial sort order
     ui->pathViewer->setSortingEnabled(true);
+    ui->pathViewer->sortByColumn(0, Qt::AscendingOrder); // Sort by the first column in ascending order
+
+    // Enable drag-drop feature
+    ui->pathViewer->setDragEnabled(true);
+    ui->pathViewer->setAcceptDrops(true);
+    ui->pathViewer->setDropIndicatorShown(true);
+    ui->pathViewer->setDragDropMode(QAbstractItemView::DragDrop);
+    ui->pathViewer->setDragDropOverwriteMode(false);
+    ui->pathViewer->setDefaultDropAction(Qt::MoveAction);
+
 
     expandAllNodes(templateIndex);
 
@@ -468,6 +480,8 @@ void MainWindow::addTag() {
         return;
     }
 
+    int currentIndex = ui->tagComboBox->currentIndex();
+
     bool ok;
     QString tag = QInputDialog::getText(this, tr("Add Tag"),
                                         tr("Tag:"), QLineEdit::Normal,
@@ -475,7 +489,15 @@ void MainWindow::addTag() {
     if (ok && !tag.isEmpty()) {
         tagManager->addTag(filePath, tag);
         updateTagComboBox();
+
+        if (currentIndex >= 0 && currentIndex < ui->tagComboBox->count()) {
+            ui->tagComboBox->setCurrentIndex(currentIndex);
+        } else {
+            ui->tagComboBox->setCurrentIndex(currentIndex);
+            ui->tagComboBox->setCurrentIndex(0);
+        }
     }
+    // qDebug() << ui->tagComboBox->currentIndex();
 }
 
 void MainWindow::deleteTag() {
@@ -484,6 +506,8 @@ void MainWindow::deleteTag() {
         QMessageBox::warning(this, tr("Warning"), tr("Please select a file first."));
         return;
     }
+
+    int currentIndex = ui->tagComboBox->currentIndex();
 
     QStringList tags = tagManager->getTags(filePath);
     if (tags.isEmpty()) {
@@ -497,9 +521,16 @@ void MainWindow::deleteTag() {
     if (ok && !tagToDelete.isEmpty()) {
         tagManager->removeTag(filePath, tagToDelete);
         updateTagComboBox();
-    }
-}
 
+        if (currentIndex >= 0 && currentIndex < ui->tagComboBox->count()) {
+            ui->tagComboBox->setCurrentIndex(currentIndex);
+        } else {
+            ui->tagComboBox->setCurrentIndex(currentIndex);
+            ui->tagComboBox->setCurrentIndex(0);
+        }
+    }
+    // qDebug() << ui->tagComboBox->currentIndex();
+}
 
 // When ascending is triggered
 
@@ -1061,7 +1092,7 @@ void MainWindow::showContextMenuForPathViewer(const QPoint &pos)
     contextMenu.addAction(addTagAction);
 
 
-    QAction *deleteItemAction = new QAction(tr("Delete"), this);
+    QAction *deleteItemAction = new QAction(tr("Delete Item"), this);
     connect(deleteItemAction, &QAction::triggered, this, &MainWindow::deleteItem);
     contextMenu.addAction(deleteItemAction);
 
@@ -1125,10 +1156,15 @@ void MainWindow::updateTagComboBox() {
     QStringList tags = tagManager->getAllTags();
     tags.insert(0, "All Tags");
 
+    // Disconnect the signal before updating the combobox
+    disconnect(ui->tagComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onTagSelected(int)));
+
     ui->tagComboBox->clear();
     ui->tagComboBox->addItems(tags);
-}
 
+    // Reconnect the signal after updating the combobox
+    connect(ui->tagComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onTagSelected(int)));
+}
 
 
 void MainWindow::filterFilesByTag(const QString &tag) {
@@ -1189,3 +1225,7 @@ bool MainWindow::filterIndexByTag(const QModelIndex &index, const QString &tag) 
 
     return anyVisible;
 }
+
+
+
+
