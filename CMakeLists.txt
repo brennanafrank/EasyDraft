@@ -29,6 +29,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         CS307ParsingGUIOfficial_en_US.ts
         replace_helper.py
         config.hpp
+        ExportDoc.py
 
 
 

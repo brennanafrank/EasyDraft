@@ -101,6 +101,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    //https://stackoverflow.com/questions/17032970/clear-data-inside-text-file-in-c
+    // Clear the file
+    std::ofstream ofs;
+    ofs.open("savedpaths.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+
     delete ui;
 }
 
@@ -201,19 +207,70 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_pushButton_5_clicked()
 {
 
-    QString currentUpdate = ui->listWidget->currentItem()->text();
 
-    std::string updateStandard = currentUpdate.toStdString();
+    if (viewPaths.empty()) {
 
-    int error = export_document(updateStandard);
+        std::ifstream file("savedpaths.txt");
 
-    if (error < 0) {
+        if (file.is_open() && !dontAdd) {
 
-        QString status = QString("Error(%d)").arg(error);
+            std::string line;
 
-        QMessageBox::about(this, "Warning", status);
+            while (std::getline(file, line)) {
+
+                viewPaths.push_back(line);
+
+            }
+
+            file.close();
+
+        }
 
     }
+
+    QMessageBox::information(this, "Success", "Exported File" + QString::fromStdString(viewPaths[viewPaths.size() - 1]));
+
+    std::string mainStringExport = viewPaths[viewPaths.size() - 1];
+
+    QString dirPath = QFileDialog::getExistingDirectory(this, tr("Select Save Directory"), QDir::homePath());
+    if (dirPath.isEmpty()) {
+        return;
+    }
+
+    QMessageBox::information(this, "Success", "Exported File" + dirPath);
+
+
+    std::string command = PYTHON_EXEC_PATH + " " + PROJECT_PATH + "/ExportDoc.py \"" + dirPath.toStdString() + "\" \"" + mainStringExport + "\" \"" + std::to_string(typeOfExport) + "\"";
+    int result = std::system(command.c_str());
+
+    if (result != 0) {
+        std::cerr << "Python script failed with exit code " << result << std::endl;
+    }
+
+}
+
+
+
+void MainWindow::on_PDFButton_clicked()
+{
+
+    MainWindow::typeOfExport = 1;
+
+}
+
+void MainWindow::on_TXTButton_clicked()
+{
+
+    MainWindow::typeOfExport = 2;
+
+}
+
+
+void MainWindow::on_HTMLButton_clicked()
+{
+
+    MainWindow::typeOfExport = 3;
+
 
 }
 
