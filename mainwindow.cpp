@@ -51,6 +51,17 @@ MainWindow::MainWindow(QWidget *parent)
     updateTagComboBox();
     connect(ui->tagComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onTagSelected(int)));
 
+    QPixmap pix(":/rec/340.png");
+
+    ui->back_button_export_view->setIcon(QIcon(pix));
+    ui->back_button_export_view->setIconSize(pix.size());
+
+    ui->back_button_parsing->setIcon(QIcon(pix));
+    ui->back_button_parsing->setIconSize(pix.size());
+
+    ui->back_button_view_doc->setIcon(QIcon(pix));
+    ui->back_button_view_doc->setIconSize(pix.size());
+
 
 
     fileSystemModel = new CustomFileSystemModel(this);
@@ -1291,6 +1302,30 @@ void MainWindow::autoSaveDraft() {
 
 
 
+void MainWindow::on_back_button_export_view_clicked()
+{
+
+    MainWindow::on_actionBack_triggered();
+
+}
+
+
+void MainWindow::on_back_button_parsing_clicked()
+{
+
+    MainWindow::on_actionBack_triggered();
+
+}
+
+
+void MainWindow::on_back_button_view_doc_clicked()
+{
+
+    MainWindow::on_actionBack_triggered();
+
+}
+
+
 void MainWindow::handleAutoSaveToggle(int state) {
     if (state == Qt::Unchecked && !docPath.empty()) {
         // Construct the path to the auto-save file
@@ -1330,3 +1365,4 @@ QString MainWindow::hashFilePath(const QString& path) {
     hash.addData(path.toUtf8());
     return hash.result().toHex();  // Converts the hash to a hexadecimal string
 }
+
