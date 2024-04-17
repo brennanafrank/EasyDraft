@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="page_2">
      <widget class="QPushButton" name="pushButton_4">
@@ -301,6 +301,19 @@
        <string>Auto-Save</string>
       </property>
      </widget>
+     <widget class="QToolButton" name="back_button_parsing">
+      <property name="geometry">
+       <rect>
+        <x>580</x>
+        <y>10</y>
+        <width>26</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_4">
      <widget class="QPushButton" name="pushButton_3">
@@ -327,6 +340,19 @@
       </property>
       <property name="text">
        <string>View</string>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="back_button_export_view">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>40</y>
+        <width>26</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>...</string>
       </property>
      </widget>
     </widget>
@@ -362,6 +388,19 @@
       </property>
       <property name="text">
        <string>Select File</string>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="back_button_view_doc">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>20</y>
+        <width>26</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>...</string>
       </property>
      </widget>
     </widget>
@@ -428,63 +467,27 @@
     </widget>
    </widget>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>870</width>
-     <height>24</height>
+     <height>37</height>
     </rect>
    </property>
    <property name="defaultUp">
     <bool>false</bool>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionFile"/>
-   </widget>
-   <widget class="QMenu" name="menuDownload">
-    <property name="title">
-     <string>Insert</string>
-    </property>
-    <addaction name="actionDownload_2"/>
-   </widget>
-   <widget class="QMenu" name="menuTrash">
-    <property name="title">
-     <string>Delete</string>
-    </property>
-    <addaction name="actionTrash_2"/>
-   </widget>
    <widget class="QMenu" name="menuBack">
     <property name="title">
      <string>Back</string>
     </property>
     <addaction name="actionBack"/>
    </widget>
-   <widget class="QMenu" name="menuSearch">
-    <property name="title">
-     <string>Additional</string>
-    </property>
-    <widget class="QMenu" name="menuFilter">
-     <property name="title">
-      <string>Order</string>
-     </property>
-     <addaction name="actionAscending"/>
-     <addaction name="actionDescending"/>
-    </widget>
-    <addaction name="actionSearch"/>
-    <addaction name="menuFilter"/>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuDownload"/>
-   <addaction name="menuTrash"/>
    <addaction name="menuBack"/>
-   <addaction name="menuSearch"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionFile_Options">
    <property name="text">
     <string>File Options</string>

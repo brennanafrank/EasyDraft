@@ -127,6 +127,12 @@ private slots:
     QString hashFilePath(const QString& path);
 
 
+    void on_back_button_export_view_clicked();
+
+    void on_back_button_parsing_clicked();
+
+    void on_back_button_view_doc_clicked();
+
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);
