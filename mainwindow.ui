@@ -17,51 +17,42 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>-20</x>
+      <x>0</x>
       <y>0</y>
       <width>871</width>
-      <height>531</height>
+      <height>541</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page_2">
-     <widget class="QPushButton" name="pushButton_4">
-      <property name="geometry">
-       <rect>
-        <x>760</x>
-        <y>470</y>
-        <width>101</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Select Widget</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_2">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>0</y>
-        <width>113</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
      <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>30</x>
-        <y>30</y>
+        <x>20</x>
+        <y>10</y>
         <width>701</width>
-        <height>501</height>
+        <height>531</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,3,0,7">
        <item>
-        <widget class="QListWidget" name="listWidget"/>
+        <widget class="QLabel" name="recentText">
+         <property name="text">
+          <string>Recent</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="recentFilesList"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="fileText">
+         <property name="text">
+          <string>Templates</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QTreeView" name="pathViewer">
@@ -75,24 +66,11 @@
        </item>
       </layout>
      </widget>
-     <widget class="QPushButton" name="chooseDocPathButton">
-      <property name="geometry">
-       <rect>
-        <x>760</x>
-        <y>430</y>
-        <width>111</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Select a Docx</string>
-      </property>
-     </widget>
      <widget class="QWidget" name="verticalLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>760</x>
-        <y>330</y>
+        <x>740</x>
+        <y>460</y>
         <width>111</width>
         <height>80</height>
        </rect>
@@ -118,8 +96,8 @@
      <widget class="QWidget" name="verticalLayoutWidget_3">
       <property name="geometry">
        <rect>
-        <x>760</x>
-        <y>260</y>
+        <x>740</x>
+        <y>390</y>
         <width>110</width>
         <height>58</height>
        </rect>
@@ -167,7 +145,7 @@
      <widget class="QPushButton" name="submitPlace">
       <property name="geometry">
        <rect>
-        <x>640</x>
+        <x>710</x>
         <y>170</y>
         <width>151</width>
         <height>41</height>
@@ -180,14 +158,14 @@
      <widget class="QTabWidget" name="tabWidget">
       <property name="geometry">
        <rect>
-        <x>570</x>
+        <x>680</x>
         <y>240</y>
-        <width>301</width>
+        <width>181</width>
         <height>281</height>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="Font">
        <attribute name="title">
@@ -196,7 +174,7 @@
        <widget class="QPushButton" name="fontButton">
         <property name="geometry">
          <rect>
-          <x>100</x>
+          <x>40</x>
           <y>30</y>
           <width>101</width>
           <height>32</height>
@@ -209,7 +187,7 @@
        <widget class="QComboBox" name="fontSelector">
         <property name="geometry">
          <rect>
-          <x>90</x>
+          <x>30</x>
           <y>100</y>
           <width>121</width>
           <height>32</height>
@@ -249,9 +227,9 @@
      <widget class="QScrollArea" name="scrollArea">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>10</y>
-        <width>511</width>
+        <x>80</x>
+        <y>20</y>
+        <width>571</width>
         <height>521</height>
        </rect>
       </property>
@@ -263,7 +241,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>509</width>
+         <width>569</width>
          <height>519</height>
         </rect>
        </property>
@@ -272,9 +250,9 @@
      <widget class="QWidget" name="horizontalLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>610</x>
+        <x>710</x>
         <y>60</y>
-        <width>237</width>
+        <width>141</width>
         <height>41</height>
        </rect>
       </property>
@@ -291,7 +269,7 @@
      <widget class="QCheckBox" name="autoSaveToggle">
       <property name="geometry">
        <rect>
-        <x>680</x>
+        <x>740</x>
         <y>120</y>
         <width>85</width>
         <height>20</height>
@@ -304,8 +282,8 @@
      <widget class="QToolButton" name="back_button_parsing">
       <property name="geometry">
        <rect>
-        <x>580</x>
-        <y>10</y>
+        <x>40</x>
+        <y>20</y>
         <width>26</width>
         <height>22</height>
        </rect>
@@ -474,7 +452,7 @@
      <x>0</x>
      <y>0</y>
      <width>870</width>
-     <height>37</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="defaultUp">

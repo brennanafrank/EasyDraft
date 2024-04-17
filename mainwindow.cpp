@@ -35,18 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     loadSettings();
     ui->stackedWidget->setCurrentIndex(0);
     currentPageIndex = 1;
-    // qDebug() << IMPORT_DIR;
-    std::vector<std::string> templates = template_list();
-    for (int i = 0;  i < templates.size(); i++)
-    {
-        QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(templates[i]));
-        ui->listWidget->addItem(item);
-    }
-    ui->lineEdit_2->setVisible(false);
 
-    // Allow for sorting
-
-    ui->listWidget->setSortingEnabled(true);
 
     updateTagComboBox();
     connect(ui->tagComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onTagSelected(int)));
@@ -95,7 +84,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->fillFromJsonButton, &QPushButton::clicked, this, [this](){
         onFillFromJsonClicked("");  // Calls the function without any parameters
     });
-    connect(ui->chooseDocPathButton, &QPushButton::clicked, this, &MainWindow::onChooseDocPathClicked);
     ui->charMaxLimitSpinBox->setValue(maxCharLimit);
 
 
@@ -106,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent)
     autoSaveTimer->setSingleShot(true);  // The timer will only fire once after each restart
     connect(ui->autoSaveToggle, &QCheckBox::stateChanged, this, &MainWindow::handleAutoSaveToggle);
 
-
+    connect(ui->recentFilesList, &QListWidget::itemClicked, this, &MainWindow::onRecentFileClicked);
 
     // Setting up all the fonts that a user can select
     for (int j = 1; j <= 12; ++j) {
@@ -126,9 +114,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     // Highlighting the name of the file we're at
-
     QFont font("Arial", 20, QFont::Bold);
-
+    ui->fileText->setFont(font);
+    ui->recentText->setFont(font);
     ui->label->setFont(font);
 }
 
@@ -168,66 +156,6 @@ void MainWindow::on_actionBack_triggered()
     ui->viewPathsListWidget->setVisible(true);
 
 }
-
-
-void MainWindow::on_pushButton_4_clicked()
-{
-    if (ui->listWidget->count() == 0) {
-
-        QMessageBox::warning(nullptr, "Warning", "No documents!");
-        return;
-
-    }
-    else {
-
-        ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() + 1);
-
-        ui->label->setText(ui->listWidget->currentItem()->text());
-
-        std::ifstream file("paths.txt");
-        if (!file) {  // Check if the file could not be opened
-            // Create the file if it does not exist
-            std::ofstream createFile("paths.txt");
-            if (!createFile) {
-                qDebug() << "Failed to create file.";
-                return;
-            }
-            createFile.close(); // Close the newly created file
-            qDebug() << "File created, but no data to read.";
-            return;
-        }
-
-        // File exists and is open for reading
-        std::string line;
-        while (std::getline(file, line)) {
-            pathsofFiles.push_back(QString::fromStdString(line));
-        }
-
-        file.close(); // Close the file after reading
-
-
-
-        QString filePath;
-
-        for (int i = 0; i < pathsofFiles.size(); ++i) {
-
-            if (pathsofFiles[i].contains(ui->listWidget->currentItem()->text())) {
-
-                filePath = pathsofFiles[i];
-
-            }
-
-        }
-        // qDebug() << "filepath = " << filePath;
-        docPath = filePath.toStdString();
-        replacements = findPlaceholdersInDocument(docPath);
-        createDynamicPlaceholders(replacements);
-        QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
-
-    }
-
-}
-
 
 void MainWindow::on_pushButton_3_clicked()
 {
@@ -307,85 +235,6 @@ void MainWindow::on_HTMLButton_clicked()
 
 }
 
-
-void MainWindow::on_actionTrash_2_triggered()
-{
-
-    QString currentDelete = ui->listWidget->currentItem()->text();
-
-    std::string deleteStandard = currentDelete.toStdString();
-
-    delete_template(deleteStandard);
-
-    ui->listWidget->clear();
-
-    if (!template_list().empty()) {
-
-        for (int i = 0; i < template_list().size(); i++) {
-
-            QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(template_list()[i]));
-            ui->listWidget->addItem(item);
-
-        }
-
-    }
-
-}
-
-
-void MainWindow::on_actionDownload_2_triggered()
-{
-    QString path = QFileDialog::getOpenFileName(this, "...", QDir::homePath());
-
-    std::filesystem::path name = path.toStdString();
-    qDebug()<< "testing"<<path;
-    upload_template(name);
-
-    ui->listWidget->clear();
-
-    if (!template_list().empty()) {
-
-        for (int i = 0; i < template_list().size(); i++) {
-
-            QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(template_list()[i]));
-            ui->listWidget->addItem(item);
-
-        }
-
-    }
-
-}
-
-
-void MainWindow::on_actionSearch_triggered()
-{
-
-    ui->lineEdit_2->setVisible(true);
-    connect(ui->lineEdit_2, &QLineEdit::textChanged, this, &MainWindow::filterSearch);
-
-
-}
-
-
-void MainWindow::filterSearch(const QString &text) {
-
-    for (int i = 0; i < ui->listWidget->count(); i++) {
-
-        QListWidgetItem *item = ui->listWidget->item(i);
-        bool matches = item->text().contains(text, Qt::CaseInsensitive);
-        ui->listWidget->setRowHidden(i, !matches);
-
-    }
-
-}
-
-
-// void MainWindow::onTagComboBoxCurrentIndexChanged(const QString &tag) {
-//     auto *model = static_cast<CustomFileSystemModel*>(ui->pathViewer->model());
-//     model->setFilterTag(tag);
-// }
-
-
 void MainWindow::createFolder(const QModelIndex &index)
 {
     // convert the model into FileSystemModel
@@ -425,8 +274,11 @@ void MainWindow::deleteAutoSaveAndTags(const QString &path) {
     QFileInfo fileInfo(path);
     if (fileInfo.isDir()) {
         QDir directory(path);
-        for (const QFileInfo &entry : directory.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot)) {
-            deleteAutoSaveAndTags(entry.absoluteFilePath());  // Recursive call
+        QStringList allFiles = directory.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System, QDir::DirsFirst);
+        for (const QString &file : allFiles) {
+            QString fullPath = directory.absoluteFilePath(file);
+            deleteAutoSaveAndTags(fullPath);  // Recursive call for files in directories
+            recentFiles.removeAll(fullPath);  // Remove from the recent files list if present
         }
     } else {
         // Delete tags if any
@@ -447,6 +299,8 @@ void MainWindow::deleteAutoSaveAndTags(const QString &path) {
             }
         }
     }
+    recentFiles.removeAll(path);
+    updateRecentFilesList();  // Refresh the UI list of recent files
 }
 
 void MainWindow::deleteItem() {
@@ -540,23 +394,6 @@ void MainWindow::deleteTag() {
         }
     }
     // qDebug() << ui->tagComboBox->currentIndex();
-}
-
-// When ascending is triggered
-
-void MainWindow::on_actionAscending_triggered()
-{
-    ui->listWidget->sortItems(Qt::AscendingOrder);
-
-}
-
-
-//Descnding triggered
-void MainWindow::on_actionDescending_triggered()
-{
-
-    ui->listWidget->sortItems(Qt::DescendingOrder);
-
 }
 
 
@@ -972,49 +809,6 @@ void MainWindow::onFillFromJsonClicked(const QString &filePath = QString()) {
 
 
 
-void MainWindow::onChooseDocPathClicked()
-{
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Open Document"), QDir::homePath(), tr("Word Documents (*.docx)"));
-    if (!filePath.isEmpty()) {
-        try {
-            docPath = filePath.toStdString();
-            replacements = findPlaceholdersInDocument(docPath);
-            createDynamicPlaceholders(replacements, maxCharLimit);
-            QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
-
-            std::ofstream file("paths.txt", std::ios::app);
-
-            if (file.is_open()) {
-
-                file << docPath;
-
-                file.close();
-
-            }
-
-            std::filesystem::path name = filePath.toStdString();
-
-            upload_template(name);
-
-            ui->listWidget->clear();
-
-            if (!template_list().empty()) {
-
-                for (int i = 0; i < template_list().size(); i++) {
-
-                    QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(template_list()[i]));
-                    ui->listWidget->addItem(item);
-
-                }
-
-            }
-        } catch (const std::exception& e) {
-            QMessageBox::warning(this, tr("Error"), QString::fromStdString(e.what()));
-        }
-    }
-
-}
-
 void MainWindow::onSaveDraftClicked() {
     updateReplacementsFromInputs(pageSpinBox->value());
     QString selectedFilter;
@@ -1123,6 +917,7 @@ void MainWindow::on_pathViewer_doubleClicked(const QModelIndex &index) {
         QMessageBox::warning(this, tr("Invalid File"), tr("The selected file is not a .docx document."));
         return;
     }
+    updateRecentFiles(currentPath);  // Update the recent files list
     updateAutoSaveToggleState();
     QString hashedName = hashFilePath(QString::fromStdString(docPath));
     fs::path autoSaveFilePath = AUTO_SAVE_PATH / (hashedName.toStdString() + ".json");
@@ -1181,12 +976,22 @@ void MainWindow::on_charMaxLimitButton_clicked()
 void MainWindow::saveSettings() {
     QSettings settings("CS307_Gp37", "EasyDraft");
     settings.setValue("maxCharLimit", maxCharLimit);
+    // Save the recent files
+    settings.setValue("recentFiles", recentFiles.join("|"));
 }
 
 
 void MainWindow::loadSettings() {
     QSettings settings("CS307_Gp37", "EasyDraft");
     maxCharLimit = settings.value("maxCharLimit", 20).toInt();
+    // Load the recent files
+    QString files = settings.value("recentFiles", "").toString();
+    if (!files.isEmpty()) {
+        recentFiles = files.split("|");
+    }
+
+    // Update the UI list to reflect the loaded recent files
+    updateRecentFilesList();
 }
 
 void MainWindow::onTagSelected(int index) {
@@ -1365,4 +1170,66 @@ QString MainWindow::hashFilePath(const QString& path) {
     hash.addData(path.toUtf8());
     return hash.result().toHex();  // Converts the hash to a hexadecimal string
 }
+
+void MainWindow::updateRecentFiles(const QString& filePath) {
+    recentFiles.removeAll(filePath);  // Remove if already exists to prevent duplicates
+    recentFiles.prepend(filePath);    // Add to the front of the list
+    if (recentFiles.size() > 5) {
+        recentFiles.removeLast();     // Ensure only 5 items are kept
+    }
+
+    updateRecentFilesList();  // Update the UI
+}
+
+
+
+// void MainWindow::updateRecentFilesList() {
+//     ui->recentFilesList->clear();
+//     for (const QString& file : recentFiles) {
+//         QListWidgetItem* item = new QListWidgetItem(QFileInfo(file).fileName(), ui->recentFilesList);
+//         item->setData(Qt::UserRole, file);  // Store the file path as item data
+//     }
+// }
+
+
+void MainWindow::updateRecentFilesList() {
+    ui->recentFilesList->clear();
+    for (const QString &filePath : recentFiles) {
+        QListWidgetItem *item = new QListWidgetItem(ui->recentFilesList);
+        QWidget *widget = new QWidget;
+        QHBoxLayout *layout = new QHBoxLayout;  // Horizontal layout
+
+        QLabel *titleLabel = new QLabel(QFileInfo(filePath).fileName());
+        QLabel *pathLabel = new QLabel(" - " + QFileInfo(filePath).absolutePath());
+        pathLabel->setStyleSheet("color: grey;");
+
+        layout->addWidget(titleLabel);
+        layout->addWidget(pathLabel);
+        layout->addStretch();  // Add a stretchable space at the end to push content to the left
+        layout->setSpacing(2);  // Reduce space between labels if needed
+        layout->setContentsMargins(5, 5, 5, 5);  // Set outer margins
+        widget->setLayout(layout);
+
+        item->setSizeHint(widget->sizeHint());
+        ui->recentFilesList->addItem(item);
+        ui->recentFilesList->setItemWidget(item, widget);
+
+        // Set the file path data for retrieval when clicked
+        item->setData(Qt::UserRole, filePath);
+    }
+    saveSettings();
+}
+
+
+
+
+void MainWindow::onRecentFileClicked(QListWidgetItem* item) {
+    QString filePath = item->data(Qt::UserRole).toString();
+    if (!filePath.isEmpty()) {
+        // Simulate opening the file as if it was double-clicked in the path viewer
+        QModelIndex index = fileSystemModel->index(filePath);
+        on_pathViewer_doubleClicked(index);
+    }
+}
+
 
