@@ -30,6 +30,7 @@ QT_BEGIN_NAMESPACE
 #include <QVariantAnimation>
 #include "replacementsHelper.h"
 #include <QSettings>
+#include <QTimer>
 
 
 
@@ -92,7 +93,7 @@ private slots:
 
     void onCompleteFillButtonlicked();
     void onPageChanged(int page);
-    void onFillFromJsonClicked();
+    void onFillFromJsonClicked(const QString &filePath);
     void onChooseDocPathClicked();
     void onSaveDraftClicked();
 
@@ -118,6 +119,9 @@ private slots:
 
     void on_HTMLButton_clicked();
 
+    // Auto-save draft
+    void autoSaveDraft();
+
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);
@@ -137,6 +141,8 @@ private:
     int currentPageIndex; // Record the index before page value change for onPageChanged function
     int maxCharLimit;
     std::string docPath;
+    QTimer* autoSaveTimer;
+
 
     //Create a vector of filePaths
     std::vector<QString> pathsofFiles;
