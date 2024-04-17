@@ -31,6 +31,7 @@ QT_BEGIN_NAMESPACE
 #include "replacementsHelper.h"
 #include <QSettings>
 #include <QTimer>
+#include <QCryptographicHash>
 
 
 
@@ -121,11 +122,15 @@ private slots:
 
     // Auto-save draft
     void autoSaveDraft();
+    void handleAutoSaveToggle(int state);
+    void updateAutoSaveToggleState();
+    QString hashFilePath(const QString& path);
+
 
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);
-    void deleteTagsRecursively(const QString &path);
+    void deleteAutoSaveAndTags(const QString&);
     void deleteItem();
     void addTag();
     void deleteTag();
@@ -166,6 +171,8 @@ private:
     void filterFilesByTag(const QString &tag); // Method to filter files
     bool filterIndexByTag(const QModelIndex &index, const QString &tag);
     void expandAllNodes(const QModelIndex &index);
+
+
 
 
 };

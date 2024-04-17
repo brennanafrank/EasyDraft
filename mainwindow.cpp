@@ -93,6 +93,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(autoSaveTimer, &QTimer::timeout, this, &MainWindow::autoSaveDraft);
     autoSaveTimer->setInterval(2500);  // Set the interval to 2.5 secs
     autoSaveTimer->setSingleShot(true);  // The timer will only fire once after each restart
+    connect(ui->autoSaveToggle, &QCheckBox::stateChanged, this, &MainWindow::handleAutoSaveToggle);
 
 
 
@@ -409,55 +410,46 @@ void MainWindow::createFolder(const QModelIndex &index)
     }
 }
 
+void MainWindow::deleteAutoSaveAndTags(const QString &path) {
+    QFileInfo fileInfo(path);
+    if (fileInfo.isDir()) {
+        QDir directory(path);
+        for (const QFileInfo &entry : directory.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot)) {
+            deleteAutoSaveAndTags(entry.absoluteFilePath());  // Recursive call
+        }
+    } else {
+        // Delete tags if any
+        QStringList tags = tagManager->getTags(path);
+        for (const QString &tag : tags) {
+            tagManager->removeTag(path, tag);
+        }
 
-void MainWindow::deleteTagsRecursively(const QString &path) {
-    QDir directory(path);
-    QFileInfoList entries = directory.entryInfoList(QDir::NoDotAndDotDot | QDir::Files | QDir::Dirs);
+        // Generate the hashed filename based on the full path
+        QString hashedName = hashFilePath(path);
+        fs::path autoSaveFilePath = AUTO_SAVE_PATH / (hashedName.toStdString() + ".json");
 
-    for (const QFileInfo &entry : entries) {
-        if (entry.isDir()) {
-            deleteTagsRecursively(entry.absoluteFilePath());
-        } else {
-            QStringList tags = tagManager->getTags(entry.absoluteFilePath());
-            for (const QString &tag : tags) {
-                tagManager->removeTag(entry.absoluteFilePath(), tag);
+        if (fs::exists(autoSaveFilePath)) {
+            try {
+                fs::remove(autoSaveFilePath);
+            } catch (const std::filesystem::filesystem_error& e) {
+                qDebug() << "Failed to delete auto-save file:" << QString::fromStdString(e.what());
             }
         }
     }
-
-    // Remove tag of current dir
-    QStringList dirTags = tagManager->getTags(path);
-    for (const QString &tag : dirTags) {
-        tagManager->removeTag(path, tag);
-    }
 }
-
-
 
 void MainWindow::deleteItem() {
     QModelIndex index = ui->pathViewer->currentIndex();
-
     if (!index.isValid()) return;
 
     QFileSystemModel *model = static_cast<QFileSystemModel *>(ui->pathViewer->model());
-
-    // Get the 0 column index for fileName no matter which row selected
     QModelIndex nameIndex = index.siblingAtColumn(0);
     QString itemPath = model->filePath(nameIndex);
     QString fileName = model->fileName(nameIndex);
 
     QString prompt = tr("Are you sure you want to delete '%1'?").arg(fileName);
-
     if (QMessageBox::question(this, tr("Delete Item"), prompt, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {
-        QFileInfo fileInfo(itemPath);
-        if (fileInfo.isDir()) {
-            deleteTagsRecursively(itemPath);
-        } else {
-            QStringList tags = tagManager->getTags(itemPath);
-            for (const QString &tag : tags) {
-                tagManager->removeTag(itemPath, tag);
-            }
-        }
+        deleteAutoSaveAndTags(itemPath);  // Use the recursive helper function
 
         if (!model->remove(nameIndex)) {
             QMessageBox::warning(this, tr("Delete Item"), tr("Failed to delete item."));
@@ -466,8 +458,6 @@ void MainWindow::deleteItem() {
         }
     }
 }
-
-
 
 
 
@@ -806,14 +796,14 @@ void MainWindow::updateReplacementsFromInputs(int currentPage) {
             }
         }
     }
-    qDebug() << "updateReplacementsFromInputs";
-    for (const auto& pair : replacements) {
-        qDebug() << "Key:" << QString::fromStdString(pair.first);
-        qDebug() << "Values:";
-        for (const auto& value : pair.second) {
-            qDebug() << QString::fromStdString(value);
-        }
-    }
+    // qDebug() << "updateReplacementsFromInputs";
+    // for (const auto& pair : replacements) {
+    //     qDebug() << "Key:" << QString::fromStdString(pair.first);
+    //     qDebug() << "Values:";
+    //     for (const auto& value : pair.second) {
+    //         qDebug() << QString::fromStdString(value);
+    //     }
+    // }
 }
 
 void MainWindow::updatePlaceholderValuesFromReplacements(int currentPage) {
@@ -965,7 +955,7 @@ void MainWindow::onFillFromJsonClicked(const QString &filePath = QString()) {
             QMessageBox::warning(this, tr("Error"), QString::fromStdString(e.what()));
         }
     } else {
-        QMessageBox::warning(this, tr("Error"), tr("Please select a document first."));
+        // QMessageBox::warning(this, tr("Error"), tr("Please select a document first."));
     }
 }
 
@@ -1122,8 +1112,9 @@ void MainWindow::on_pathViewer_doubleClicked(const QModelIndex &index) {
         QMessageBox::warning(this, tr("Invalid File"), tr("The selected file is not a .docx document."));
         return;
     }
-
-    fs::path autoSaveFilePath = AUTO_SAVE_PATH / (fs::path(docPath).filename().replace_extension(".json").string());
+    updateAutoSaveToggleState();
+    QString hashedName = hashFilePath(QString::fromStdString(docPath));
+    fs::path autoSaveFilePath = AUTO_SAVE_PATH / (hashedName.toStdString() + ".json");
     QFile autoSaveFile(QString::fromStdString(autoSaveFilePath.string()));
     if (autoSaveFile.exists()) {
         // Set the autoSaveToggle checked state to true
@@ -1145,16 +1136,18 @@ void MainWindow::on_pathViewer_doubleClicked(const QModelIndex &index) {
 
     createDynamicPlaceholders(replacements, maxCharLimit);
     ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() + 1);
+    currentPageIndex = pageSpinBox->value();
     updatePlaceholderValuesFromReplacements(currentPageIndex);
 
-    qDebug()<< "on_pathViewer_doubleClicked";
-    for (const auto& pair : replacements) {
-        qDebug() << "Key:" << QString::fromStdString(pair.first);
-        qDebug() << "Values:";
-        for (const auto& value : pair.second) {
-            qDebug() << QString::fromStdString(value);
-        }
-    }
+
+    // qDebug()<< "on_pathViewer_doubleClicked";
+    // for (const auto& pair : replacements) {
+    //     qDebug() << "Key:" << QString::fromStdString(pair.first);
+    //     qDebug() << "Values:";
+    //     for (const auto& value : pair.second) {
+    //         qDebug() << QString::fromStdString(value);
+    //     }
+    // }
 }
 
 
@@ -1273,8 +1266,8 @@ bool MainWindow::filterIndexByTag(const QModelIndex &index, const QString &tag) 
 void MainWindow::autoSaveDraft() {
     updateReplacementsFromInputs(currentPageIndex);
     if (!docPath.empty()) {
-        fs::path autoSaveFilePath = AUTO_SAVE_PATH / QString::fromStdString(docPath).split("/").last().toStdString();
-        autoSaveFilePath.replace_extension(".json");
+        QString hashedName = hashFilePath(QString::fromStdString(docPath));
+        fs::path autoSaveFilePath = AUTO_SAVE_PATH / (hashedName.toStdString() + ".json");
 
         // Check if the directory exists and create it if it does not
         if (!fs::exists(autoSaveFilePath.parent_path())) {
@@ -1289,7 +1282,7 @@ void MainWindow::autoSaveDraft() {
         // Attempt to save the JSON file
         try {
             saveJsonToFile(replacements, autoSaveFilePath.string());
-            qDebug() << "Auto-saved successfully to:" << QString::fromStdString(autoSaveFilePath.string());
+            // qDebug() << "Auto-saved successfully to:" << QString::fromStdString(autoSaveFilePath.string());
         } catch (const std::exception& e) {
             qDebug() << "Auto-save failed: " << QString::fromStdString(e.what());
         }
@@ -1297,3 +1290,43 @@ void MainWindow::autoSaveDraft() {
 }
 
 
+
+void MainWindow::handleAutoSaveToggle(int state) {
+    if (state == Qt::Unchecked && !docPath.empty()) {
+        // Construct the path to the auto-save file
+        QString hashedName = hashFilePath(QString::fromStdString(docPath));
+        fs::path autoSaveFilePath = AUTO_SAVE_PATH / (hashedName.toStdString() + ".json");
+
+        // Check if the auto-save file exists and delete it
+        if (fs::exists(autoSaveFilePath)) {
+            try {
+                fs::remove(autoSaveFilePath);
+                // qDebug() << "Auto-save file deleted successfully.";
+            } catch (const std::filesystem::filesystem_error& e) {
+                qDebug() << "Failed to delete auto-save file:" << QString::fromStdString(e.what());
+                QMessageBox::warning(this, tr("Error Deleting Auto-Save File"),
+                                     tr("Could not delete the auto-save file. Please check permissions and file status."));
+            }
+        }
+    }
+}
+
+void MainWindow::updateAutoSaveToggleState() {
+    if (docPath.empty()) {
+        ui->autoSaveToggle->setChecked(false);
+        return;
+    }
+
+    QString hashedName = hashFilePath(QString::fromStdString(docPath));
+    fs::path autoSaveFilePath = AUTO_SAVE_PATH / (hashedName.toStdString() + ".json");
+    bool exists = fs::exists(autoSaveFilePath);
+
+    ui->autoSaveToggle->setChecked(exists);
+}
+
+
+QString MainWindow::hashFilePath(const QString& path) {
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    hash.addData(path.toUtf8());
+    return hash.result().toHex();  // Converts the hash to a hexadecimal string
+}
