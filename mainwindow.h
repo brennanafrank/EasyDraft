@@ -32,7 +32,7 @@ QT_BEGIN_NAMESPACE
 #include <QSettings>
 #include <QTimer>
 #include <QCryptographicHash>
-
+#include <QListWidget>
 
 
 
@@ -161,6 +161,11 @@ private:
     bool filterIndexByTag(const QModelIndex &index, const QString &tag);
     void expandAllNodes(const QModelIndex &index);
 
+    // recent file
+    QStringList recentFiles;
+    void updateRecentFiles(const QString&);
+    void updateRecentFilesList();
+    void onRecentFileClicked(QListWidgetItem* item);
 
 
 
