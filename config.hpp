@@ -22,6 +22,7 @@ inline fs::path IMPORT_DIR = (fs::current_path().append("templates")).string();
 inline fs::path EXPORT_DIR = "/Users/aneeshpendyala/Desktop/ExportTemplates";
 inline fs::path DRAFTS_DIR = (fs::current_path().append("drafts")).string();
 inline fs::path LOG_DIR = (fs::current_path().append("logs")).string();
+inline fs::path AUTO_SAVE_PATH = fs::current_path() / "Auto_Save_Templates";
 inline const std::string PYTHON_EXEC_PATH = "/Library/Frameworks/Python.framework/Versions/3.12/bin/python3";
 inline const std::string PROJECT_PATH = "/Users/aneeshpendyala/Desktop/EasyDraft";
 inline const QString TAG_MANAGER_JSON_PATH = QString::fromStdString((fs::current_path() / "tag.json").string());

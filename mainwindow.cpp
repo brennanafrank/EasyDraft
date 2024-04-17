@@ -64,14 +64,35 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pathViewer->setContextMenuPolicy(Qt::CustomContextMenu);
     ui->pathViewer->setColumnWidth(0, 200); // set width of Name
     ui->pathViewer->setColumnWidth(3, 120); // Set width of date modified
+
+    // Enable sorting and set initial sort order
     ui->pathViewer->setSortingEnabled(true);
+    ui->pathViewer->sortByColumn(0, Qt::AscendingOrder); // Sort by the first column in ascending order
+
+    // Enable drag-drop feature
+    ui->pathViewer->setDragEnabled(true);
+    ui->pathViewer->setAcceptDrops(true);
+    ui->pathViewer->setDropIndicatorShown(true);
+    ui->pathViewer->setDragDropMode(QAbstractItemView::DragDrop);
+    ui->pathViewer->setDragDropOverwriteMode(false);
+    ui->pathViewer->setDefaultDropAction(Qt::MoveAction);
+
 
     expandAllNodes(templateIndex);
 
     connect(ui->pathViewer, &QWidget::customContextMenuRequested, this, &MainWindow::showContextMenuForPathViewer);
-    connect(ui->fillFromJsonButton, &QPushButton::clicked, this, &MainWindow::onFillFromJsonClicked);
+    connect(ui->fillFromJsonButton, &QPushButton::clicked, this, [this](){
+        onFillFromJsonClicked("");  // Calls the function without any parameters
+    });
     connect(ui->chooseDocPathButton, &QPushButton::clicked, this, &MainWindow::onChooseDocPathClicked);
     ui->charMaxLimitSpinBox->setValue(maxCharLimit);
+
+
+    //Auto-save initialization
+    autoSaveTimer = new QTimer(this);
+    connect(autoSaveTimer, &QTimer::timeout, this, &MainWindow::autoSaveDraft);
+    autoSaveTimer->setInterval(2500);  // Set the interval to 2.5 secs
+    autoSaveTimer->setSingleShot(true);  // The timer will only fire once after each restart
 
 
 
@@ -468,6 +489,8 @@ void MainWindow::addTag() {
         return;
     }
 
+    int currentIndex = ui->tagComboBox->currentIndex();
+
     bool ok;
     QString tag = QInputDialog::getText(this, tr("Add Tag"),
                                         tr("Tag:"), QLineEdit::Normal,
@@ -475,7 +498,15 @@ void MainWindow::addTag() {
     if (ok && !tag.isEmpty()) {
         tagManager->addTag(filePath, tag);
         updateTagComboBox();
+
+        if (currentIndex >= 0 && currentIndex < ui->tagComboBox->count()) {
+            ui->tagComboBox->setCurrentIndex(currentIndex);
+        } else {
+            ui->tagComboBox->setCurrentIndex(currentIndex);
+            ui->tagComboBox->setCurrentIndex(0);
+        }
     }
+    // qDebug() << ui->tagComboBox->currentIndex();
 }
 
 void MainWindow::deleteTag() {
@@ -484,6 +515,8 @@ void MainWindow::deleteTag() {
         QMessageBox::warning(this, tr("Warning"), tr("Please select a file first."));
         return;
     }
+
+    int currentIndex = ui->tagComboBox->currentIndex();
 
     QStringList tags = tagManager->getTags(filePath);
     if (tags.isEmpty()) {
@@ -497,9 +530,16 @@ void MainWindow::deleteTag() {
     if (ok && !tagToDelete.isEmpty()) {
         tagManager->removeTag(filePath, tagToDelete);
         updateTagComboBox();
-    }
-}
 
+        if (currentIndex >= 0 && currentIndex < ui->tagComboBox->count()) {
+            ui->tagComboBox->setCurrentIndex(currentIndex);
+        } else {
+            ui->tagComboBox->setCurrentIndex(currentIndex);
+            ui->tagComboBox->setCurrentIndex(0);
+        }
+    }
+    // qDebug() << ui->tagComboBox->currentIndex();
+}
 
 // When ascending is triggered
 
@@ -601,15 +641,6 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
         contents->setLayout(layout);
     }
 
-    // debug
-    // for (const auto& pair : replacements) {
-    //     qDebug() << "Key:" << QString::fromStdString(pair.first);
-    //     qDebug() << "Values (type:" << QString::fromStdString(typeid(pair.second).name()) << ")";
-    //     for (const auto& value : pair.second) {
-    //         qDebug() << QString::fromStdString(value);
-    //     }
-    // }
-
     int keyIndex = 0;
     for (const auto& pair : replacements) {
         QLabel* label = new QLabel(QString::fromStdString(pair.first));
@@ -626,6 +657,9 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
         // Connect the textChanged signal to update the character count dynamically
         connect(lineEdit, &QLineEdit::textChanged, this, [this, lineEdit, charCountLabel, maxCharLimit]() {
             updateCharCountLabel(lineEdit, charCountLabel);
+            if (ui->autoSaveToggle->isChecked()) { // auto-save check
+                autoSaveTimer->start();  // Restart the timer
+            }
         });
 
         QHBoxLayout* rowLayout = new QHBoxLayout();
@@ -649,6 +683,7 @@ void MainWindow::createDynamicPlaceholders(const std::vector<std::pair<std::stri
     layout->addRow(pageLayout);
 
     layout->addRow(buttonLayout);
+    updatePlaceholderValuesFromReplacements(currentPageIndex);
 }
 
 
@@ -730,6 +765,7 @@ void MainWindow::animateLineEditColorChange(QLineEdit* lineEdit, const QColor& s
 }
 
 
+// Update the char count label and check whether it reach the max char limit
 void MainWindow::updateCharCountLabel(QLineEdit* lineEdit, QLabel* charCountLabel) {
     int currentLength = lineEdit->text().length();
     int maxLength = lineEdit->maxLength();
@@ -770,25 +806,23 @@ void MainWindow::updateReplacementsFromInputs(int currentPage) {
             }
         }
     }
-
-    // for (const auto& pair : replacements) {
-    //     qDebug() << "Key:" << QString::fromStdString(pair.first);
-    //     qDebug() << "Values:";
-    //     for (const auto& value : pair.second) {
-    //         qDebug() << QString::fromStdString(value);
-    //     }
-    // }
+    qDebug() << "updateReplacementsFromInputs";
+    for (const auto& pair : replacements) {
+        qDebug() << "Key:" << QString::fromStdString(pair.first);
+        qDebug() << "Values:";
+        for (const auto& value : pair.second) {
+            qDebug() << QString::fromStdString(value);
+        }
+    }
 }
 
 void MainWindow::updatePlaceholderValuesFromReplacements(int currentPage) {
     QFormLayout* layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
     if (!layout) return;
-
     // Resize replacements vectors to accommodate new page data if needed
     for (auto& pair : replacements) {
         pair.second.resize(std::max(pair.second.size(), static_cast<size_t>(currentPage)));
     }
-
     // Update QLineEdit widgets with the values from replacements
     for (int i = 0; i < layout->rowCount() - 2; ++i) {
         QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*>(layout->itemAt(i, QFormLayout::FieldRole)->layout());
@@ -885,18 +919,20 @@ void MainWindow::onCompleteFillButtonlicked() {
 
 
 
-void MainWindow::onFillFromJsonClicked()
-{
-    // check whether docPath is empty
-    if (docPath.empty()) {
-        QMessageBox::warning(this, tr("Error"), tr("Please select a document first."));
-        return;
+void MainWindow::onFillFromJsonClicked(const QString &filePath = QString()) {
+    QString selectedFilePath = filePath;
+
+    if (selectedFilePath.isEmpty()) {
+        // If no file path is provided, show file dialog
+        selectedFilePath = QFileDialog::getOpenFileName(this, tr("Open JSON File"), QDir::homePath(), tr("JSON Files (*.json)"));
+    }
+    else{ // find placeholder in docx first if prefill the placeholder needed
+        replacements = findPlaceholdersInDocument(docPath);
     }
 
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Open JSON File"), QDir::homePath(), tr("JSON Files (*.json)"));
-    if (!filePath.isEmpty()) {
+    if (!docPath.empty() && !selectedFilePath.isEmpty()) {
         try {
-            std::vector<std::pair<std::string, std::vector<std::string>>> jsonReplacements = readJsonFromFile(filePath.toStdString());
+            std::vector<std::pair<std::string, std::vector<std::string>>> jsonReplacements = readJsonFromFile(selectedFilePath.toStdString());
 
             // Check if the keys in the JSON file match the keys in replacements
             std::vector<std::string> jsonKeys, replacementsKeys;
@@ -915,8 +951,9 @@ void MainWindow::onFillFromJsonClicked()
                 return;
             }
 
-            // If the keys match, update the placeholder values
             replacements = jsonReplacements;
+            updatePlaceholderValuesFromReplacements(currentPageIndex);
+            // QMessageBox::information(this, tr("Fill from JSON"), tr("Placeholders populated from JSON file."));
             // for (const auto& pair : replacements) {
             //     qDebug() << "Key:" << QString::fromStdString(pair.first);
             //     qDebug() << "Values:";
@@ -924,13 +961,15 @@ void MainWindow::onFillFromJsonClicked()
             //         qDebug() << QString::fromStdString(value);
             //     }
             // }
-            updatePlaceholderValuesFromReplacements(currentPageIndex);
-            QMessageBox::information(this, tr("Fill from JSON"), tr("Placeholders populated from JSON file."));
         } catch (const std::exception& e) {
             QMessageBox::warning(this, tr("Error"), QString::fromStdString(e.what()));
         }
+    } else {
+        QMessageBox::warning(this, tr("Error"), tr("Please select a document first."));
     }
 }
+
+
 
 void MainWindow::onChooseDocPathClicked()
 {
@@ -1061,7 +1100,7 @@ void MainWindow::showContextMenuForPathViewer(const QPoint &pos)
     contextMenu.addAction(addTagAction);
 
 
-    QAction *deleteItemAction = new QAction(tr("Delete"), this);
+    QAction *deleteItemAction = new QAction(tr("Delete Item"), this);
     connect(deleteItemAction, &QAction::triggered, this, &MainWindow::deleteItem);
     contextMenu.addAction(deleteItemAction);
 
@@ -1075,27 +1114,62 @@ void MainWindow::showContextMenuForPathViewer(const QPoint &pos)
 
 
 
-void MainWindow::on_pathViewer_doubleClicked(const QModelIndex &index)
-{
+void MainWindow::on_pathViewer_doubleClicked(const QModelIndex &index) {
     QString currentPath = fileSystemModel->filePath(index);
     docPath = currentPath.toStdString();
-
-    // qDebug() << "Selected path:" << QString::fromStdString(docPath);
 
     if (!currentPath.endsWith(".docx", Qt::CaseInsensitive)) {
         QMessageBox::warning(this, tr("Invalid File"), tr("The selected file is not a .docx document."));
         return;
     }
 
-    ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() + 1);
-    replacements = findPlaceholdersInDocument(docPath);
+    fs::path autoSaveFilePath = AUTO_SAVE_PATH / (fs::path(docPath).filename().replace_extension(".json").string());
+    QFile autoSaveFile(QString::fromStdString(autoSaveFilePath.string()));
+    if (autoSaveFile.exists()) {
+        // Set the autoSaveToggle checked state to true
+        ui->autoSaveToggle->setChecked(true);
+
+        auto reply = QMessageBox::question(this, tr("Load Auto-Save"), tr("An auto-saved file exists. Would you like to load it?"), QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            onFillFromJsonClicked(QString::fromStdString(autoSaveFilePath.string()));  // Load the auto-saved data
+        }
+        else {
+            replacements = findPlaceholdersInDocument(docPath); // Load placeholders from document without auto-saved data
+        }
+    }
+    else {
+        // Ensure that the autoSaveToggle is unchecked if no auto-save file exists
+        ui->autoSaveToggle->setChecked(false);
+        replacements = findPlaceholdersInDocument(docPath);
+    }
+
     createDynamicPlaceholders(replacements, maxCharLimit);
-    // QMessageBox::information(this, tr("Document Loaded"), tr("Placeholders loaded from the selected document."));
+    ui->stackedWidget->setCurrentIndex(ui->stackedWidget->currentIndex() + 1);
+    updatePlaceholderValuesFromReplacements(currentPageIndex);
+
+    qDebug()<< "on_pathViewer_doubleClicked";
+    for (const auto& pair : replacements) {
+        qDebug() << "Key:" << QString::fromStdString(pair.first);
+        qDebug() << "Values:";
+        for (const auto& value : pair.second) {
+            qDebug() << QString::fromStdString(value);
+        }
+    }
 }
+
+
+
 
 
 void MainWindow::on_charMaxLimitButton_clicked()
 {
+    for (const auto& pair : replacements) {
+        qDebug() << "Key:" << QString::fromStdString(pair.first);
+        qDebug() << "Values:";
+        for (const auto& value : pair.second) {
+            qDebug() << QString::fromStdString(value);
+        }
+    }
     maxCharLimit = ui->charMaxLimitSpinBox->value();
     saveSettings();
 }
@@ -1125,10 +1199,15 @@ void MainWindow::updateTagComboBox() {
     QStringList tags = tagManager->getAllTags();
     tags.insert(0, "All Tags");
 
+    // Disconnect the signal before updating the combobox
+    disconnect(ui->tagComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onTagSelected(int)));
+
     ui->tagComboBox->clear();
     ui->tagComboBox->addItems(tags);
-}
 
+    // Reconnect the signal after updating the combobox
+    connect(ui->tagComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onTagSelected(int)));
+}
 
 
 void MainWindow::filterFilesByTag(const QString &tag) {
@@ -1189,3 +1268,32 @@ bool MainWindow::filterIndexByTag(const QModelIndex &index, const QString &tag) 
 
     return anyVisible;
 }
+
+
+void MainWindow::autoSaveDraft() {
+    updateReplacementsFromInputs(currentPageIndex);
+    if (!docPath.empty()) {
+        fs::path autoSaveFilePath = AUTO_SAVE_PATH / QString::fromStdString(docPath).split("/").last().toStdString();
+        autoSaveFilePath.replace_extension(".json");
+
+        // Check if the directory exists and create it if it does not
+        if (!fs::exists(autoSaveFilePath.parent_path())) {
+            try {
+                fs::create_directories(autoSaveFilePath.parent_path());
+            } catch (const std::exception& e) {
+                qDebug() << "Failed to create auto-save directory: " << QString::fromStdString(e.what());
+                return;
+            }
+        }
+
+        // Attempt to save the JSON file
+        try {
+            saveJsonToFile(replacements, autoSaveFilePath.string());
+            qDebug() << "Auto-saved successfully to:" << QString::fromStdString(autoSaveFilePath.string());
+        } catch (const std::exception& e) {
+            qDebug() << "Auto-save failed: " << QString::fromStdString(e.what());
+        }
+    }
+}
+
+

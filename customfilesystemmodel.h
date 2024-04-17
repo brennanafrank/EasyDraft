@@ -16,6 +16,11 @@ public:
     void setTagManager(TagManager *manager);
     void setFilterTag(const QString& tag);
 
+    // Functions to support drag and drop of files
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    QMimeData *mimeData(const QModelIndexList &indexes) const override;
+    bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
 protected:
 
 private:
