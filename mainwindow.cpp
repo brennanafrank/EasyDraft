@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <QXmlStreamReader>
 #include <QPixmap>
+#include <QShortcut>
 #include <QTreeView>
 
 
