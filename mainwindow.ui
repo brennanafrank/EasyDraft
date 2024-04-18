@@ -32,27 +32,24 @@
        <rect>
         <x>20</x>
         <y>10</y>
-        <width>701</width>
+        <width>731</width>
         <height>551</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,3,0,7">
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,7,0,2">
        <item>
-        <widget class="QLabel" name="recentText">
-         <property name="text">
-          <string>Recent</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QListWidget" name="recentFilesList"/>
-       </item>
-       <item>
-        <widget class="QLabel" name="fileText">
-         <property name="text">
-          <string>Templates</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="7,3">
+         <item>
+          <widget class="QLabel" name="fileText">
+           <property name="text">
+            <string>Templates</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="searchLineEdit"/>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QTreeView" name="pathViewer">
@@ -64,45 +61,28 @@
          </property>
         </widget>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="verticalLayoutWidget_2">
-      <property name="geometry">
-       <rect>
-        <x>740</x>
-        <y>460</y>
-        <width>111</width>
-        <height>80</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QSpinBox" name="charMaxLimitSpinBox">
-         <property name="value">
-          <number>20</number>
+        <widget class="QLabel" name="recentText">
+         <property name="text">
+          <string>Recent</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="charMaxLimitButton">
-         <property name="text">
-          <string>Limit 
- Characters</string>
-         </property>
-        </widget>
+        <widget class="QListWidget" name="recentFilesList"/>
        </item>
       </layout>
      </widget>
      <widget class="QWidget" name="verticalLayoutWidget_3">
       <property name="geometry">
        <rect>
-        <x>740</x>
-        <y>390</y>
-        <width>110</width>
-        <height>61</height>
+        <x>760</x>
+        <y>440</y>
+        <width>91</width>
+        <height>121</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0">
        <property name="spacing">
         <number>1</number>
        </property>
@@ -125,17 +105,22 @@
        <item>
         <widget class="QComboBox" name="tagComboBox"/>
        </item>
+       <item>
+        <widget class="QSpinBox" name="charMaxLimitSpinBox">
+         <property name="value">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="charMaxLimitButton">
+         <property name="text">
+          <string>Limit 
+ Characters</string>
+         </property>
+        </widget>
+       </item>
       </layout>
-     </widget>
-     <widget class="QLineEdit" name="searchLineEdit">
-      <property name="geometry">
-       <rect>
-        <x>740</x>
-        <y>360</y>
-        <width>121</width>
-        <height>21</height>
-       </rect>
-      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="page_3">
