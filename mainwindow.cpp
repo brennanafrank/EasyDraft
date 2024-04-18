@@ -39,6 +39,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     updateTagComboBox();
     connect(ui->tagComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onTagSelected(int)));
+    connect(ui->searchLineEdit, &QLineEdit::textChanged, this, &MainWindow::searchFiles);
+
+    ui->searchLineEdit->setPlaceholderText("Search files...");
+    ui->searchLineEdit->setClearButtonEnabled(true);
+
+
 
     QPixmap pix(":/rec/340.png");
 
@@ -76,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pathViewer->setDragDropMode(QAbstractItemView::DragDrop);
     ui->pathViewer->setDragDropOverwriteMode(false);
     ui->pathViewer->setDefaultDropAction(Qt::MoveAction);
-
+    ui->pathViewer->setFocus();
 
     expandAllNodes(templateIndex);
 
@@ -197,12 +203,12 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     // Focus Recent Files widget
-    new QShortcut(QKeySequence("Ctrl+Up"), this, [this]() {
+    new QShortcut(QKeySequence("Ctrl+Down"), this, [this]() {
         ui->recentFilesList->setFocus(); // Focuses the recent files list widget
     });
 
     // Focus on templates widget
-    new QShortcut(QKeySequence("Ctrl+Down"), this, [this]() {
+    new QShortcut(QKeySequence("Ctrl+Up"), this, [this]() {
         ui->pathViewer->setFocus(); // Focuses the recent files list widget
     });
 
@@ -1310,7 +1316,7 @@ void MainWindow::updateRecentFilesList() {
         layout->addWidget(pathLabel);
         layout->addStretch();  // Add a stretchable space at the end to push content to the left
         layout->setSpacing(2);  // Reduce space between labels if needed
-        layout->setContentsMargins(5, 5, 5, 5);  // Set outer margins
+        layout->setContentsMargins(5, 2, 5, 2);  // Set outer margins
         widget->setLayout(layout);
 
         item->setSizeHint(widget->sizeHint());
@@ -1357,3 +1363,34 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     }
     return QMainWindow::eventFilter(obj, event); // Pass the event on to the parent class
 }
+
+void MainWindow::searchFiles(const QString &searchQuery) {
+    QModelIndex rootIndex = fileSystemModel->index(TEMPLATES_PATH);
+    expandAllNodes(rootIndex);  // Optionally, you might want to skip expanding all nodes if it's not necessary for search
+
+    searchIndex(rootIndex, searchQuery);
+}
+
+bool MainWindow::searchIndex(const QModelIndex &index, const QString &searchQuery) {
+    int rowCount = fileSystemModel->rowCount(index);
+    bool anyVisible = false;
+
+    for (int i = 0; i < rowCount; ++i) {
+        QModelIndex childIndex = fileSystemModel->index(i, 0, index);
+        if (!childIndex.isValid()) continue;
+
+        QString fileName = fileSystemModel->fileName(childIndex);
+        bool isVisible = fileName.contains(searchQuery, Qt::CaseInsensitive);
+
+        if (fileSystemModel->isDir(childIndex)) {
+            // Apply the search recursively to directories
+            isVisible = searchIndex(childIndex, searchQuery) || isVisible;
+        }
+
+        ui->pathViewer->setRowHidden(i, index, !isVisible);
+        anyVisible = anyVisible || isVisible;
+    }
+
+    return anyVisible;
+}
+
