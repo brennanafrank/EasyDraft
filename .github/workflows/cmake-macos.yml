@@ -27,7 +27,7 @@ jobs:
       uses: jurplel/install-qt-action@v2
       with:
         version: '5.12.11'
-        host: 'macos'
+        host: 'mac'
         target: 'desktop'
         arch: 'clang_64'
         dir: '${{github.workspace}}/qt/'
