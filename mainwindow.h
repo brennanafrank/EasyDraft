@@ -9,6 +9,7 @@ QT_BEGIN_NAMESPACE
 #include <QDir>
 #include "tagmanager.h"
 #include "customfilesystemmodel.h"
+#include "helpdialog.h"
 #include <QListView>
 #include <QStringListModel>
 #include <vector>

@@ -30,6 +30,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         replace_helper.py
         config.hpp
         ExportDoc.py
+        helpdialog.h helpdialog.cpp
 
 
 

@@ -211,6 +211,13 @@ MainWindow::MainWindow(QWidget *parent)
         onFillFromJsonClicked("");
     });
 
+    new QShortcut(QKeySequence("Ctrl+/"), this, [this]() {
+        HelpDialog *helpDialog = new HelpDialog(this);
+        helpDialog->setAttribute(Qt::WA_DeleteOnClose); // Ensure the dialog is deleted automatically after closing
+        helpDialog->show();
+    });
+
+
     // Install event filters
     ui->pathViewer->installEventFilter(this);
     ui->recentFilesList->installEventFilter(this);
