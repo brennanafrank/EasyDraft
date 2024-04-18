@@ -99,7 +99,7 @@
         <x>740</x>
         <y>390</y>
         <width>110</width>
-        <height>58</height>
+        <height>61</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -126,6 +126,16 @@
         <widget class="QComboBox" name="tagComboBox"/>
        </item>
       </layout>
+     </widget>
+     <widget class="QLineEdit" name="searchLineEdit">
+      <property name="geometry">
+       <rect>
+        <x>740</x>
+        <y>360</y>
+        <width>121</width>
+        <height>21</height>
+       </rect>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="page_3">

@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     updateTagComboBox();
     connect(ui->tagComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onTagSelected(int)));
+    connect(ui->searchLineEdit, &QLineEdit::textChanged, this, &MainWindow::searchFiles);
+
 
     QPixmap pix(":/rec/340.png");
 
@@ -1357,3 +1359,34 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     }
     return QMainWindow::eventFilter(obj, event); // Pass the event on to the parent class
 }
+
+void MainWindow::searchFiles(const QString &searchQuery) {
+    QModelIndex rootIndex = fileSystemModel->index(TEMPLATES_PATH);
+    expandAllNodes(rootIndex);  // Optionally, you might want to skip expanding all nodes if it's not necessary for search
+
+    searchIndex(rootIndex, searchQuery);
+}
+
+bool MainWindow::searchIndex(const QModelIndex &index, const QString &searchQuery) {
+    int rowCount = fileSystemModel->rowCount(index);
+    bool anyVisible = false;
+
+    for (int i = 0; i < rowCount; ++i) {
+        QModelIndex childIndex = fileSystemModel->index(i, 0, index);
+        if (!childIndex.isValid()) continue;
+
+        QString fileName = fileSystemModel->fileName(childIndex);
+        bool isVisible = fileName.contains(searchQuery, Qt::CaseInsensitive);
+
+        if (fileSystemModel->isDir(childIndex)) {
+            // Apply the search recursively to directories
+            isVisible = searchIndex(childIndex, searchQuery) || isVisible;
+        }
+
+        ui->pathViewer->setRowHidden(i, index, !isVisible);
+        anyVisible = anyVisible || isVisible;
+    }
+
+    return anyVisible;
+}
+
