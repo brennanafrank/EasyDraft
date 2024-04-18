@@ -33,6 +33,7 @@ QT_BEGIN_NAMESPACE
 #include <QTimer>
 #include <QCryptographicHash>
 #include <QListWidget>
+#include <QMenu>
 
 
 
