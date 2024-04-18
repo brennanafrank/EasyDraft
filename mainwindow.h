@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "ui_mainwindow.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -8,6 +9,7 @@ QT_BEGIN_NAMESPACE
 #include <QDir>
 #include "tagmanager.h"
 #include "customfilesystemmodel.h"
+#include "helpdialog.h"
 #include <QListView>
 #include <QStringListModel>
 #include <vector>
@@ -34,6 +36,7 @@ QT_BEGIN_NAMESPACE
 #include <QCryptographicHash>
 #include <QListWidget>
 #include <QMenu>
+#include <QShortcut>
 
 
 
@@ -168,7 +171,8 @@ private:
     void updateRecentFilesList();
     void onRecentFileClicked(QListWidgetItem* item);
 
-
-
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override; // Declare the override here
 };
+
 #endif // MAINWINDOW_H

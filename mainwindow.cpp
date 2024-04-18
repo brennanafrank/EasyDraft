@@ -90,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent)
     //Auto-save initialization
     autoSaveTimer = new QTimer(this);
     connect(autoSaveTimer, &QTimer::timeout, this, &MainWindow::autoSaveDraft);
-    autoSaveTimer->setInterval(2500);  // Set the interval to 2.5 secs
+    autoSaveTimer->setInterval(1500);  // Set the interval to 1.5 secs
     autoSaveTimer->setSingleShot(true);  // The timer will only fire once after each restart
     connect(ui->autoSaveToggle, &QCheckBox::stateChanged, this, &MainWindow::handleAutoSaveToggle);
 
@@ -118,6 +118,109 @@ MainWindow::MainWindow(QWidget *parent)
     ui->fileText->setFont(font);
     ui->recentText->setFont(font);
     ui->label->setFont(font);
+
+    // Shortcut
+    // Back to previous page
+    new QShortcut(QKeySequence("Esc"), this, SLOT(on_actionBack_triggered()));
+
+    // Shortcut for forward page navigation (Cmd + ])
+    new QShortcut(QKeySequence("Ctrl+]"), this, [this]() {
+        int currentValue = pageSpinBox->value();
+        int maxValue = pageSpinBox->maximum();
+        if (currentValue < maxValue) {
+            pageSpinBox->setValue(currentValue + 1);
+        }
+    });
+
+    // Shortcut for backward page navigation (Cmd + [)
+    new QShortcut(QKeySequence("Ctrl+["), this, [this]() {
+        int currentValue = pageSpinBox->value();
+        int minValue = pageSpinBox->minimum();
+        if (currentValue > minValue) {
+            pageSpinBox->setValue(currentValue - 1);
+        }
+    });
+
+    // Context Menu Activation with adjustment for keyboard shortcut
+    new QShortcut(QKeySequence("Ctrl+Shift+M"), this, [this]() {
+        // Simulate a context menu event based on the current selection in pathViewer
+        QModelIndex currentIndex = ui->pathViewer->currentIndex();
+        if (currentIndex.isValid()) {
+            // If there is a valid selection, show the context menu for that item
+            QPoint simulatedPos = ui->pathViewer->visualRect(currentIndex).center();
+            showContextMenuForPathViewer(simulatedPos);
+        } else {
+            // Fallback or handle cases with no selection
+            showContextMenuForPathViewer(QPoint());
+        }
+    });
+
+    // File Operations
+    // Shortcut for deleting an item
+    new QShortcut(QKeySequence("Ctrl+D"), this, [this]() {
+        deleteItem();
+    });
+
+    // Shortcut for creating a folder
+    new QShortcut(QKeySequence("Ctrl+N"), this, [this]() {
+        QModelIndex currentIndex = ui->pathViewer->currentIndex();
+        createFolder(currentIndex);
+    });
+
+    // Exporting Files
+    new QShortcut(QKeySequence("Ctrl+E"), this, [this]() {
+        onCompleteFillButtonlicked();
+    });
+
+    // Saving a Draft
+    new QShortcut(QKeySequence("Ctrl+S"), this, [this]() {
+        onSaveDraftClicked();
+    });
+
+    // Tag Management
+    // Adding a Tag
+    new QShortcut(QKeySequence("Ctrl+T"), this, [this]() {
+        addTag();
+    });
+
+    // Deleting a Tag
+    new QShortcut(QKeySequence("Ctrl+Shift+T"), this, [this]() {
+        deleteTag();
+    });
+
+    // Toggle Auto-Save
+    new QShortcut(QKeySequence("Ctrl+A"), this, [this]() {
+        // Toggle the checkbox state
+        bool checked = ui->autoSaveToggle->isChecked();
+        ui->autoSaveToggle->setChecked(!checked);
+        handleAutoSaveToggle(!checked ? Qt::Checked : Qt::Unchecked);
+    });
+
+    // Focus Recent Files widget
+    new QShortcut(QKeySequence("Ctrl+Up"), this, [this]() {
+        ui->recentFilesList->setFocus(); // Focuses the recent files list widget
+    });
+
+    // Focus on templates widget
+    new QShortcut(QKeySequence("Ctrl+Down"), this, [this]() {
+        ui->pathViewer->setFocus(); // Focuses the recent files list widget
+    });
+
+    // Shortcut for Fill From Json
+    new QShortcut(QKeySequence("Ctrl+J"), this, [this]() {
+        onFillFromJsonClicked("");
+    });
+
+    new QShortcut(QKeySequence("Ctrl+/"), this, [this]() {
+        HelpDialog *helpDialog = new HelpDialog(this);
+        helpDialog->setAttribute(Qt::WA_DeleteOnClose); // Ensure the dialog is deleted automatically after closing
+        helpDialog->show();
+    });
+
+
+    // Install event filters
+    ui->pathViewer->installEventFilter(this);
+    ui->recentFilesList->installEventFilter(this);
 }
 
 MainWindow::~MainWindow()
@@ -1232,4 +1335,25 @@ void MainWindow::onRecentFileClicked(QListWidgetItem* item) {
     }
 }
 
-
+bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_Return || keyEvent->key() == Qt::Key_Enter) {
+            // Determine which widget is in focus and act accordingly
+            if (obj == ui->pathViewer) {
+                QModelIndex currentIndex = ui->pathViewer->currentIndex();
+                if (currentIndex.isValid()) {
+                    on_pathViewer_doubleClicked(currentIndex);
+                    return true; // Event handled
+                }
+            } else if (obj == ui->recentFilesList) {
+                QListWidgetItem *currentItem = ui->recentFilesList->currentItem();
+                if (currentItem != nullptr) {
+                    onRecentFileClicked(currentItem);
+                    return true; // Event handled
+                }
+            }
+        }
+    }
+    return QMainWindow::eventFilter(obj, event); // Pass the event on to the parent class
+}
