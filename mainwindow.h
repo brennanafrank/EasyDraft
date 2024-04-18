@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "ui_mainwindow.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -8,6 +9,7 @@ QT_BEGIN_NAMESPACE
 #include <QDir>
 #include "tagmanager.h"
 #include "customfilesystemmodel.h"
+#include "helpdialog.h"
 #include <QListView>
 #include <QStringListModel>
 #include <vector>
@@ -32,7 +34,9 @@ QT_BEGIN_NAMESPACE
 #include <QSettings>
 #include <QTimer>
 #include <QCryptographicHash>
-
+#include <QListWidget>
+#include <QMenu>
+#include <QShortcut>
 
 
 
@@ -66,25 +70,9 @@ private slots:
     void changePage();
     void on_actionBack_triggered();
 
-    void on_pushButton_4_clicked();
-
     void on_pushButton_3_clicked();
 
     void on_pushButton_5_clicked();
-
-    void on_actionTrash_2_triggered();
-
-    void on_actionDownload_2_triggered();
-
-    void on_actionSearch_triggered();
-
-    void filterSearch(const QString &);
-
-    // void onTagComboBoxCurrentIndexChanged(const QString &tag);
-
-    void on_actionAscending_triggered();
-
-    void on_actionDescending_triggered();
 
     void on_pushButton_6_clicked();
 
@@ -95,7 +83,6 @@ private slots:
     void onCompleteFillButtonlicked();
     void onPageChanged(int page);
     void onFillFromJsonClicked(const QString &filePath);
-    void onChooseDocPathClicked();
     void onSaveDraftClicked();
 
     void on_selectFileToView_clicked();
@@ -178,8 +165,14 @@ private:
     bool filterIndexByTag(const QModelIndex &index, const QString &tag);
     void expandAllNodes(const QModelIndex &index);
 
+    // recent file
+    QStringList recentFiles;
+    void updateRecentFiles(const QString&);
+    void updateRecentFilesList();
+    void onRecentFileClicked(QListWidgetItem* item);
 
-
-
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override; // Declare the override here
 };
+
 #endif // MAINWINDOW_H

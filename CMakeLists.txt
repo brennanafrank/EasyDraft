@@ -35,6 +35,8 @@ set(PROJECT_SOURCES
         findPlaceholders.py
         modify_docx.py
         replace_helper.py
+        helpdialog.h
+        helpdialog.cpp
 
 
 
