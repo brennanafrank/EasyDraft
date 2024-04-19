@@ -6,6 +6,7 @@
 #include "cloud.hpp"
 
 #include <fstream>
+#include <filesystem>
 
 
 #include <QVBoxLayout>
@@ -17,7 +18,7 @@
 #include <QShortcut>
 #include <QTreeView>
 
-
+#include <iostream>
 #include <QDebug>
 
 
@@ -1561,5 +1562,18 @@ void MainWindow::on_printButton_clicked()
 
     printPdf(fileNamePDFPrint);
 
+}
+
+
+void MainWindow::on_comboBox_activated(int index)
+{
+    //QString currentPath = QString::fromStdString(std::filesystem::current_path().parent_path().string());
+    
+    QString fileName = "Adaptic.qss";
+    QFile styleSheetFile(fileName);
+    styleSheetFile.open(QFile::ReadOnly);
+
+    QString styleSheet = QLatin1String(styleSheetFile.readAll());
+    qApp->setStyleSheet(styleSheet);
 }
 
