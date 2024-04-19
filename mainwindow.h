@@ -179,6 +179,7 @@ private:
     void updateRecentFiles(const QString&);
     void updateRecentFilesList();
     void onRecentFileClicked(QListWidgetItem* item);
+    void handleFileMoved(const QString &oldPath, const QString &newPath);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override; // Declare the override here
