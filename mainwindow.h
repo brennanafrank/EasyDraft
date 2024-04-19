@@ -130,6 +130,8 @@ private slots:
 
     void on_printButton_clicked();
 
+    void on_linkButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);
