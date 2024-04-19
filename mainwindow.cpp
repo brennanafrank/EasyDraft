@@ -1356,7 +1356,7 @@ void MainWindow::onRecentFileClicked(QListWidgetItem* item) {
 
 
 void MainWindow::handleFileMoved(const QString &oldPath, const QString &newPath) {
-    qDebug() << "handleFileMoved";
+    // qDebug() << "handleFileMoved";
     recentFiles.removeAll(oldPath);
     while (recentFiles.size() > 5) {
         recentFiles.removeLast();

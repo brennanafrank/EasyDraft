@@ -81,7 +81,7 @@ bool CustomFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction a
         qDebug() << "No URLs in data";
         return false;
     }
-    qDebug() << "dropMimeData";
+    // qDebug() << "dropMimeData";
     QModelIndex dropIndex = parent.isValid() ? parent : this->index(rootPath());
     QString destDirectory = filePath(dropIndex);
 
@@ -133,7 +133,7 @@ bool CustomFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 
 void CustomFileSystemModel::moveTagsAndAutoSaveFile(const QString &srcFilePath, const QString &destFilePath) {
     // Move tags
-    qDebug() << "moveTagsAndAutoSaveFile";
+    // qDebug() << "moveTagsAndAutoSaveFile";
     if (tagManager) {
         QStringList tags = tagManager->getTags(srcFilePath);
         for (const QString &tag : tags) {
