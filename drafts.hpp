@@ -1,3 +1,7 @@
+/*
+ * Kye Jocham
+*/
+
 #ifndef DRAFTS_H
 #define DRAFTS_H
 
@@ -8,8 +12,8 @@
 namespace fs = std::filesystem;
 
 int create_draft_dir();
-int create_draft(std::string, ValueVector);
+int create_draft(std::string, PlaceholderPair);
 int use_draft();
-int delete_draft();
+int delete_draft(std::string draft_name);
 
 #endif /* FILE_OPERATIONS_H */

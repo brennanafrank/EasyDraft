@@ -37,17 +37,23 @@ void TagManager::addTag(const QString &filePath, const QString &tag) {
 
 void TagManager::removeTag(const QString &filePath, const QString &tag) {
     QJsonArray tags = tagData.value(filePath).toArray();
-    QJsonArray newTags; // Create a new JSON array without the tags to be removed
+    QJsonArray newTags; // Create a new JSON array without the tag to be removed
+
     for (int i = 0; i < tags.size(); ++i) {
         if (tags[i].toString() != tag) {
             newTags.append(tags[i]);
         }
     }
-    // Update and save label data if changes have occurred
-    if (tags.size() != newTags.size()) {
+
+    // If newTags is empty, remove the filePath from tagData
+    if (newTags.isEmpty()) {
+        tagData.remove(filePath);
+    } else {
         tagData.insert(filePath, newTags);
-        saveTags();
     }
+
+    // Save changes
+    saveTags();
 }
 
 
@@ -74,3 +80,14 @@ QStringList TagManager::getTags(const QString &filePath) {
     return filePaths;
 }
 
+
+QStringList TagManager::getAllTags() const {
+    QSet<QString> allTagsSet;
+    for (auto it = tagData.begin(); it != tagData.end(); ++it) {
+        QJsonArray tags = it.value().toArray();
+        for (const QJsonValue& value : tags) {
+            allTagsSet.insert(value.toString());
+        }
+    }
+    return QStringList(allTagsSet.begin(), allTagsSet.end());
+}

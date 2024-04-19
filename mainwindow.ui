@@ -17,116 +17,118 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>-20</x>
+      <x>0</x>
       <y>0</y>
-      <width>861</width>
+      <width>871</width>
       <height>571</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page_2">
-     <widget class="QPushButton" name="pushButton_4">
-      <property name="geometry">
-       <rect>
-        <x>360</x>
-        <y>430</y>
-        <width>141</width>
-        <height>71</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Select Widget</string>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit_2">
-      <property name="geometry">
-       <rect>
-        <x>370</x>
-        <y>0</y>
-        <width>113</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
      <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>50</x>
-        <y>30</y>
-        <width>761</width>
-        <height>381</height>
+        <x>20</x>
+        <y>10</y>
+        <width>731</width>
+        <height>551</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,7,0,2">
        <item>
-        <widget class="QListWidget" name="listWidget"/>
+        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="7,3">
+         <item>
+          <widget class="QLabel" name="fileText">
+           <property name="text">
+            <string>Templates</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="searchLineEdit"/>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QTreeView" name="pathViewer"/>
+        <widget class="QTreeView" name="pathViewer">
+         <property name="dragEnabled">
+          <bool>true</bool>
+         </property>
+         <property name="dragDropOverwriteMode">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="recentText">
+         <property name="text">
+          <string>Recent</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="recentFilesList"/>
        </item>
       </layout>
      </widget>
-     <widget class="QPushButton" name="createFolderButton">
+     <widget class="QWidget" name="verticalLayoutWidget_3">
       <property name="geometry">
        <rect>
-        <x>100</x>
-        <y>430</y>
-        <width>100</width>
-        <height>32</height>
+        <x>760</x>
+        <y>440</y>
+        <width>91</width>
+        <height>121</height>
        </rect>
       </property>
-      <property name="text">
-       <string>Create folder</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="deleteItemButton">
-      <property name="geometry">
-       <rect>
-        <x>220</x>
-        <y>430</y>
-        <width>100</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Delete Item</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="addTagButton">
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>470</y>
-        <width>100</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Add Tag</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="deleteTagButton">
-      <property name="geometry">
-       <rect>
-        <x>220</x>
-        <y>470</y>
-        <width>100</width>
-        <height>32</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Delete Tag</string>
-      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0">
+       <property name="spacing">
+        <number>1</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>  Filter by Tag</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="tagComboBox"/>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="charMaxLimitSpinBox">
+         <property name="value">
+          <number>20</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="charMaxLimitButton">
+         <property name="text">
+          <string>Limit 
+ Characters</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
     <widget class="QWidget" name="page_3">
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>400</x>
-        <y>-10</y>
+        <x>70</x>
+        <y>270</y>
         <width>271</width>
         <height>91</height>
        </rect>
@@ -135,63 +137,154 @@
        <string/>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_8">
+     <widget class="QPushButton" name="submitPlace">
       <property name="geometry">
        <rect>
-        <x>360</x>
-        <y>390</y>
+        <x>670</x>
+        <y>170</y>
         <width>151</width>
-        <height>71</height>
+        <height>41</height>
        </rect>
       </property>
       <property name="text">
        <string>Submit</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="deletePlaceholderButton">
+     <widget class="QTabWidget" name="tabWidget">
       <property name="geometry">
        <rect>
-        <x>700</x>
-        <y>70</y>
-        <width>100</width>
-        <height>32</height>
+        <x>650</x>
+        <y>240</y>
+        <width>181</width>
+        <height>281</height>
        </rect>
       </property>
-      <property name="text">
-       <string>Delete</string>
+      <property name="currentIndex">
+       <number>0</number>
       </property>
+      <widget class="QWidget" name="Font">
+       <attribute name="title">
+        <string>Font</string>
+       </attribute>
+       <widget class="QPushButton" name="fontButton">
+        <property name="geometry">
+         <rect>
+          <x>40</x>
+          <y>30</y>
+          <width>101</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Font</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="fontSelector">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>100</y>
+          <width>121</width>
+          <height>32</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="Color">
+       <attribute name="title">
+        <string>Color</string>
+       </attribute>
+       <widget class="QPushButton" name="ColorButton">
+        <property name="geometry">
+         <rect>
+          <x>100</x>
+          <y>30</y>
+          <width>101</width>
+          <height>32</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Color</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="ColorSelector">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>100</y>
+          <width>121</width>
+          <height>32</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
      </widget>
-     <widget class="QPushButton" name="addPlaceholderButton">
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>20</y>
+        <width>571</width>
+        <height>521</height>
+       </rect>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>569</width>
+         <height>519</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="horizontalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>680</x>
+        <y>60</y>
+        <width>141</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="fillFromJsonButton">
+         <property name="text">
+          <string>Fill from Json</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QCheckBox" name="autoSaveToggle">
       <property name="geometry">
        <rect>
         <x>700</x>
         <y>130</y>
-        <width>100</width>
-        <height>32</height>
+        <width>85</width>
+        <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>Add</string>
+       <string>Auto-Save</string>
       </property>
      </widget>
-     <widget class="QComboBox" name="placeholderComboBox">
+     <widget class="QToolButton" name="back_button_parsing">
       <property name="geometry">
        <rect>
-        <x>700</x>
-        <y>190</y>
-        <width>103</width>
-        <height>32</height>
+        <x>20</x>
+        <y>20</y>
+        <width>26</width>
+        <height>22</height>
        </rect>
       </property>
-     </widget>
-     <widget class="QLineEdit" name="lineEdit">
-      <property name="geometry">
-       <rect>
-        <x>490</x>
-        <y>270</y>
-        <width>311</width>
-        <height>21</height>
-       </rect>
+      <property name="text">
+       <string>...</string>
       </property>
      </widget>
     </widget>
@@ -222,6 +315,67 @@
        <string>View</string>
       </property>
      </widget>
+     <widget class="QToolButton" name="back_button_export_view">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>40</y>
+        <width>26</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="viewDocument">
+     <widget class="QTextBrowser" name="textBrowser">
+      <property name="geometry">
+       <rect>
+        <x>145</x>
+        <y>50</y>
+        <width>621</width>
+        <height>441</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="viewPathsListWidget">
+      <property name="geometry">
+       <rect>
+        <x>145</x>
+        <y>51</y>
+        <width>621</width>
+        <height>431</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="selectFileToView">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>200</y>
+        <width>100</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Select File</string>
+      </property>
+     </widget>
+     <widget class="QToolButton" name="back_button_view_doc">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>20</y>
+        <width>26</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="page_5">
      <widget class="QPushButton" name="pushButton_5">
@@ -237,7 +391,7 @@
        <string>Local</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_7">
+     <widget class="QPushButton" name="cloudButton">
       <property name="geometry">
        <rect>
         <x>350</x>
@@ -250,56 +404,41 @@
        <string>Cloud</string>
       </property>
      </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_4">
+      <property name="geometry">
+       <rect>
+        <x>620</x>
+        <y>200</y>
+        <width>160</width>
+        <height>100</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QPushButton" name="PDFButton">
+         <property name="text">
+          <string>PDF</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="TXTButton">
+         <property name="text">
+          <string>TXT</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="HTMLButton">
+         <property name="text">
+          <string>HTML</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>870</width>
-     <height>37</height>
-    </rect>
-   </property>
-   <property name="defaultUp">
-    <bool>false</bool>
-   </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionFile"/>
-   </widget>
-   <widget class="QMenu" name="menuDownload">
-    <property name="title">
-     <string>Insert</string>
-    </property>
-    <addaction name="actionDownload_2"/>
-   </widget>
-   <widget class="QMenu" name="menuTrash">
-    <property name="title">
-     <string>Delete</string>
-    </property>
-    <addaction name="actionTrash_2"/>
-   </widget>
-   <widget class="QMenu" name="menuBack">
-    <property name="title">
-     <string>Back</string>
-    </property>
-    <addaction name="actionBack"/>
-   </widget>
-   <widget class="QMenu" name="menuSearch">
-    <property name="title">
-     <string>Additional</string>
-    </property>
-    <addaction name="actionSearch"/>
-   </widget>
-   <addaction name="menuFile"/>
-   <addaction name="menuDownload"/>
-   <addaction name="menuTrash"/>
-   <addaction name="menuBack"/>
-   <addaction name="menuSearch"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionFile_Options">
@@ -356,6 +495,16 @@
    </property>
    <property name="text">
     <string>Search</string>
+   </property>
+  </action>
+  <action name="actionAscending">
+   <property name="text">
+    <string>Ascending</string>
+   </property>
+  </action>
+  <action name="actionDescending">
+   <property name="text">
+    <string>Descending</string>
    </property>
   </action>
  </widget>

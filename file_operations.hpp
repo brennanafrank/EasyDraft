@@ -1,3 +1,7 @@
+/*
+ * Kye Jocham
+*/
+
 #ifndef FILE_OPERATIONS_H
 #define FILE_OPERATIONS_H
 
