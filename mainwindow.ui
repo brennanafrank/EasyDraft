@@ -78,8 +78,8 @@
        <rect>
         <x>760</x>
         <y>440</y>
-        <width>91</width>
-        <height>121</height>
+        <width>106</width>
+        <height>124</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0">
@@ -289,19 +289,6 @@
      </widget>
     </widget>
     <widget class="QWidget" name="page_4">
-     <widget class="QPushButton" name="pushButton_3">
-      <property name="geometry">
-       <rect>
-        <x>350</x>
-        <y>160</y>
-        <width>151</width>
-        <height>71</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Export</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pushButton_6">
       <property name="geometry">
        <rect>
@@ -367,6 +354,52 @@
        <string>Create Watermark</string>
       </property>
      </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_5">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>80</y>
+        <width>160</width>
+        <height>100</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QPushButton" name="PDFButton">
+         <property name="text">
+          <string>PDF</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="TXTButton">
+         <property name="text">
+          <string>TXT</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="HTMLButton">
+         <property name="text">
+          <string>HTML</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>30</y>
+        <width>58</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Export</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="viewDocument">
      <widget class="QTextBrowser" name="textBrowser">
@@ -417,7 +450,7 @@
      </widget>
     </widget>
     <widget class="QWidget" name="page_5">
-     <widget class="QPushButton" name="pushButton_5">
+     <widget class="QPushButton" name="pushButton_000">
       <property name="geometry">
        <rect>
         <x>350</x>
@@ -454,21 +487,21 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QPushButton" name="PDFButton">
+        <widget class="QPushButton" name="PDFButton_3">
          <property name="text">
           <string>PDF</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="TXTButton">
+        <widget class="QPushButton" name="TXTButton_3">
          <property name="text">
           <string>TXT</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="HTMLButton">
+        <widget class="QPushButton" name="HTMLButton_3">
          <property name="text">
           <string>HTML</string>
          </property>

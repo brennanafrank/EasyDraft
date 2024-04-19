@@ -1,5 +1,5 @@
-#include <QPrintDialog>
-#include <QtPdf>
+
+#include <QPdf>
 #include <QPdfDocument>
 #include <QtPrintSupport>
 
