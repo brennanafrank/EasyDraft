@@ -385,6 +385,10 @@ void MainWindow::on_pushButtonForWriting_clicked()
             std::cerr << "Python script failed with exit code " << result << std::endl;
         }
 
+
+        ui->pushButtonForWriting->setVisible(false);
+        ui->lineEditForWritingWatermark->setVisible(false);
+
     }
 
 }
@@ -1561,5 +1565,13 @@ void MainWindow::on_printButton_clicked()
 
     printPdf(fileNamePDFPrint);
 
+}
+
+
+void MainWindow::on_linkButton_clicked()
+{
+    // From a stackoverflow page
+    QString link = "https://docs.google.com/presentation/d/1Fmi57LLI413nAvK60fsKNoQYFWEMN2wywRRekPSScNI/edit#slide=id.p";
+    QDesktopServices::openUrl(QUrl(link));
 }
 
