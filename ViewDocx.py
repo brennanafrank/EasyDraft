@@ -1,5 +1,8 @@
-from docxtpl import DocxTemplate
-
+from docx import Document
+from docx.enum.section import WD_SECTION
+from docx.shared import Pt
+import sys
+import os
 
 def watermarkImport(dirPath_input, inputPath_input):
 
@@ -14,7 +17,7 @@ def watermarkImport(dirPath_input, inputPath_input):
     font = run.font
     font.size = Pt(10)
     font.bold = True
-    run.text = text
+    run.text = inputPath_input
 
     return doc
 
@@ -32,7 +35,12 @@ if __name__ == "__main__":
     dirPath = sys.argv[1]
     inputPath = sys.argv[2]
 
-    watermarkImport(dirPath, inputPath)
+    doc = Document(dirPath)
+
+
+    doc = watermarkImport(doc, inputPath)
+
+    doc.save(dirPath)
 
 
 
