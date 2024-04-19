@@ -120,6 +120,10 @@ private slots:
 
     void on_back_button_view_doc_clicked();
 
+    void on_importWaterMarkButton_clicked();
+
+    void on_createWaterMarkButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);

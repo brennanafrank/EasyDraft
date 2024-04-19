@@ -56,6 +56,9 @@ qt_add_executable(CS307ParsingGUIOfficial
         ViewDocx.py
         replacementsHelper.h
         replacementsHelper.cpp
+        ExportDoc.py
+        WatermarkDoc.py
+
 
 
     )
