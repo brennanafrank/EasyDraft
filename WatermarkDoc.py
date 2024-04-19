@@ -13,10 +13,11 @@ def watermarkImport(input_docx, input_image):
         footer.add_paragraph()
 
     footer_paragraph = footer.paragraphs[0]
+    footer_paragraph.alignment = 2
 
     run = footer_paragraph.add_run()
 
-    run.add_picture(input_image, width=Inches(1.0), height=Inches(1.0))
+    run.add_picture(input_image, width=Inches(0.5), height=Inches(0.5))
 
     doc.save(input_docx)
 

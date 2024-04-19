@@ -313,6 +313,41 @@ void MainWindow::on_importWaterMarkButton_clicked()
 
 }
 
+void MainWindow::on_createWaterMarkButton_clicked()
+{
+
+
+    if (viewPaths.empty()) {
+
+        std::ifstream file("savedpaths.txt");
+
+        if (file.is_open() && !dontAdd) {
+
+            std::string line;
+
+            while (std::getline(file, line)) {
+
+                viewPaths.push_back(line);
+
+            }
+
+            file.close();
+
+        }
+
+    }
+
+    //QMessageBox::information(this, "Success", "Exported File" + QString::fromStdString(viewPaths[viewPaths.size() - 1]));
+
+    std::string mainStringExport = viewPaths[viewPaths.size() - 1];
+
+
+
+
+
+
+}
+
 
 void MainWindow::on_pushButton_5_clicked()
 {
@@ -1403,6 +1438,9 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     }
     return QMainWindow::eventFilter(obj, event); // Pass the event on to the parent class
 }
+
+
+
 
 
 
