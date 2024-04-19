@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include "file_operations.hpp"
+#include "printer.hpp"
 #include "cloud.hpp"
 
 #include <fstream>
@@ -1546,7 +1547,19 @@ bool MainWindow::searchIndex(const QModelIndex &index, const QString &searchQuer
     return anyVisible;
 }
 
+void MainWindow::on_printButton_clicked()
+{
 
 
+    QString fileNamePDFPrint = QFileDialog::getOpenFileName(this, "Select PDF File", QDir::homePath(), "PDF Files (*.pdf)");
 
+    if (fileNamePDFPrint.isEmpty()) {
+
+        return;
+
+    }
+
+    printPdf(fileNamePDFPrint);
+
+}
 
