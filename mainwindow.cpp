@@ -268,6 +268,52 @@ void MainWindow::on_pushButton_3_clicked()
 }
 
 
+void MainWindow::on_importWaterMarkButton_clicked()
+{
+
+    if (viewPaths.empty()) {
+
+        std::ifstream file("savedpaths.txt");
+
+        if (file.is_open() && !dontAdd) {
+
+            std::string line;
+
+            while (std::getline(file, line)) {
+
+                viewPaths.push_back(line);
+
+            }
+
+            file.close();
+
+        }
+
+    }
+
+    //QMessageBox::information(this, "Success", "Exported File" + QString::fromStdString(viewPaths[viewPaths.size() - 1]));
+
+    std::string mainStringExport = viewPaths[viewPaths.size() - 1];
+
+    QString fileNameJPEG = QFileDialog::getOpenFileName(this, "Select JPEG File",QDir::homePath(),"JPEG Files (*.jpg *.jpeg)");
+
+    if (fileNameJPEG.isEmpty()) {
+        return;
+    }
+
+    //QMessageBox::information(this, "Success", "Exported File" + dirPath);
+
+
+    std::string command = PYTHON_EXEC_PATH + " " + PROJECT_PATH + "/WatermarkDoc.py \"" + mainStringExport + "\" \""  + fileNameJPEG.toStdString() + "\"";
+    int result = std::system(command.c_str());
+
+    if (result != 0) {
+        std::cerr << "Python script failed with exit code " << result << std::endl;
+    }
+
+}
+
+
 void MainWindow::on_pushButton_5_clicked()
 {
 
@@ -292,7 +338,7 @@ void MainWindow::on_pushButton_5_clicked()
 
     }
 
-    QMessageBox::information(this, "Success", "Exported File" + QString::fromStdString(viewPaths[viewPaths.size() - 1]));
+    //QMessageBox::information(this, "Success", "Exported File" + QString::fromStdString(viewPaths[viewPaths.size() - 1]));
 
     std::string mainStringExport = viewPaths[viewPaths.size() - 1];
 
@@ -301,7 +347,7 @@ void MainWindow::on_pushButton_5_clicked()
         return;
     }
 
-    QMessageBox::information(this, "Success", "Exported File" + dirPath);
+    //QMessageBox::information(this, "Success", "Exported File" + dirPath);
 
 
     std::string command = PYTHON_EXEC_PATH + " " + PROJECT_PATH + "/ExportDoc.py \"" + dirPath.toStdString() + "\" \"" + mainStringExport + "\" \"" + std::to_string(typeOfExport) + "\"";
@@ -1357,3 +1403,6 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     }
     return QMainWindow::eventFilter(obj, event); // Pass the event on to the parent class
 }
+
+
+
