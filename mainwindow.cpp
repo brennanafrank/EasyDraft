@@ -185,7 +185,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Exporting Files
     new QShortcut(QKeySequence("Ctrl+E"), this, [this]() {
-        onCompleteFillButtonlicked();
+        changePage();
     });
 
     // Saving a Draft
@@ -386,6 +386,10 @@ void MainWindow::on_pushButtonForWriting_clicked()
             std::cerr << "Python script failed with exit code " << result << std::endl;
         }
 
+
+        ui->pushButtonForWriting->setVisible(false);
+        ui->lineEditForWritingWatermark->setVisible(false);
+
     }
 
 }
@@ -471,11 +475,11 @@ void MainWindow::on_HTMLButton_clicked()
 
 void MainWindow::on_DocxButton_clicked()
 {
+    onCompleteFillButtonlicked();
 
+    //MainWindow::typeOfExport = 4;
 
-    MainWindow::typeOfExport = 4;
-
-    MainWindow::on_pushButton_5_clicked();
+    //MainWindow::on_pushButton_5_clicked();
 
 }
 
@@ -1565,15 +1569,10 @@ void MainWindow::on_printButton_clicked()
 }
 
 
-void MainWindow::on_comboBox_activated(int index)
+void MainWindow::on_linkButton_clicked()
 {
-    //QString currentPath = QString::fromStdString(std::filesystem::current_path().parent_path().string());
-    
-    QString fileName = "Adaptic.qss";
-    QFile styleSheetFile(fileName);
-    styleSheetFile.open(QFile::ReadOnly);
-
-    QString styleSheet = QLatin1String(styleSheetFile.readAll());
-    qApp->setStyleSheet(styleSheet);
+    // From a stackoverflow page
+    QString link = "https://docs.google.com/presentation/d/1Fmi57LLI413nAvK60fsKNoQYFWEMN2wywRRekPSScNI/edit#slide=id.p";
+    QDesktopServices::openUrl(QUrl(link));
 }
 
