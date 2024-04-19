@@ -77,8 +77,6 @@ bool CustomFileSystemModel::canDropMimeData(const QMimeData *data, Qt::DropActio
 }
 
 bool CustomFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) {
-    // qDebug() << "dropMimeData called with action:" << action;
-
     if (!data->hasUrls()) {
         qDebug() << "No URLs in data";
         return false;
@@ -86,40 +84,28 @@ bool CustomFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 
     QModelIndex dropIndex = parent.isValid() ? parent : this->index(rootPath());
     QString destDirectory = filePath(dropIndex);
-    // qDebug() << "Intended destination directory:" << destDirectory;
 
-    // Check if the intended destination is a directory
-    QFileInfo checkDestDir(destDirectory);
-    if (!checkDestDir.isDir()) {
-        // qDebug() << "Destination is not a directory. Using file's parent directory instead.";
-        destDirectory = checkDestDir.absolutePath();
+    if (!QFileInfo(destDirectory).isDir()) {
+        destDirectory = QFileInfo(destDirectory).absolutePath();
     }
 
     bool anySuccess = false;
     QList<QUrl> urls = data->urls();
-    // qDebug() << "URLs to process:" << urls.count();
-
-    QSet<QString> processedPaths; // To avoid processing the same file path multiple times
 
     foreach (const QUrl &url, urls) {
         QString srcFilePath = url.toLocalFile();
-        if (processedPaths.contains(srcFilePath)) {
-            // qDebug() << "Skipping already processed file:" << srcFilePath;
-            continue;
-        }
-        processedPaths.insert(srcFilePath);
-
         QFileInfo srcFileInfo(srcFilePath);
         QString destFilePath = destDirectory + "/" + srcFileInfo.fileName();
-        // qDebug() << "Processing file:" << srcFilePath << "to" << destFilePath;
 
         bool success;
         if (action == Qt::CopyAction) {
             success = QFile::copy(srcFilePath, destFilePath);
-            // qDebug() << "Copy";
         } else if (action == Qt::MoveAction) {
             success = QFile::rename(srcFilePath, destFilePath);
-            // qDebug() << "Move";
+            if (success) {
+                // Handle moving tags and auto-save files
+                moveTagsAndAutoSaveFile(srcFilePath, destFilePath);
+            }
         } else {
             continue; // Skip unsupported actions
         }
@@ -132,7 +118,6 @@ bool CustomFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction a
                                       .arg(action == Qt::CopyAction ? "copy" : "move")
                                       .arg(srcFileInfo.fileName())
                                       .arg(destDirectory));
-
         }
     }
 
@@ -144,4 +129,36 @@ bool CustomFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 
     return anySuccess;
 }
+
+void CustomFileSystemModel::moveTagsAndAutoSaveFile(const QString &srcFilePath, const QString &destFilePath) {
+    // Move tags
+    if (tagManager) {
+        QStringList tags = tagManager->getTags(srcFilePath);
+        for (const QString &tag : tags) {
+            tagManager->removeTag(srcFilePath, tag);
+            tagManager->addTag(destFilePath, tag);
+        }
+    }
+
+    // Move auto-save files
+    QString srcHash = hashFilePath(srcFilePath);
+    QString destHash = hashFilePath(destFilePath);
+    fs::path srcAutoSavePath = AUTO_SAVE_PATH / (srcHash.toStdString() + ".json");
+    fs::path destAutoSavePath = AUTO_SAVE_PATH / (destHash.toStdString() + ".json");
+
+    if (fs::exists(srcAutoSavePath)) {
+        try {
+            fs::rename(srcAutoSavePath, destAutoSavePath);
+        } catch (const std::filesystem::filesystem_error &e) {
+            qDebug() << "Failed to move auto-save file:" << QString::fromStdString(e.what());
+        }
+    }
+}
+
+QString CustomFileSystemModel::hashFilePath(const QString &path) const {
+    QCryptographicHash hash(QCryptographicHash::Sha1);
+    hash.addData(path.toUtf8());
+    return hash.result().toHex();
+}
+
 

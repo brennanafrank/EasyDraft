@@ -3,6 +3,8 @@
 
 #include <QFileSystemModel>
 #include "tagmanager.h"
+#include "config.hpp"
+#include <QCryptographicHash>
 
 class CustomFileSystemModel : public QFileSystemModel {
     Q_OBJECT
@@ -21,6 +23,8 @@ public:
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
     bool canDropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) const override;
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
+    void moveTagsAndAutoSaveFile(const QString &srcFilePath, const QString &destFilePath);
+    QString hashFilePath(const QString &path) const;
 protected:
 
 private:

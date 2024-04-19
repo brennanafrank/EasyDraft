@@ -72,8 +72,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pathViewer->setColumnWidth(3, 120); // Set width of date modified
 
     // Enable sorting and set initial sort order
-    ui->pathViewer->setSortingEnabled(true);
     ui->pathViewer->sortByColumn(0, Qt::AscendingOrder); // Sort by the first column in ascending order
+    ui->pathViewer->setSortingEnabled(true);
+
 
     // Enable drag-drop feature
     ui->pathViewer->setDragEnabled(true);
@@ -82,6 +83,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pathViewer->setDragDropMode(QAbstractItemView::DragDrop);
     ui->pathViewer->setDragDropOverwriteMode(false);
     ui->pathViewer->setDefaultDropAction(Qt::MoveAction);
+    ui->pathViewer->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    ui->pathViewer->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->pathViewer->setFocus();
 
     expandAllNodes(templateIndex);
@@ -413,25 +416,47 @@ void MainWindow::deleteAutoSaveAndTags(const QString &path) {
 }
 
 void MainWindow::deleteItem() {
-    QModelIndex index = ui->pathViewer->currentIndex();
-    if (!index.isValid()) return;
+    QModelIndexList selectedIndexes = ui->pathViewer->selectionModel()->selectedRows();
+
+    if (selectedIndexes.isEmpty()) {
+        QMessageBox::information(this, "No Selection", "Please select one or more items to delete.");
+        return;
+    }
+
+    int numSelected = selectedIndexes.count();
+    QString prompt = tr("Are you sure you want to delete these %1 items?").arg(numSelected);
+    if (QMessageBox::question(this, "Confirm Delete", prompt, QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes) {
+        return;
+    }
 
     QFileSystemModel *model = static_cast<QFileSystemModel *>(ui->pathViewer->model());
-    QModelIndex nameIndex = index.siblingAtColumn(0);
-    QString itemPath = model->filePath(nameIndex);
-    QString fileName = model->fileName(nameIndex);
+    bool anyFailed = false;
+    QStringList failedItems;
 
-    QString prompt = tr("Are you sure you want to delete '%1'?").arg(fileName);
-    if (QMessageBox::question(this, tr("Delete Item"), prompt, QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes) {
-        deleteAutoSaveAndTags(itemPath);  // Use the recursive helper function
+    // Process each selected index
+    for (const QModelIndex &index : selectedIndexes) {
+        if (!index.isValid()) continue;
 
-        if (!model->remove(nameIndex)) {
-            QMessageBox::warning(this, tr("Delete Item"), tr("Failed to delete item."));
-        } else {
-            updateTagComboBox();
+        QString itemPath = model->filePath(index);
+        QString fileName = model->fileName(index);
+
+        deleteAutoSaveAndTags(itemPath);  // Use the recursive helper function if necessary
+
+        if (!model->remove(index)) {
+            anyFailed = true;
+            failedItems.append(fileName);
         }
     }
+
+    if (anyFailed) {
+        QMessageBox::warning(this, "Delete Item", "Failed to delete the following items:\n" + failedItems.join(", "));
+    } else {
+        QMessageBox::information(this, "Operation Successful", "Selected items have been successfully deleted.");
+    }
+
+    updateTagComboBox();  // Update the UI if necessary
 }
+
 
 
 
@@ -1187,6 +1212,29 @@ bool MainWindow::filterIndexByTag(const QModelIndex &index, const QString &tag) 
     return anyVisible;
 }
 
+void MainWindow::on_back_button_export_view_clicked()
+{
+
+    MainWindow::on_actionBack_triggered();
+
+}
+
+
+void MainWindow::on_back_button_parsing_clicked()
+{
+
+    MainWindow::on_actionBack_triggered();
+
+}
+
+
+void MainWindow::on_back_button_view_doc_clicked()
+{
+
+    MainWindow::on_actionBack_triggered();
+
+}
+
 
 void MainWindow::autoSaveDraft() {
     updateReplacementsFromInputs(currentPageIndex);
@@ -1212,31 +1260,6 @@ void MainWindow::autoSaveDraft() {
             qDebug() << "Auto-save failed: " << QString::fromStdString(e.what());
         }
     }
-}
-
-
-
-void MainWindow::on_back_button_export_view_clicked()
-{
-
-    MainWindow::on_actionBack_triggered();
-
-}
-
-
-void MainWindow::on_back_button_parsing_clicked()
-{
-
-    MainWindow::on_actionBack_triggered();
-
-}
-
-
-void MainWindow::on_back_button_view_doc_clicked()
-{
-
-    MainWindow::on_actionBack_triggered();
-
 }
 
 
@@ -1291,16 +1314,6 @@ void MainWindow::updateRecentFiles(const QString& filePath) {
 }
 
 
-
-// void MainWindow::updateRecentFilesList() {
-//     ui->recentFilesList->clear();
-//     for (const QString& file : recentFiles) {
-//         QListWidgetItem* item = new QListWidgetItem(QFileInfo(file).fileName(), ui->recentFilesList);
-//         item->setData(Qt::UserRole, file);  // Store the file path as item data
-//     }
-// }
-
-
 void MainWindow::updateRecentFilesList() {
     ui->recentFilesList->clear();
     for (const QString &filePath : recentFiles) {
@@ -1328,9 +1341,6 @@ void MainWindow::updateRecentFilesList() {
     }
     saveSettings();
 }
-
-
-
 
 void MainWindow::onRecentFileClicked(QListWidgetItem* item) {
     QString filePath = item->data(Qt::UserRole).toString();
