@@ -45,6 +45,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->searchLineEdit->setPlaceholderText("Search files...");
     ui->searchLineEdit->setClearButtonEnabled(true);
 
+    ui->lineEditForWritingWatermark->setVisible(false);
+    ui->pushButtonForWriting->setVisible(false);
 
 
     QPixmap pix(":/rec/340.png");
@@ -329,34 +331,60 @@ void MainWindow::on_createWaterMarkButton_clicked()
 {
 
 
-    if (viewPaths.empty()) {
+    ui->pushButtonForWriting->setVisible(true);
+    ui->lineEditForWritingWatermark->setVisible(true);
 
-        std::ifstream file("savedpaths.txt");
+    QMessageBox::information(this, "Information", "Please create your watermark below");
 
-        if (file.is_open() && !dontAdd) {
 
-            std::string line;
+}
 
-            while (std::getline(file, line)) {
+void MainWindow::on_pushButtonForWriting_clicked()
+{
 
-                viewPaths.push_back(line);
+    writeWatermark = ui->lineEditForWritingWatermark->text();
+
+    if (writeWatermark.isEmpty()) {
+
+        QMessageBox::warning(this, "Error", "Please enter text to create watermark.");
+
+    }
+    else {
+
+
+        if (viewPaths.empty()) {
+
+            std::ifstream file("savedpaths.txt");
+
+            if (file.is_open() && !dontAdd) {
+
+                std::string line;
+
+                while (std::getline(file, line)) {
+
+                    viewPaths.push_back(line);
+
+                }
+
+                file.close();
 
             }
 
-            file.close();
+        }
 
+        //QMessageBox::information(this, "Success", "Exported File" + QString::fromStdString(viewPaths[viewPaths.size() - 1]));
+
+        std::string mainStringExport = viewPaths[viewPaths.size() - 1];
+
+
+        std::string command = PYTHON_EXEC_PATH + " " + PROJECT_PATH + "/ViewDocx.py \"" + mainStringExport + "\" \""  + writeWatermark.toStdString() + "\"";
+        int result = std::system(command.c_str());
+
+        if (result != 0) {
+            std::cerr << "Python script failed with exit code " << result << std::endl;
         }
 
     }
-
-    //QMessageBox::information(this, "Success", "Exported File" + QString::fromStdString(viewPaths[viewPaths.size() - 1]));
-
-    std::string mainStringExport = viewPaths[viewPaths.size() - 1];
-
-
-
-
-
 
 }
 
@@ -436,6 +464,16 @@ void MainWindow::on_HTMLButton_clicked()
     MainWindow::on_pushButton_5_clicked();
 
 
+
+}
+
+void MainWindow::on_DocxButton_clicked()
+{
+
+
+    MainWindow::typeOfExport = 4;
+
+    MainWindow::on_pushButton_5_clicked();
 
 }
 
@@ -1507,4 +1545,8 @@ bool MainWindow::searchIndex(const QModelIndex &index, const QString &searchQuer
 
     return anyVisible;
 }
+
+
+
+
 

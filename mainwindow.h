@@ -124,6 +124,10 @@ private slots:
 
     void on_createWaterMarkButton_clicked();
 
+    void on_pushButtonForWriting_clicked();
+
+    void on_DocxButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);
@@ -164,6 +168,8 @@ private:
     bool warning;
 
     bool dontAdd;
+
+    QString writeWatermark;
 
     // tag filter
     void filterFilesByTag(const QString &tag); // Method to filter files

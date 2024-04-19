@@ -49,6 +49,12 @@ def htmlConvert(filePath_arg, dirPath_arg):
     fileTxt.write(docHtml.value)
     fileTxt.close()
 
+def docxExport(filePath_arg, dirPath_arg):
+
+    file_name = os.path.basename(filePath_arg)
+    dirPath_docx = dirPath_arg + "/" + file_name
+    os.rename(filePath_arg, dirPath_docx)
+
 
 if __name__ == '__main__':
 
@@ -72,3 +78,7 @@ if __name__ == '__main__':
     elif typeOfExport == "3":
 
         htmlConvert(filePath, dirPath)
+
+    elif typeOfExport == "4":
+
+        docxExport(filePath, dirPath)
