@@ -81,7 +81,7 @@ bool CustomFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction a
         qDebug() << "No URLs in data";
         return false;
     }
-
+    qDebug() << "dropMimeData";
     QModelIndex dropIndex = parent.isValid() ? parent : this->index(rootPath());
     QString destDirectory = filePath(dropIndex);
 
@@ -112,6 +112,7 @@ bool CustomFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 
         if (success) {
             anySuccess = true;
+            emit fileMoved(srcFilePath, destFilePath);
         } else {
             QMessageBox::critical(nullptr, "Error Moving or Copying File",
                                   QString("Failed to %1 '%2' to '%3'.\nThis may be because a file with the same name already exists at the destination.")
@@ -132,6 +133,7 @@ bool CustomFileSystemModel::dropMimeData(const QMimeData *data, Qt::DropAction a
 
 void CustomFileSystemModel::moveTagsAndAutoSaveFile(const QString &srcFilePath, const QString &destFilePath) {
     // Move tags
+    qDebug() << "moveTagsAndAutoSaveFile";
     if (tagManager) {
         QStringList tags = tagManager->getTags(srcFilePath);
         for (const QString &tag : tags) {

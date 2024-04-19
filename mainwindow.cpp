@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->tagComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onTagSelected(int)));
     connect(ui->searchLineEdit, &QLineEdit::textChanged, this, &MainWindow::searchFiles);
 
+
     ui->searchLineEdit->setPlaceholderText("Search files...");
     ui->searchLineEdit->setClearButtonEnabled(true);
 
@@ -62,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent)
     fileSystemModel = new CustomFileSystemModel(this);
     fileSystemModel->setRootPath(TEMPLATES_PATH);
     fileSystemModel->setTagManager(tagManager);
+
+    connect(fileSystemModel, &CustomFileSystemModel::fileMoved, this, &MainWindow::handleFileMoved);
 
     QModelIndex templateIndex = fileSystemModel->index(TEMPLATES_PATH);
 
@@ -1350,6 +1353,18 @@ void MainWindow::onRecentFileClicked(QListWidgetItem* item) {
         on_pathViewer_doubleClicked(index);
     }
 }
+
+
+void MainWindow::handleFileMoved(const QString &oldPath, const QString &newPath) {
+    qDebug() << "handleFileMoved";
+    recentFiles.removeAll(oldPath);
+    while (recentFiles.size() > 5) {
+        recentFiles.removeLast();
+    }
+    updateRecentFilesList();
+    saveSettings();
+}
+
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
     if (event->type() == QEvent::KeyPress) {

@@ -30,6 +30,10 @@ protected:
 private:
     TagManager *tagManager;
     QString currentFilterTag;
+
+signals:
+    void fileMoved(const QString &oldPath, const QString &newPath);
+
 };
 
 #endif // CUSTOMFILESYSTEMMODEL_H
