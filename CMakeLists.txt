@@ -16,7 +16,8 @@ find_package(PythonInterp 3.12 REQUIRED)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
-#find_package(Qt6 REQUIRED COMPONENTS PrintSupport Pdf)
+find_package(Qt${QT_VERSION_MAJOR}  REQUIRED COMPONENTS PrintSupport)
+#find_package(QT NAMES Qt5 REQUIRED COMPONENTS Pdf)
 
 set(TS_FILES CS307ParsingGUIOfficial_en_US.ts)
 
@@ -89,8 +90,8 @@ else()
 endif()
 
 target_link_libraries(CS307ParsingGUIOfficial PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-#target_link_libraries(CS307ParsingGUIOfficial PRIVATE Qt6::PrintSupport)
-#target_link_libraries(CS307ParsingGUIOfficial PRIVATE Qt6::Pdf)
+target_link_libraries(CS307ParsingGUIOfficial PRIVATE Qt6::PrintSupport)
+#target_link_libraries(CS307ParsingGUIOfficial PRIVATE Qt5::Pdf)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

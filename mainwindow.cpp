@@ -413,12 +413,17 @@ void MainWindow::on_PDFButton_clicked()
 
     MainWindow::typeOfExport = 1;
 
+    MainWindow::on_pushButton_5_clicked();
+
 }
 
 void MainWindow::on_TXTButton_clicked()
 {
 
     MainWindow::typeOfExport = 2;
+
+    MainWindow::on_pushButton_5_clicked();
+
 
 }
 
@@ -427,6 +432,9 @@ void MainWindow::on_HTMLButton_clicked()
 {
 
     MainWindow::typeOfExport = 3;
+
+    MainWindow::on_pushButton_5_clicked();
+
 
 
 }

@@ -1,7 +1,9 @@
-#include <QPrintDialog>
-#include <QtPdf>
-#include <QPdfDocument>
-#include <QtPrintSupport>
+//#include <QPrintDialog>
+//#include <QtPdf>
+//#include <QPdfDocument>
+//#include <QtPrintSupport>
+
+#include "printer.hpp"
 
 void printPdf(const QString& filePath) {
     QPdfDocument pdfDocument = QPdfDocument();
