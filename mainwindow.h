@@ -128,6 +128,8 @@ private slots:
 
     void on_DocxButton_clicked();
 
+    void on_printButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     void createFolder(const QModelIndex &index);
