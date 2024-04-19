@@ -1576,3 +1576,16 @@ void MainWindow::on_linkButton_clicked()
     QDesktopServices::openUrl(QUrl(link));
 }
 
+
+void MainWindow::on_comboBox_activated(int index)
+{
+    //QString currentPath = QString::fromStdString(fs::current_path().parent_path().string());
+
+    QString fileName = "Adaptic.qss";
+    QFile styleSheetFile(fileName);
+    styleSheetFile.open(QFile::ReadOnly);
+
+    QString styleSheet = QLatin1String(styleSheetFile.readAll());
+    qApp->setStyleSheet(styleSheet);
+}
+
