@@ -184,7 +184,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Exporting Files
     new QShortcut(QKeySequence("Ctrl+E"), this, [this]() {
-        onCompleteFillButtonlicked();
+        changePage();
     });
 
     // Saving a Draft
@@ -474,11 +474,11 @@ void MainWindow::on_HTMLButton_clicked()
 
 void MainWindow::on_DocxButton_clicked()
 {
+    onCompleteFillButtonlicked();
 
+    //MainWindow::typeOfExport = 4;
 
-    MainWindow::typeOfExport = 4;
-
-    MainWindow::on_pushButton_5_clicked();
+    //MainWindow::on_pushButton_5_clicked();
 
 }
 
