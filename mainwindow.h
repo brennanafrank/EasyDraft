@@ -165,9 +165,14 @@ private:
 
     bool dontAdd;
 
+    // tag filter
     void filterFilesByTag(const QString &tag); // Method to filter files
     bool filterIndexByTag(const QModelIndex &index, const QString &tag);
     void expandAllNodes(const QModelIndex &index);
+
+    // search
+    void searchFiles(const QString &searchQuery);
+    bool searchIndex(const QModelIndex &index, const QString &searchQuery);
 
     // recent file
     QStringList recentFiles;
