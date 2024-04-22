@@ -87,10 +87,6 @@ private slots:
 
     void on_selectFileToView_clicked();
 
-    void on_fontButton_clicked();
-
-    void on_ColorButton_clicked();
-
     void on_pathViewer_doubleClicked(const QModelIndex &index);
 
     void on_charMaxLimitButton_clicked();
@@ -190,6 +186,7 @@ private:
     void updateRecentFilesList();
     void onRecentFileClicked(QListWidgetItem* item);
     void handleFileMoved(const QString &oldPath, const QString &newPath);
+    void on_comboBox_activated(int index);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override; // Declare the override here

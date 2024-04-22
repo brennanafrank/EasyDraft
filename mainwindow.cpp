@@ -113,20 +113,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->recentFilesList, &QListWidget::itemClicked, this, &MainWindow::onRecentFileClicked);
 
     // Setting up all the fonts that a user can select
-    for (int j = 1; j <= 12; ++j) {
 
-        ui->fontSelector->addItem(QString::fromStdString(std::to_string(j)));
 
-    }
-
-    ui->ColorSelector->addItem("Red");
-    ui->ColorSelector->addItem("Blue");
-    ui->ColorSelector->addItem("Yellow");
-    ui->ColorSelector->addItem("Pink");
-    ui->ColorSelector->addItem("Purple");
-    ui->ColorSelector->addItem("Green");
-    ui->ColorSelector->addItem("Black");
-    ui->ColorSelector->addItem("White");
 
 
     // Highlighting the name of the file we're at
@@ -1133,22 +1121,6 @@ void MainWindow::on_selectFileToView_clicked()
 }
 
 
-void MainWindow::on_fontButton_clicked()
-{
-
-    fontSize = ui->fontSelector->currentText().toStdString();
-
-}
-
-
-void MainWindow::on_ColorButton_clicked()
-{
-    color = ui->ColorSelector->currentText().toStdString();
-
-}
-
-
-
 void MainWindow::showContextMenuForPathViewer(const QPoint &pos)
 {
     QModelIndex index = ui->pathViewer->indexAt(pos); // Check the clicking position
@@ -1586,6 +1558,6 @@ void MainWindow::on_comboBox_activated(int index)
     styleSheetFile.open(QFile::ReadOnly);
 
     QString styleSheet = QLatin1String(styleSheetFile.readAll());
-    qApp->setStyleSheet(styleSheet);
+    this->setStyleSheet(styleSheet);
 }
 
